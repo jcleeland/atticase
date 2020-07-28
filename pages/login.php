@@ -3,6 +3,9 @@
 <div class="row h-50 justify-content-center align-items-center">
     <form class="col-5" method="post">
         <input type='hidden' name='login' value='true' />
+        <div class='col mb-3 p-0'>
+            <h3 style="font-weight: bold"><img src='images/logo.png'>OpenCaseTracker</h3>
+        </div>
         <div class="col header mb-3">
             Login
         </div>
