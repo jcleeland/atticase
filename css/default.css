@@ -1,0 +1,313 @@
+/* #6ab446 */
+/*  bae8a3 */
+/*  93d573 */
+/*  4c9828 */
+/*  30770e */
+
+body {
+  padding: 0;
+  margin: 0;
+  background: #f2f6e9;
+  background-image: url('../images/background.png');
+  background-size: auto;
+  background-position: 2% -16%;
+  background-repeat: no-repeat; 
+}
+/*--- navigation bar ---*/
+.navbar {
+  background:#6ab446;
+}
+.nav-link,
+.navbar-brand {
+  color: #fff;
+  cursor: pointer;
+}
+.nav-link {
+  margin-right: 1em !important;
+}
+.nav-link:hover {
+  color: #000;
+}
+.navbar-collapse {
+  justify-content: flex-end;
+}
+.nav-link-tab {
+    color: #bbb;
+}
+
+.overlay {
+  position: absolute;
+  min-height: 100%;
+  min-width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.0);
+}
+.filter {
+    /* overflow-y: auto; */
+    /* height: calc(100vh - 105px); */
+}
+.caselist {
+    overflow-y: auto;
+    height: calc(100vh - 105px);
+}
+.card-icon {
+    max-width: 35px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-8%);
+}
+.card-heading {
+    background:#bae8a3;
+}
+.card-heading-border {
+    border-color: #6ab446 !important;
+}
+.card-heading-inverse {
+    background-color: #6ab446;
+    color: white;
+}
+.text-footnote {
+    font-size: 0.8rem;
+    font-style: italic;
+}
+.header {
+    border-bottom: 0.2rem solid #bae8a3;
+    padding: 0px;
+}
+.case-link, .green-link{
+    background-color: #6ab446;
+    cursor: pointer;
+    color: white;
+}
+
+.case-link a {
+    color: white;
+}
+.red-link {
+    background-color: #fa8072;
+    cursor: pointer;
+    color: white;
+}
+.orange-link {
+    background-color: orange;
+    cursor: pointer;
+    color: white;
+}
+.pale-green-link {
+    background-color: #bae8a3;
+    cursor: pointer;
+    color: black;
+}
+.pale-grey-link {
+    background-color: #e9ecef;
+    cursor: pointer;
+    color: black;
+}
+.calendar-link {
+    position: relative;
+    top: 2px;
+    left: -3px;
+    float: left;
+    cursor: pointer;
+}
+.calendar-div {
+    color: black;
+}
+.calendar-div::after {
+    content: '\00a0\00a0\00a0\00a0';
+    background-image: url(../images/calendar.svg);
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center; 
+    background-size: 13px;
+    opacity: 0.5;      
+}
+.pointer {
+    cursor: pointer !important;
+}
+
+.display-5 {
+    font-weight: bold;
+    color: #30770e;
+    font-size: 1rem;
+}
+.display-6 {
+    font-weight: bold;
+    color: #30770e;
+    font-size: 1.1rem;
+    text-shadow: #6ab446 0.1em 0.1em 0.2em;
+}
+.display-7 {
+    font-weight: bold;
+    color: #30770e;
+    font-size: 0.9rem;
+}
+.subSection-label {
+    color: rgba(0,0,0,0.54);
+    margin: 0;
+}
+.subSection-field {
+    color: rgba(0,0,0,0.87);
+    margin: 0;
+}
+.row::before, .row::after {
+    content: " ";
+    display: table;
+}
+::before, ::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.col-xs-4 {
+    width: 32%;
+}
+.col-xs-8 {
+    width: 67%;
+}
+
+
+
+
+
+
+a.fa-icon, a.fa-phone, a.fa-email, a.fa-chat, a.fa-userlink {
+    overflow-wrap: break-word;
+    font-decoration: none;
+    color: (0,0,0,0.75);
+}
+
+a.fa-phone::after {
+    content: '\00a0\00a0\00a0\00a0';
+    background-image: url(../images/telephone.svg);
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center; 
+    background-size: 13px;
+    opacity: 0.5;
+}
+a.fa-chat::after {
+    content: '\00a0\00a0\00a0\00a0';
+    background-image: url(../images/message.svg);
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center; 
+    background-size: 13px;
+    opacity: 0.5;    
+}
+a.fa-email::after {
+    content: '\00a0\00a0\00a0\00a0';
+    background-image: url(../images/email.svg);
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center; 
+    background-size: 13px;
+    opacity: 0.5;    
+}
+a.fa-userlink::after {
+    content: '\00a0\00a0\00a0\00a0';
+    background-image: url(../images/external.svg);
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center; 
+    background-size: 13px;
+    opacity: 0.5;     
+}
+.datepicker {
+    border: 0;
+    padding: 1px 0 1px 0;
+    background-color: transparent;
+    width: 50px;
+}
+
+
+
+
+.status-current {
+    color: #6ab446;
+}
+.status-arrears-small {
+    color: #95a453;
+}
+.status-arrears-big {
+    color: #fa8072;
+}
+.status-notcurrent {
+    color: #fa8072;
+}
+.userlink-current::before {
+    background-color: #6ab446;
+    background-image: url(../images/user.svg);
+    content: '\00a0\00a0\00a0\00a0';
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px;
+    opacity: 0.5;
+    border-radius: 0.2rem;
+    padding: 0;
+    margin-right: 2px;
+}
+.userlink-arrears-small::before {
+    background-color: #95a453;
+    background-image: url(../images/user.svg);
+    content: '\00a0\00a0\00a0\00a0';
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px;
+    opacity: 0.5;
+    border-radius: 0.2rem;
+    padding: 0;
+    margin-right: 2px;
+}
+.userlink-arrears-big::before {
+    background-color: #fa8072;
+    background-image: url(../images/user.svg);
+    content: '\00a0\00a0\00a0\00a0';
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px;
+    opacity: 0.5;
+    border-radius: 0.2rem;
+    padding: 0;
+    margin-right: 2px;
+}
+.userlink-notcurrent::before {
+    background-color: #fa8072;
+    background-image: url(../images/user.svg);
+    content: '\00a0\00a0\00a0\00a0';
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px;
+    opacity: 0.5;
+    border-radius: 0.2rem;
+    padding: 0;
+    margin-right: 2px;
+}
+.create-case {
+    background-image: url(../images/plus.svg);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: 1rem;
+    background-color:  #bae8a3;
+    padding-left: 1.2rem !important;
+    padding-right: 0.2rem;
+    content: 'Create Case';
+    font-size: 1rem;
+    color: rgb(0,0,0,0.6);
+    cursor: pointer;
+}
+.w-45 {
+    width: 45% !important;
+}
+.w-30 {
+    width: 29% !important;
+}
+
+.w-30x {
+    width: calc(100% / 3);
+}
+.smaller {
+    font-size: 75%;
+    font-weight: 400;
+}
