@@ -1,6 +1,10 @@
 <?php
   if(isset($_POST['login']) && $_POST['login']=="true") {
       //Log user in
+      print_r($_POST);
+      die();
+      
+      
       
       $_SESSION['authenticated']=1;
       $_SESSION['administrator']=1;

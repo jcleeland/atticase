@@ -1,5 +1,17 @@
 <?php
     session_start();
+    error_reporting(E_ALL);
+    require_once("config/config.php");
+    require_once("helpers/oct.php");
+    $oct=new oct;
+    $oct->db=mysqli_connect($settings['dbhost'], $settings['dbuser'], $settings['dbpass'], $settings['dbname']);
+    if(!$oct->db) {
+        echo "Error: Unable to connect to database.". PHP_EOL;
+        echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
+        echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
+        die();    
+    }
+    
     include("scripts/authenticate.php"); 
     
     //NAVIGATION
