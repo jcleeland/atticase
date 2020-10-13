@@ -1,13 +1,26 @@
 <?php
   if(isset($_POST['login']) && $_POST['login']=="true") {
       //Log user in
-      print_r($_POST);
-      die();
+      if(isset($_POST['username']) && isset($_POST['password'])) {
+          //See if user exists
+          $query="SELECT * FROM ".$oct->dbprefix."users WHERE user_name = :username";
+          $stmt=$oct->db->prepare($query) or die("The prepared statement does not work");
+          $stmt->execute(['username'=>$_POST['username']]);
+          $out=$stmt->fetch();
+          
+          if(crypt($_POST['password'], '4t6dcHiefIkeYcn48B') == $out['user_pass']) {
+              $_SESSION['authenticated']=1;
+              $_SESSION['administrator']=1;
+              $_SESSION['user_name']=$out['user_name'];
+              $_SESSION['is_admin']=1;
+              //print_r($out);
+          } else {
+              echo "Login failed";
+          }
+      }
       
       
       
-      $_SESSION['authenticated']=1;
-      $_SESSION['administrator']=1;
   }
   
   if(isset($_GET['logout']) && $_GET['logout']=="true") {

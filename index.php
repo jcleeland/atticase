@@ -4,14 +4,14 @@
     require_once("config/config.php");
     require_once("helpers/oct.php");
     $oct=new oct;
-    $oct->db=mysqli_connect($settings['dbhost'], $settings['dbuser'], $settings['dbpass'], $settings['dbname']);
-    if(!$oct->db) {
-        echo "Error: Unable to connect to database.". PHP_EOL;
-        echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
-        echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
-        die();    
-    }
+    $oct->dbuser=$settings['dbuser'];
+    //$oct->dbpass=$settings['dbpass'];
+    $oct->dbpass=$settings['dbpass'];
+    $oct->dbhost=$settings['dbhost'];
+    $oct->dbname=$settings['dbname'];
+    $oct->dbprefix=$settings['dbprefix'];
     
+    $oct->connect();
     include("scripts/authenticate.php"); 
     
     //NAVIGATION
