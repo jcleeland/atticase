@@ -1,7 +1,5 @@
 <?php
-if($loggedin) {
-    include("login.php");
-} else {  
+
 ?>
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
@@ -170,5 +168,5 @@ if($loggedin) {
     </div>
 </div>
 <?php
-}
+
 ?>

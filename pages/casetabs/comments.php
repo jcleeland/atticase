@@ -1,8 +1,11 @@
-<div class="overflow-auto" style='max-height: 500px'>
+<script src="js/pages/casetabs/comments.js"></script>
+
+<div id='commentlist' class='justify-content-center'>
+</div>
 <?php
   
 //Note - change the "x" in the data toggle to the comment id
-for ($x=1; $x<10; $x++) {
+/* for ($x=1; $x<10; $x++) {
 ?>
     <div class="card m-2 w-100">
         <div class="card-header">
@@ -20,6 +23,5 @@ for ($x=1; $x<10; $x++) {
         </div>
     </div>
 <?php
-}
+} */
 ?>
-</div>

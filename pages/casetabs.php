@@ -3,92 +3,106 @@
 ?>
 <div class='col-sm-12 mb-1'>
     <ul class="nav nav-tabs w-100">
-        <li class="nav-item active no-wrap"><a class="nav-link nav-link-tab active" data-toggle="tab" href='#comments'><img src='images/book.svg' width='20px' class="float-left mr-1" title="comments" /><div class='float-left d-none d-sm-block'>Comments</div><div style='clear: both'></div></a></li>
+        <li class="nav-item active no-wrap">
+            <a class="nav-link nav-link-tab active" data-toggle="tab" href='#comments'>
+                <img src='images/compose.svg' width='20px' class="float-left mr-1" title="Notes" />
+                <div class='float-left d-none d-sm-block'>Notes</div>
+                <div id='commentcount' class='tabcounter'>0</div>
+            <div style='clear: both'></div>
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#attachments'>
-                <img src='images/file.svg' width='20px' class="float-left mr-1" title="Attachments" />
+                <img src='images/portfolio.svg' width='20px' class="float-left mr-1" title="Attachments" />
                 <div class='float-left d-none d-sm-block'>Attachments</div>
+                <div id='attachmentcount' class='tabcounter'>0</div>
                 <div style="clear: both"></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#poi'>
                 <img src='images/user.svg' width='20px' class="float-left mr-1" title="People of Interest" />
-                <div class='float-left d-none d-sm-block'>POI</div><div style='clear: both'></div>
+                <div class='float-left d-none d-sm-block'>POI</div>
+                <div id='poicount' class='tabcounter'>0</div>
+                <div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#related'>
-                <img src='images/external.svg' width='20px' class="float-left mr-1" title="Related" />
-                <div class='float-left d-none d-sm-block'>Related</div><div style='clear: both'></div>
+                <img src='images/activity.svg' width='20px' class="float-left mr-1" title="Related" />
+                <div class='float-left d-none d-sm-block'>Related</div>
+                <div id='relatedcount' class='tabcounter'>0</div>
+                <div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#linked'>
-                <img src='images/lock.svg' width='20px' class="float-left mr-1" title="Linked" />
-                <div class='float-left d-none d-sm-block'>Linked</div><div style='clear: both'></div>
+                <img src='images/link.svg' width='20px' class="float-left mr-1" title="Linked" />
+                <div class='float-left d-none d-sm-block'>Linked</div>
+                <div id='linkedcount' class='tabcounter'>0</div>
+                <div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#notifications'>
-                <img src='images/telephone.svg' width='20px' class="float-left mr-1" title="Notifications" />
+                <img src='images/bell.svg' width='20px' class="float-left mr-1" title="Notifications" />
                 <div class='float-left d-none d-sm-block'>Notifications</div><div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#planning'>
-                <img src='images/location.svg' width='20px' class="float-left mr-1" title="Planning" />
+                <img src='images/flag.svg' width='20px' class="float-left mr-1" title="Planning" />
                 <div class='float-left d-none d-sm-block'>Planning</div><div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#billing'>
-                <img src='images/creditcard.svg' width='20px' class="float-left mr-1" title="Billing" />
+                <img src='images/clock.svg' width='20px' class="float-left mr-1" title="Billing" />
                 <div class='float-left d-none d-sm-block'>Billing</div><div style='clear: both'></div>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#history'>
-                <img src='images/info.svg' width='20px' class="float-left mr-1" title="History" />
+                <img src='images/archive.svg' width='20px' class="float-left mr-1" title="History" />
                 <div class='float-left d-none d-sm-block'>History</div><div style='clear: both'></div>
             </a>
         </li>
     </ul>
 
-    <div class='tab-content '>
-        <div class='tab-pane active' id='comments'>
+    <div class='tab-content bg-white col-12 pt-2 pb-2 pl-0 pr-0'>
+        <div class='tab-pane active pl-0 pr-0' id='comments'>
             <?php include("pages/casetabs/comments.php"); ?>
         </div>
 
-        <div class='tab-pane' id='attachments'>
+        <div class='tab-pane pl-0 pr-0' id='attachments'>
             <?php include("pages/casetabs/attachments.php"); ?>
         </div>
         
-        <div class='tab-pane active' id='poi'>
+        <div class='tab-pane pl-0 pr-0' id='poi'>
+            <?php include("pages/casetabs/poi.php"); ?>
+        </div>        
+
+        <div class='tab-pane pl-0 pr-0' id='related'>
+            <?php include("pages/casetabs/related.php"); ?>
+        </div>        
+
+        <div class='tab-pane pl-0 pr-0' id='linked'>
+            <?php include("pages/casetabs/linked.php"); ?>
+        </div>        
+
+        <div class='tab-pane pl-0 pr-0' id='notifications'>
         
         </div>        
 
-        <div class='tab-pane container active' id='related'>
+        <div class='tab-pane container' id='planning'>
         
         </div>        
 
-        <div class='tab-pane container active' id='linked'>
-        
-        </div>        
-
-        <div class='tab-pane container active' id='notifications'>
-        
-        </div>        
-
-        <div class='tab-pane container active' id='planning'>
-        
-        </div>        
-
-        <div class='tab-pane container active' id='billing'>
+        <div class='tab-pane container' id='billing'>
         
         </div>
                 
-        <div class='tab-pane container active' id='history'>
+        <div class='tab-pane container' id='history'>
         
         </div>        
     

@@ -1,10 +1,15 @@
+<script src="js/pages/dashboard/recent.js"></script>
 <h4 class="header">Recent</h4>
-<div class="w-100 overflow-auto" style="max-height: 270px">
+<?php 
+    $pagername="recent";
+    include('pages/helpers/pager.php'); 
+?>
+<div class="overflow-auto" style="max-height: 270px" id="recentlist">
+    <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
-for($x=1; $x<=7; $x++) {
+/* for($x=1; $x<=7; $x++) {
 
     $parent="recent";
-    /** FOR TESTING - REPLACE WITH DATA GATHER **/
     $case_details=array(
         "task_id"=>$x,
         "item_summary"=>"Feeling really let down by my employer and manager",
@@ -26,6 +31,6 @@ for($x=1; $x<=7; $x++) {
     
     
     include("pages/dashboard/listitem.php");
-}  
+} */  
 ?>
 </div>

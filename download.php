@@ -1,0 +1,28 @@
+<?php
+session_start();
+//error_reporting(E_ALL);
+require_once("helpers/startup.php");
+
+if(isset($_GET['attachmentid'])) {
+    $fileinfo=$oct->getAttachment($_GET['attachmentid']);
+    $attachmentdir="/var/attachments/";
+    $filename=$fileinfo['results']['file_name'];
+    $origname=$fileinfo['results']['orig_name'];
+    $filetype=$fileinfo['results']['file_type'];
+    if(file_exists("$attachmentdir/$filename")) {
+        $path="$attachmentdir/$filename";
+        $orig_name=urlencode($origname);
+
+        header("Cache-Control: max-age=60"); //Fix for Internet explorer bug
+        header("Pragma: public");
+        header("Content-type: $file_type");
+        header("Content-Disposition: attachment; filename=$orig_name");
+        header("Content-transfer-encoding: binary\n");
+        header("Content-length: " . filesize($path) . "\n");
+        
+        readfile("$path");
+    }
+    
+}
+  
+?>

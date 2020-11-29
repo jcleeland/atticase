@@ -13,6 +13,8 @@ body {
   background-position: 2% -16%;
   background-repeat: no-repeat; 
 }
+
+
 /*--- navigation bar ---*/
 .navbar {
   background:#6ab446;
@@ -78,12 +80,19 @@ body {
 .case-link, .green-link{
     background-color: #6ab446;
     cursor: pointer;
-    color: white;
+    color: white; 
+    min-width: 55px;                                   
 }
-
 .case-link a {
     color: white;
 }
+.client-link {
+    min-width: 130px;
+    text-align: center;
+    background-color: rgba(70, 141, 180, 0.2);
+    cursor: pointer;
+}
+
 .red-link {
     background-color: #fa8072;
     cursor: pointer;
@@ -133,13 +142,13 @@ body {
     font-size: 1rem;
 }
 .display-6 {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #30770e;
     font-size: 1.1rem;
-    text-shadow: #6ab446 0.1em 0.1em 0.2em;
+    /* text-shadow: #6ab446 0.1em 0.1em 0.2em; */
 }
 .display-7 {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #30770e;
     font-size: 0.9rem;
 }
@@ -311,3 +320,148 @@ a.fa-userlink::after {
     font-size: 75%;
     font-weight: 400;
 }
+.form-transparent {
+    background-color: transparent;
+}
+
+.form-transparent-sm {
+    background-color: rgba(192,192,192, 0.1);
+    font-size: 0.7em;
+    padding: 2px !important;
+    height: 20px !important;
+    border: 1px solid #ccc;
+}
+
+.date-overdue {
+    background-color: rgba(255,0,0,0.1);
+}
+.date-due {
+    background-color: rgba(255,255,0,0.1);
+}
+.date-future {
+    background-color: rgba(186, 232, 163, 1);
+}
+.pager {
+    background-color: rgba(186, 232, 163, 0.5);
+    /* color:  rgba(106, 180, 70, 1); */
+    font-weight: bold;
+    margin-top: -8px;
+    margin-bottom: 4px;
+}
+.pager img {
+    height: 1em;
+    margin-top:  5px;
+}
+.pagerlight {
+    background-color: rgba(255,255,255, 0.2);
+}
+.pagerposition {
+    min-width: 20px;
+    text-align: center;
+    margin-top: 1px !important;
+}
+.officer {
+    background-color: rgba(222, 226, 230, 0.6);
+    min-width: 100px;
+    text-align: center;
+}
+.tabcounter {
+    float: right;
+    width: 18px;
+    height: 18px;
+    /* border-radius: 3px; */
+    /* border: 1px solid rgba(186, 232, 163, 0.8); */
+    color: green;
+    font-size: 0.6em;
+    text-align: center;
+    margin-top: -8px;
+    margin-right: -16px;
+    padding-top: 2px;
+}
+
+.disabledimage {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.enabledimage {
+    opacity: 1; 
+    cursor: pointer;   
+}
+.link {
+    background-color: rgba(70, 141, 180, 0.2);
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 4px 4px 4px 20px;
+    background-image: url(../images/external.svg);
+    background-repeat: no-repeat;
+    background-position: 5px 5px; 
+    background-size: 14px; 
+    margin-bottom: 4px; 
+}
+.link:hover {
+    background-color: rgba(70, 141, 180, 0.8);
+    color: white;
+}
+
+.attachment-card{
+    margin-top: 3px; 
+}
+
+.casePrimeBox {
+    background-color: #6ab446;
+    min-height: 50px;
+    border-radius: 5px;
+    padding: 5px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* font-weight: bold; */
+    color: rgb(93,118,130);       
+}
+.tabPrimeBox {
+    background-color: #bec8cd;
+    min-height: 50px;
+    border-radius: 5px;
+    padding: 5px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* font-weight: bold; */
+    color: rgb(93,118,130);       
+}
+.tabSpeechBubble {
+    position: relative;
+    background: white;
+    border: 1px solid #bec8cd;
+    border-radius: .7em;
+    min-height: 100px;  
+}
+.tabSpeechBubble:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 0;
+    height: 0;
+    border: 16px solid transparent;
+    border-right-color: #bec8cd;
+    border-left: 0;
+    border-bottom: 0; /* hide this for middle pointer, change to border-top for flat bottom */
+    margin-top: -10px;
+    margin-left: -16px;
+}
+
+.closed-case {
+    position: relative; 
+    bottom: -15px; 
+    right: -20px;
+    background-color: rgba(255,0,0,0.1);
+}
+
+.btn-main {
+    background-color: rgba(70, 141, 180, 0.75);
+    color: white; 
+}
+

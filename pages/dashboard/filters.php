@@ -1,3 +1,4 @@
+        <script src="js/pages/dashboard/filters.js"></script>
         <h4 class="header">Search cases</h4>
         <div class='row'>
             <div class='form-group m-2 w-45'>
@@ -10,7 +11,7 @@
             </div>
             <div class='form-group m-2 w-45'>        
                 <div class='form-group m-1 form-check'>
-                    <input type='checkbox' class='form-check-input small' id='mycasesOnly' />
+                    <input type='checkbox' class='form-check-input small' id='mycasesOnly' checked=checked />
                     <label class='form-check-label smaller' for='mycasesOnly'>My Cases</label>
                 </div>
                 <div class='form-group m-1 form-check'>
@@ -61,8 +62,8 @@
             </div> 
         </div>
         <div class="row">
-            <div class='form-group w-100 m-2 text-justify'>        
-                <center><button type='submit' class='btn btn-primary float-right mb-2 w-100'>Search</button></center>
+            <div class='form-group m-2 w-100 text-center'>        
+                <button type='submit' class='btn btn-main mb-2 w-75'>Search</button>
             </div>
         </div>  
 <?php

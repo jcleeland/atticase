@@ -1,21 +1,19 @@
 <?php
     session_start();
+    /* REMOVE THE FOLLOWING LINES IN PRODUCTION ENVIRONMENT */
+    ini_set('display_errors', 1);
     error_reporting(E_ALL);
-    require_once("config/config.php");
-    require_once("helpers/oct.php");
-    $oct=new oct;
-    $oct->dbuser=$settings['dbuser'];
-    //$oct->dbpass=$settings['dbpass'];
-    $oct->dbpass=$settings['dbpass'];
-    $oct->dbhost=$settings['dbhost'];
-    $oct->dbname=$settings['dbname'];
-    $oct->dbprefix=$settings['dbprefix'];
+    /*                                                      */
     
-    $oct->connect();
-    include("scripts/authenticate.php"); 
+    require_once("helpers/startup.php");
     
     //NAVIGATION
     $page=isset($_GET['page']) ? $_GET['page'] : "dashboard";
+    
+    //Some useful values for each page
+    $todaystart=mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+    $todayend=mktime(23,59,59, date("m"), date("d"), date("Y"));
+    
 ?>
 <html>
     <head>
@@ -36,11 +34,19 @@
     <script type="text/javascript">
         //Load the Visualization API and the corechart package
         google.charts.load('current', {'packages':['corechart']});
-    </script>    
+    </script>
+    <script src="js/index.js"></script>    
     </head>
     <body>
+    <input type='hidden' name='user_id' id='user_id' value='<?php echo $_SESSION['user_id'] ?>' />
+    <input type='hidden' name='user_name' id='user_name' value='<?php echo $_SESSION['user_name'] ?>' />
+    <input type='hidden' name='real_name' id='real_name' value='<?php echo $_SESSION['real_name'] ?>' />
+    <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
+    <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
+    <input type='hidden' name='admin_status' id='admin_status' value='<?php echo "" ?>' />
+    <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
         <?php
-            if(!$_SESSION['authenticated']){
+            if(!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']){
                 include("pages/login.php");
             } else {
             ?>

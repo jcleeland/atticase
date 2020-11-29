@@ -1,12 +1,19 @@
-<h4 class="p-0 header">To do</h4>
-
-<div class="w-100 overflow-auto" style="max-height: 270px">
+<script src="js/pages/dashboard/todo.js"></script>
+<div class="float-right m-1 text-muted">
+    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />
+</div>
+<h4 class="p-0 header" id='todoheader'>To do</h4>
+<?php 
+    $pagername="todo";
+    include('pages/helpers/pager.php'); 
+?>
+<div class="w-100 overflow-auto" style="max-height: 270px" id="todolist">
+<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
 $status=array("current", "arrears-small", "arrears-big", "notcurrent");
-for($x=1; $x<=7; $x++) {
+/* for($x=1; $x<=7; $x++) {
     $y=rand(0,3);
     $parent="todo";
-    /** FOR TESTING - REPLACE WITH DATA GATHER **/
     $case_details=array(
         "task_id"=>$x,
         "item_summary"=>"Feeling really let down by my employer and manager",
@@ -27,8 +34,7 @@ for($x=1; $x<=7; $x++) {
         "member_status"=>$status[$y]
     ); 
     
-    /** Repeat, reuse **/   
     include("pages/dashboard/listitem.php");
-}  
+} */ 
 ?>
 </div>

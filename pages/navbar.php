@@ -18,7 +18,7 @@
                         <a class="nav-link" href="?page=options">Options</a>
                     </li>
                     <?php
-                        if($admin) {
+                        if(isset($admin) && $admin) {
                     ?>
                     <li class="nav-item">
                         <a class="nav-link" href="?page=admin">Admin</a>

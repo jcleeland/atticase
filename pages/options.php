@@ -37,7 +37,15 @@ $options=array(
                 
             ?>
         </div>
-    </div>
+        <!--<div class="col-xs-12 col-sm-10">
+            <pre>
+            <?php
+                foreach($prefs as $name=>$pref) {
+                    echo "<b>".$name."</b>: ".$pref['value']."<br /><i>".$pref['description']."</i><br /><br />";
+                }
+            ?>
+            </pre>
+        </div>-->
 <?php
     }
 ?>
