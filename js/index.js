@@ -62,6 +62,15 @@ function commentList(parameters, conditions, order, first, last) {
     });
 }
 
+function notificationsList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'notificationsList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });    
+}
+
 function poiList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -282,8 +291,8 @@ function pagerNumbers(pagername, start, end, total) {
 
 
 function insertCaseCard(parentDiv, uniqueId, casedata) {
-    console.log('Inserting Case Card');
-    console.log(casedata);
+    //console.log('Inserting Case Card');
+    //console.log(casedata);
     var thisDateDue=timestamp2date(casedata.date_due);
     if(typeof casedata.pref_name !== 'undefined') {
         var client=casedata.pref_name+' '+casedata.surname;
@@ -291,11 +300,12 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         var client=casedata.member;
     }
     var dateclass='date-future';
-    var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
-    var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
     if(casedata.date_due < $('#today_start').val()) {dateclass='date-overdue';}
     if(casedata.date_due >= $('#today_start').val() && casedata.date_due <= $('#today_end').val()) {dateclass='date-due';}
-    console.log(parentDiv+' for case '+casedata.task_id+': Date Due: '+casedata.date_due+' - today_start: '+$('#today_start').val());
+    
+    var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
+    var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
+    //console.log(parentDiv+' for case '+casedata.task_id+': Date Due: '+casedata.date_due+' - today_start: '+$('#today_start').val());
     
     $('#'+parentDiv).append('<div class="row m-1" id="caseCardParent_'+uniqueId+'"></div>');
         

@@ -20,15 +20,16 @@ function loadRecent() {
     var joins={};
     joins['tasks']="INNER JOIN tasks t ON t.task_id = h.task_id";
     joins['member_cache']="INNER JOIN member_cache mem ON mem.member=t.member";
+    joins['users']="LEFT JOIN users u ON t.assigned_to=u.user_id"
     
     var parameters={};
     parameters[':user_id']=$('#user_id').val();
     //parameters[':isclosed']=1;
     //parameters[':datedue']=today.getTime() / 1000 | 0;
     
-    var select="h.*, t.*, mem.*";
+    var select="h.*, t.*, mem.*, u.real_name as assigned_real_name";
     
-    var conditions='user_id = :user_id';
+    var conditions='h.user_id = :user_id';
     
     var order='event_date DESC';
     

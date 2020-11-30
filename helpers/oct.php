@@ -37,7 +37,7 @@ class oct {
     
     function fetchMany($query, $parameters=array(), $first=0, $last=100000000, $debug=false) {
           if($debug) {
-              echo "DEBUGGING INFO\r\n";
+              echo "<pre>DEBUGGING INFO\r\n";
               print_r($query);
               echo "\r\nPARAMETERS\r\n";
               print_r($parameters);
@@ -48,6 +48,7 @@ class oct {
               print_r($stmt);
               echo "\r\nERROR INFO<br />";
               print_r($this->db->errorInfo());
+              echo "\r\n-----";
           }
           $stmt->execute($parameters);
           $count=0;
@@ -148,6 +149,7 @@ class oct {
     }
     
     function caseList($parameters=array(), $conditions="is_closed != 1", $order="date_due ASC", $first=0, $last=1000000000) {
+        
         if($conditions === null) {$conditions="is_closed != 1";}
         if($order===null) {$order="date_due ASC";}
         
@@ -180,7 +182,7 @@ class oct {
         //ORDER
         $query .= " \nORDER BY ".$order;       
         //echo $query;
-        $results=$this->fetchMany($query, $parameters, $first, $last);
+        $results=$this->fetchMany($query, $parameters, $first, $last, true);
         
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
@@ -222,6 +224,24 @@ class oct {
         return($output);         
     }
     
+    function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="date_added DESC";}
+        
+        $query = "SELECT u.*, n.*";
+        $query .="\r\n  FROM ".$this->dbprefix."users u";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."notifications n ON n.user_id = u.user_id";
+        $query .="\r\nWHERE $conditions";
+        $query .="\r\nORDER BY $order";
+        
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);         
+    }
+
     function linkedList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}

@@ -1,5 +1,5 @@
 $(function() {
-    loadTodo();
+    //loadTodo();
     
     $('#filterTodo').keyup(function() {
         //console.log($(this).val());
@@ -54,7 +54,9 @@ function loadTodo() {
             $('#todolist').html('');
             $.each(cases.results, function(i, casedata) {
                 /* Put formatting into a standalone script */
-                var thisDateDue=timestamp2date(casedata.date_due);
+                
+                insertCaseCard('todolist', 'todolist'+casedata.task_id, casedata);
+                /* var thisDateDue=timestamp2date(casedata.date_due);
                 if(typeof casedata.pref_name !== 'undefined') {
                     var client=casedata.pref_name+' '+casedata.surname;
                 } else {
@@ -69,6 +71,7 @@ function loadTodo() {
                 $('#caseheader_'+casedata.task_id).append("<div class='float-left border rounded pl-1 pr-1 mr-2 pale-green-link userlink-"+casedata.member_status+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
                 $('#caseheader_'+casedata.task_id).append("<div class='float-left col p-0 display-7'>"+casedata.item_summary+"</div>");
                 $('#caseheader_'+casedata.task_id).append("<div style='clear: both'></div>");
+                */
             })
             
         }
