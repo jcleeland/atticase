@@ -1,5 +1,5 @@
 $(function() {
-    //loadTodo();
+    loadTodo();
     
     $('#filterTodo').keyup(function() {
         //console.log($(this).val());

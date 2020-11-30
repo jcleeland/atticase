@@ -31,7 +31,7 @@ function loadRecent() {
     
     var conditions='h.user_id = :user_id';
     
-    var order='event_date DESC';
+    var order='event_date DESC LIMIT 500';
     
     var start=parseInt($('#recentstart').val()) || 0;
     var end=parseInt($('#recentend').val()) || 9;
@@ -52,7 +52,7 @@ function loadRecent() {
     
     $.when(tableList("history h", joins, select, parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('RECENTS');
-        console.log(cases);
+        //console.log(cases);
         if(cases.results.length<0) {
             //console.log('Nothing');
             $('#recentlist').html("No cases in recent list");

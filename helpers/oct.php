@@ -182,7 +182,7 @@ class oct {
         //ORDER
         $query .= " \nORDER BY ".$order;       
         //echo $query;
-        $results=$this->fetchMany($query, $parameters, $first, $last, true);
+        $results=$this->fetchMany($query, $parameters, $first, $last, false);
         
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           

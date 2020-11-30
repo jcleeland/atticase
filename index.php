@@ -7,6 +7,9 @@
     
     require_once("helpers/startup.php");
     
+    $user_id=isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    $user_name=isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
+    $user_real_name=isset($_SESSION['real_name']) ? $_SESSION['real_name'] : null;
     //NAVIGATION
     $page=isset($_GET['page']) ? $_GET['page'] : "dashboard";
     
@@ -38,9 +41,9 @@
     <script src="js/index.js"></script>    
     </head>
     <body>
-    <input type='hidden' name='user_id' id='user_id' value='<?php echo $_SESSION['user_id'] ?>' />
-    <input type='hidden' name='user_name' id='user_name' value='<?php echo $_SESSION['user_name'] ?>' />
-    <input type='hidden' name='real_name' id='real_name' value='<?php echo $_SESSION['real_name'] ?>' />
+    <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
+    <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
+    <input type='hidden' name='real_name' id='real_name' value='<?php echo $user_real_name ?>' />
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
     <input type='hidden' name='admin_status' id='admin_status' value='<?php echo "" ?>' />
