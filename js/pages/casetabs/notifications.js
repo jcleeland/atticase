@@ -31,16 +31,16 @@ function loadNotifications() {
     
     
     $.when(notificationsList(parameters, conditions, order, start, end)).done(function(notifications) {
-        console.log('Notifications');
-        console.log(notifications);
+        //console.log('Notifications');
+        //console.log(notifications);
         if(notifications.count<1) {
-            $('#notificationslist').html("<center><br />No notifications set for this case yet<br />&nbsp;</center>");
+            $('#notificationlist').html("<center><br />No notifications set for this case yet<br />&nbsp;</center>");
             $('#notificationscount').html('');
         } else {
             $('#notificationlist').html('');
             $('#notificationscount').html(notifications.total);
             $.each(notifications.results, function(i, notificationsdata) {
-                console.log(notificationsdata);
+                //console.log(notificationsdata);
                 var parentDiv='notificationlist';
                 var uniqueId=notificationsdata.notify_id;
                 

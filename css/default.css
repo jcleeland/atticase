@@ -81,7 +81,8 @@ body {
     background-color: #6ab446;
     cursor: pointer;
     color: white; 
-    min-width: 55px;                                   
+    min-width: 55px; 
+    text-align: center;                                  
 }
 .case-link a {
     color: white;
@@ -465,3 +466,22 @@ a.fa-userlink::after {
     color: white; 
 }
 
+.oct-warning {
+    background-color: #ff6b77;
+    color: white;
+}
+.text-green {
+    color: #6ab446 !important;
+}
+.green-curtain {
+    background-color:  #d5eec6;
+    margin-top: -9px !important;
+}
+
+.form-control-xs {
+    height: calc(1.2em + .4rem + 2px);
+    padding: 0.05rem .1rem;
+    line-height: 1;
+    border-radius: .2rem;
+    background-color: rgba(256, 256, 256, 0.4);
+}

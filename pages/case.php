@@ -6,7 +6,7 @@
         <div class="card-header card-heading border rounded">
             <div class="float-left card-heading-border border rounded pl-1 pr-1 mr-2 case-link" id='caseid_header'></div>
             <a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card' >
-                <img id="case-card-toggle-image" src='images/caret-top.svg' class='img-thumbnail float-right green-link' width='30px' title="Hide case details" />
+                <img id="case-card-toggle-image" src='images/caret-top.svg' class='img-thumbnail float-right' style='background-color: #6ab446' width='30px' title="Hide case details" />
             </a>
             <div class="float-right mr-2 card-heading-border border rounded pl-1 pr-1 calendar-div pointer" id='date_due_parent'><input type='text' id='date_due' class='datepicker' value='' /></div>
             <div class="float-right card-heading-border border rounded pl-1 pr-1 mr-2 pale-green-link" id="clientname">

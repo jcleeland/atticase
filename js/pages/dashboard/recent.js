@@ -2,7 +2,7 @@ $(function() {
     loadRecent();
     
     $('#filterRecent').keyup(function() {
-        console.log($(this).val());
+        //console.log($(this).val());
         var search=$(this).val();
         $('.recentitem').each(function() {
             if($(this).html().toUpperCase().includes(search.toUpperCase())) {
@@ -27,11 +27,11 @@ function loadRecent() {
     //parameters[':isclosed']=1;
     //parameters[':datedue']=today.getTime() / 1000 | 0;
     
-    var select="h.*, t.*, mem.*, u.real_name as assigned_real_name";
+    //var select="h.*, t.*, mem.surname, mem.pref_name, u.real_name as assigned_real_name";
     
     var conditions='h.user_id = :user_id';
     
-    var order='event_date DESC LIMIT 500';
+    var order='event_date DESC';
     
     var start=parseInt($('#recentstart').val()) || 0;
     var end=parseInt($('#recentend').val()) || 9;
@@ -44,13 +44,13 @@ function loadRecent() {
         end=9;
         $('#recentend').val(9);
     }
-    console.log(joins);
-    console.log('Doing cases, '+start+' to '+end);
+    //console.log(joins);
+    //console.log('Doing cases, '+start+' to '+end);
     
     $('#recentlist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     
-    $.when(tableList("history h", joins, select, parameters, conditions, order, start, end)).done(function(cases) {
+    $.when(recentList(parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('RECENTS');
         //console.log(cases);
         if(cases.results.length<0) {
@@ -63,6 +63,7 @@ function loadRecent() {
                 /* Put formatting into a standalone script */
                 if(!$('#caseCardParent_recentlist'+casedata.task_id).length) {
                     insertCaseCard('recentlist', 'recentlist'+casedata.task_id, casedata);
+                    $('#caseheader_recentlist'+casedata.task_id).prepend('<div class="text-muted green-curtain p-0 pl-1 pr-1 m-0 mb-1 smaller" >You modified this case on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
                 }
                 //console.log(casedata);
                 /* var thisDateDue=timestamp2date(casedata.event_date);
@@ -85,7 +86,7 @@ function loadRecent() {
         toggleCaseCards();
         toggleDatepickers();        
     }).fail(function(output) {
-        console.log(output);
+        //console.log(output);
         console.log('Nothing found');
         $('#recentlist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
         pagerNumbers('recent', 0, 0, 0);
@@ -96,7 +97,7 @@ function recentend_pager() {
     var start=parseInt($('#recentstart').val()) || 0;
     var end=parseInt($('#recentend').val()) || 9;
     var qty=end-start+1;
-    console.log('Quantity: '+qty);
+    //console.log('Quantity: '+qty);
     $('#recentstart').val((start+qty));
     $('#recentend').val((end+qty));
     

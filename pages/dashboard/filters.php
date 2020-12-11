@@ -1,5 +1,6 @@
         <script src="js/pages/dashboard/filters.js"></script>
         <h4 class="header">Search cases</h4>
+        <div class="pager rounded-bottom">&nbsp;</div>
         <div class='row'>
             <div class='form-group m-2 w-45'>
                 <div class='form-group m-1'>

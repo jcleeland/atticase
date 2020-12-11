@@ -31,13 +31,12 @@
     <link rel="stylesheet" href="js/jquery/jquery-ui-1.12.1/jquery-ui.min.css" />
     <script src="js/jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
-    <script src="js/default.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        //Load the Visualization API and the corechart package
         google.charts.load('current', {'packages':['corechart']});
     </script>
+    <script src="js/default.js"></script>
     <script src="js/index.js"></script>    
     </head>
     <body>

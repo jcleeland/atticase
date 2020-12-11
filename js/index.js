@@ -53,11 +53,38 @@ function relatedList(parameters, conditions, order, first, last) {
     });
 }
 
+function strategyList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'strategyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
+function timeList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
 function commentList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
         data: {method: 'commentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
+function historyList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'historyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
 }
@@ -80,6 +107,15 @@ function poiList(parameters, conditions, order, first, last) {
     });
 }
 
+function recentList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'recentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
 function tableList(tablename, joins, select, parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -88,6 +124,19 @@ function tableList(tablename, joins, select, parameters, conditions, order, firs
         dataType: 'json'
     })
 }
+
+
+function statsCases(parameters, conditions, order, first, last, select) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'statsCases', parameters: parameters, conditions: conditions, order: order, first: first, last: last, select: select},
+        dataType: 'json'
+    });
+}
+
+
+
 
 function toggleCaseCards() {
     $('.case-link').each(function(i, obj) {
@@ -215,6 +264,19 @@ function deWordify(string) {
     return output;
 }
 
+function minutes2hours(minutes) {
+    var thours= parseInt(minutes/60);
+    var tminutes=parseInt(minutes)-(thours*60);
+    var niceTime=thours+':'+tminutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+    return niceTime;
+}
+
+/**
+* put your comment there...
+* 
+* @param timestamp
+* @param {String} format: d/m/y, y/m/d, dd/mm/yy, dd/mm/yy hh:ii, dd/mm/yy g:i a, dd MM, dd MMM, dd MMM YYYY
+*/
 function timestamp2date(timestamp, format) {
     
     var monthNamesShort=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -248,8 +310,11 @@ function timestamp2date(timestamp, format) {
     if(format=='d/m/y') var time=day+'/'+month+'/'+year;
     if(format=='y/m/d') var time=year+'/'+month+'/'+day;
     if(format=='dd/mm/yy') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year;
+    if(format=='yy/mm/dd') var time=year+'/'+pad(month, 2)+'/'+pad(day, 2);
+    if(format=='yy-mm-dd') var time=year+'-'+pad(month, 2)+'-'+pad(day, 2);
     if(format=='dd/mm/yy hh:ii') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year+' '+hours+':'+minutes;
-    if(format=='dd/mm/yy g:i a') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year+' '+hours12+':'+minutes+'&nbsp;'+hoursMeridian;
+    if(format=='dd/mm/yy g:i a') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year+' '+hours12+':'+minutes+' '+hoursMeridian;
+    if(format=='yy/mm/dd g:i a') var time=year+'/'+pad(month, 2)+'/'+pad(day, 2)+' '+hours12+':'+minutes+' '+hoursMeridian;
     if(format=='dd MM') var time=day+' '+monthNamesShort[monthSearch];
     if(format=='dd MMM') var time=day+' '+monthNamesLong[monthSearch];
     if(format=='dd MM YY') var time=day+' '+monthNamesShort[monthSearch]+' '+year;
@@ -273,11 +338,11 @@ function getInitials(string) {
 
 function pagerNumbers(pagername, start, end, total) {
             var displayEnd=end+1;
-            console.log(start+'->'+end)+1;
+            //console.log(start+'->'+end)+1;
             var qty=parseInt(end)-parseInt(start)+1;
             var start=start+1;
             if(displayEnd > parseInt(total)) displayEnd=parseInt(total)-1;
-            console.log('Results found - '+displayEnd);
+            //console.log('Results found - '+displayEnd);
             if(total==0) {
                 qty=0;
                 start=0;
@@ -323,7 +388,8 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     
     //Right Col
     $('#caseheader_'+uniqueId).append("<div class='float-right mr-2 border rounded pl-1 pr-1 calendar-div pointer "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
-    $('#caseheader_'+uniqueId).append("<div class='d-md-block d-lg-block d-xl-block d-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
+    //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
+    $('#caseheader_'+uniqueId).append("<div class='d-lg-none d-xl-block d-none d-md-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
                     
     $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-2 client-link userlink-"+casedata.member_status+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
     $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7'><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span  onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
@@ -382,3 +448,143 @@ function toggleDetails(id) {
         $('#casedetails_'+id).show();
     }
 }
+
+
+///// GOOGLE CHARTS STUFF
+/**
+* Draw a pie chart
+* 
+* @param name       - the displayed title of the chart
+* @param values     - the chart data (in the form of an array ['label', value] - with the first row being titles)
+* @param id         - the document id of the chart
+* @param xtitle     - the name of the x axis (labels)
+* @param ytitle     - the name of the y axis (values)
+* @param method     - print or display (default or null is display)
+* @param chartheight- the height in pixels of the chart
+* @param legend     - where to show the legend (left, right, bottom, top or none)
+*/
+function drawPieChart(name, values, id, xtitle, ytitle, method, chartheight, legend) {
+    //See if google charts has been loaded
+    if((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) {
+        return false;
+    }
+    console.log('Drawing Pie Chart');
+    console.log(values);
+    var width=$('#'+id).width();
+    
+    var chartdata=new google.visualization.DataTable();
+    chartdata.addColumn('string', xtitle);
+    chartdata.addColumn('number', ytitle);    
+    
+    var keys=[];
+    for (var index in values) {
+        keys.push(index);                
+    }
+    keys.sort(); 
+    
+    $.each(keys, function(i, val) {
+        chartdata.addRow([val, values[val]]);
+    })
+
+    var chartoptions={
+                'title': name,
+                'is3D': true,
+                'legend': {position: legend},
+                /*'point': {visible: true},*/
+                'width': width,
+                'height': chartheight,
+                'chartArea': {'width': '95%', 'top': 30}
+                }; 
+    
+    var chart_div=document.getElementById(id);
+    var chart = new google.visualization.PieChart(chart_div);
+    
+    chart.draw(chartdata, chartoptions);    
+       
+}
+
+function googleMultiBarChart(id, title, data) {
+    var datum=google.visualization.arrayToDataTable(data);
+    var options={
+        width: $('#'+id).css("width"),
+        backgroundColor: 'white',
+        title: title,
+        bars: 'veritical',
+        //vAxis: {title: 'Cases', viewWindow: {min:0}},
+        vAxis: {textStyle: {fontSize: 9}, viewWindow: {min:0}, title: 'Cases'},
+        hAxis: {title: 'Quantity', textStyle: {fontSize: 10, fontFamily: "arial"}, slantedText: "true", slantedTextAngle: 50},
+        legend: {position: 'none'},
+        curveType: 'function',
+        bar: {groupWidth: '85%'},
+        'chartArea': {'width': '85%', 'top': 30, 'bottom': 100, 'left': 60}
+    }
+    var chart=new google.visualization.ColumnChart(document.getElementById(id));
+    chart.draw(datum, options);
+}
+
+function googleMultiLineChart(id, title, data) {
+    var datum=google.visualization.arrayToDataTable(data);
+    var options={
+        width: $('#'+id).css("width"),
+        backgroundColor: 'white',
+        title: title,
+        //vAxis: {title: 'Cases', viewWindow: {min:0}},
+        vAxis: {textStyle: {fontSize: 9}, viewWindow: {min:0}, title: 'Cases'},
+        hAxis: {title: 'Date', textStyle: {fontSize: 9}, slantedText: false, slantedTextAngle: 120},
+        legend: {position: 'top'},
+        curveType: 'function',
+        pointSize: 4,
+        'chartArea': {'width': '85%', 'top': 60, 'bottom': 50}
+    }
+    var chart=new google.visualization.LineChart(document.getElementById(id));
+    chart.draw(datum, options);
+}
+
+function googlePieChart(id, title, data) {
+    var datum=google.visualization.arrayToDataTable(data);
+    var options={
+        width: $('#'+id).css("width"),
+        backgroundColor: 'white',
+        title: title,
+        //vAxis: {title: 'Cases', viewWindow: {min:0}},
+        vAxis: {textStyle: {fontSize: 9}, viewWindow: {min:0}, title: 'Cases'},
+        hAxis: {title: 'Date', textStyle: {fontSize: 9}, slantedText: false, slantedTextAngle: 90},
+        legend: {position: 'top'},
+        curveType: 'function',
+        pointSize: 4,
+        'chartArea': {'width': '85%', 'top': 60, 'bottom': 50}
+    }
+    var chart=new google.visualization.PieChart(document.getElementById(id));
+    chart.draw(datum, options);        
+    
+}
+
+(function($,sr){
+
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  var debounce = function (func, threshold, execAsap) {
+      var timeout;
+
+      return function debounced () {
+          var obj = this, args = arguments;
+          function delayed () {
+              if (!execAsap)
+                  func.apply(obj, args);
+              timeout = null;
+          };
+
+          if (timeout)
+              clearTimeout(timeout);
+          else if (execAsap)
+              func.apply(obj, args);
+
+          timeout = setTimeout(delayed, threshold || 100);
+      };
+  }
+  // smartresize 
+  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
+
+})(jQuery,'smartresize');
+
+

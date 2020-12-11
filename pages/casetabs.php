@@ -55,7 +55,7 @@
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#planning'>
                 <img src='images/flag.svg' width='20px' class="float-left mr-1" title="Planning" />
                 <div class='float-left d-none d-sm-block'>Planning</div>
-                <div id='planningcount' class='tabcounter'></div>
+                <div id='strategycount' class='tabcounter'></div>
                 <div style='clear: both'></div>
             </a>
         </li>
@@ -63,7 +63,7 @@
             <a class="nav-link nav-link-tab" data-toggle="tab" href='#billing'>
                 <img src='images/clock.svg' width='20px' class="float-left mr-1" title="Billing" />
                 <div class='float-left d-none d-sm-block'>Billing</div>
-                <div id='billingcount' class='tabcounter'></div>
+                <div id='timecount' class='tabcounter'></div>
                 <div style='clear: both'></div>
             </a>
         </li>
@@ -102,16 +102,16 @@
             <?php include("pages/casetabs/notifications.php"); ?>
         </div>        
 
-        <div class='tab-pane container' id='planning'>
-        
+        <div class='tab-pane  pl-0 pr-0' id='planning'>
+            <?php include("pages/casetabs/strategys.php"); ?>
         </div>        
 
-        <div class='tab-pane container' id='billing'>
-        
+        <div class='tab-pane  pl-0 pr-0' id='billing'>
+            <?php include("pages/casetabs/times.php"); ?>
         </div>
                 
-        <div class='tab-pane container' id='history'>
-        
+        <div class='tab-pane  pl-0 pr-0' id='history'>
+            <?php include("pages/casetabs/history.php"); ?>
         </div>        
     
     </div>
