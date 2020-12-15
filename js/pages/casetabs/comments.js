@@ -61,13 +61,24 @@ function loadComments() {
             var counter=0;
             var divid=1;
             $.each(comments.results, function(i, commentdata) { 
+                //console.log('Commentdata');
+                //console.log(commentdata);
+                
+                
                 var parentDiv='commentlist';
                 var uniqueId='comment'+commentdata.comment_id;
                 var dateBox=timestamp2date(commentdata.date_added, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(commentdata.date_added, 'dd MM YY');
                 var primeBox=commentdata.real_name;
                 var briefPrimeBox=getInitials(commentdata.real_name);
-                var actionPermissions='edit';
+                var actionPermissions=null;
+                //Permissions
+                // Owner: edit, delete
+                // Admin: edit, delete
+                if(globals.user_id==commentdata.user_id || globals.is_admin=='1') {
+                    actionPermissions=['edit', 'delete'];    
+                }
+
                 var header=null
                 var content=deWordify(commentdata.comment_text);
                 

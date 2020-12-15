@@ -3,8 +3,45 @@ This file contains all the common javascript functions for OpenCaseTracker
 
 */
 $(function() {
+    $(document).on('click', '.tabActionEdit', function() {
+        console.log('Editing ');
+                                                                              
+        var details=this.id.split("_");
+        var edits=details[1].split(/([0-9]+)/);
+        console.log(edits);
+        $(this).hide();
+        $('#save_'+details[1]).show();
+        $('#rightTabCol_'+details[1]).addClass("tab-being-edited");
+        $('#cardbody_'+details[1]).attr("contenteditable", "true");
+        $('#cardbody_'+details[1]).focus();
+
+    })
+    $(document).on('click', '.tabActionSave', function() {
+        console.log('Saving');
+        
+        var details=this.id.split("_");
+        var edits=details[1].split(/([0-9]+)/);
+        
+        $.when(saveTabEdit(edits[0], edits[1])).done(function(output) {
+            console.log('Database save of tab Edit');
+        })
+        
+        $(this).hide();
+        $('#edit_'+details[1]).show();
+        $('#rightTabCol_'+details[1]).removeClass("tab-being-edited");
+        $('#cardbody_'+details[1]).attr("contenteditable", "false");
+        
+    })
+    $(document).on('click', '.tabActionDelete', function() {
+        console.log('Deleting');
+        
+    })
 
 })
+
+function saveTabEdit(method, id) {
+    console.log('Saving '+id+' using '+method);
+}
 
 function caseList(parameters, conditions, order, first, last) {
     //console.log(parameters);
@@ -24,6 +61,23 @@ function getCase(caseId) {
         data: {method: 'case', caseId: caseId},
         dataType: 'json'
     })
+}
+
+function getSettings() {
+    var cookiename = "OpenCaseTracker" + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++)
+    {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(cookiename) == 0) {
+            
+            var output=decodeURIComponent(c).substring(cookiename.length,c.length);
+            return JSON.parse(output);
+        }
+    }
+    return null;
+    
 }
 
 function attachmentList(parameters, conditions, order, first, last) {
@@ -124,7 +178,6 @@ function tableList(tablename, joins, select, parameters, conditions, order, firs
         dataType: 'json'
     })
 }
-
 
 function statsCases(parameters, conditions, order, first, last, select) {
     return $.ajax({
@@ -425,6 +478,16 @@ function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, br
     
     $('#tabDate_'+uniqueId).append('<span class="d-xs-block d-sm-block d-md-none d-lg-none d-xl-none" title="'+dateBox+'">'+briefDateBox+'</span>');
     $('#tabDate_'+uniqueId).append('<span class="d-none d-md-block d-lg-block d-xl-block">'+dateBox+'</span>');
+    
+    if(actionPermissions) {
+        if(actionPermissions.includes('edit')) {
+            $('#tabActions_'+uniqueId).append('<img src="images/sign-in.svg" id="save_'+uniqueId+'" title="Save changes" alt="Save changes" style="max-width: 28px; width: 46%" class="tabActionSave hidden clickable rounded pale-green-link img-fluid p-1" />')
+            $('#tabActions_'+uniqueId).append('<img src="images/edit.svg" id="edit_'+uniqueId+'" title="Edit" alt="Edit" style="max-width: 28px; width: 46%" class="tabActionEdit clickable img-fluid p-1" />');
+        }
+        if(actionPermissions.includes('delete')) {
+            $('#tabActions_'+uniqueId).append('<img src="images/trash.svg" id="delete_'+uniqueId+'" title="Delete" alt="Delete" style="max-width: 28px; width: 46%" class="tabActionDelete clickable img-fluid p-1" />');
+        }
+    }
     
     if(header !== null) {
         $('#cardheader_'+uniqueId).append(header);

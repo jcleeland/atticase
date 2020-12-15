@@ -30,8 +30,8 @@ function loadHistory() {
     $('#historylist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Loading history list...</center>");
     
     $.when(historyList(parameters, conditions, order, start, end)).done(function(historys) {
-        console.log('History');
-        console.log(historys);
+        //console.log('History');
+        //console.log(historys);
         if(historys.count<1) {
             $('#historylist').html("<center><br />No history for this case yet<br />&nbsp;</center>");
             $('#historycount').html('');
@@ -39,7 +39,7 @@ function loadHistory() {
             $('#historylist').html('');
             $('#historycount').html(historys.total);
             $.each(historys.results, function(i, historydata) {
-                console.log(historydata);  
+                //console.log(historydata);  
                 var parentDiv='historylist';
                 var uniqueId='history'+historydata.history_id;
                 var primeBox=historydata.real_name;

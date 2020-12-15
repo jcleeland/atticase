@@ -18,7 +18,7 @@ function loadTodo() {
     var today=new Date();
     
     var parameters={};
-    parameters[':assignedto']=$('#user_id').val();
+    parameters[':assignedto']=globals.user_id;
     parameters[':isclosed']=1;
     parameters[':datedue']=today.getTime() / 1000 | 0;
     

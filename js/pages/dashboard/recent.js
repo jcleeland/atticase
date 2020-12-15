@@ -23,7 +23,7 @@ function loadRecent() {
     joins['users']="LEFT JOIN users u ON t.assigned_to=u.user_id"
     
     var parameters={};
-    parameters[':user_id']=$('#user_id').val();
+    parameters[':user_id']=globals.user_id;
     //parameters[':isclosed']=1;
     //parameters[':datedue']=today.getTime() / 1000 | 0;
     

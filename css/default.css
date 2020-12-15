@@ -485,3 +485,15 @@ a.fa-userlink::after {
     border-radius: .2rem;
     background-color: rgba(256, 256, 256, 0.4);
 }
+
+.hidden {
+    display: none; 
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.tab-being-edited {
+    border-left: 15px solid #bec8cd;
+}

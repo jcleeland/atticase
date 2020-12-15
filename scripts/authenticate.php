@@ -3,16 +3,17 @@
       //Log user in
       if(isset($_POST['username']) && isset($_POST['password'])) {
           //See if user exists
-          $query="SELECT * FROM ".$oct->dbprefix."users WHERE user_name = :username";
+          $query="SELECT * FROM ".$oct->dbprefix."users u INNER JOIN ".$oct->dbprefix."groups g ON u.group_in=g.group_id WHERE user_name = :username";
           $out=$oct->fetch($query, array("username"=>$_POST['username']));
           //$stmt=$oct->db->prepare($query) or die("The prepared statement does not work");
           //$stmt->execute(['username'=>$_POST['username']]);
           //$out=$stmt->fetch();
           if(crypt($_POST['password'], '4t6dcHiefIkeYcn48B') == $out['user_pass']) {
+              //print_r($out);
               $_SESSION['authenticated']=1;
               $_SESSION['administrator']=1;
               $_SESSION['user_name']=$out['user_name'];
-              $_SESSION['is_admin']=1;
+              $_SESSION['is_admin']=$out['is_admin'];
               $_SESSION['user_id']=$out['user_id'];
               $_SESSION['real_name']=$out['real_name'];
           } else {

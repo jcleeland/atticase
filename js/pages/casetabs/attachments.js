@@ -61,12 +61,15 @@ function loadAttachments() {
             $.each(attachments.results, function(i, attachmentdata) {
                 /* Put formatting into a standalone script */
                 var parentDiv='attachmentlist';
-                var uniqueId=attachmentdata.attachment_id;
+                var uniqueId='attachment'+attachmentdata.attachment_id;
                 var primeBox=attachmentdata.real_name;
                 var briefPrimeBox=getInitials(attachmentdata.real_name);
                 var dateBox=timestamp2date(attachmentdata.date_added, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(attachmentdata.date_added, 'dd MM YY');
                 var actionPermissions=null;
+                if(globals.user_id==attachmentdata.user_id || globals.is_admin=='1') {
+                    actionPermissions=['edit', 'delete'];    
+                }                
                 var header='<a href="download.php?attachmentid='+attachmentdata.attachment_id+'" class="link" id="loadattachment_'+attachmentdata.attachment_id+'">'+attachmentdata.orig_name+'</a>';
                 var content=deWordify(attachmentdata.file_desc);
     

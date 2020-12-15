@@ -11,6 +11,9 @@ $(function() {
     });
 
     $('#statsChooser').change(function() {
+        console.log(globals);
+        console.log('STATS');
+    
         console.log($(this).val());
         var fn='load'+$(this).val();
         
@@ -28,7 +31,7 @@ function loadCaseDates() {
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     
     var parameters={};
-    parameters[':assigned_to']=$('#user_id').val();
+    parameters[':assigned_to']=globals.user_id;
     var conditions='t.assigned_to = :assigned_to AND is_closed != 1';
 
     var now = new Date; // now
@@ -75,7 +78,7 @@ function loadCaseDepartments() {
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     
     var parameters={};
-    parameters[':assigned_to']=$('#user_id').val();
+    parameters[':assigned_to']=globals.user_id;
     var conditions='t.assigned_to = :assigned_to AND is_closed != 1';
     
     var select='lc.category_name, count(*) as qty';
@@ -111,7 +114,7 @@ function loadCaseTypes() {
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     
     var parameters={};
-    parameters[':assigned_to']=$('#user_id').val();
+    parameters[':assigned_to']=globals.user_id;
     var conditions='t.assigned_to = :assigned_to AND is_closed != 1';
     
     var select='lt.tasktype_name, count(*) as qty';
@@ -136,7 +139,7 @@ function loadCaseTypes() {
             if(colorCount > 3) colorCount=0;    
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googleMultiBarChart('dashboardStatistics', 'My Case Types', graph);
                             
         });
@@ -147,7 +150,7 @@ function loadCaseStats() {
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     //Currently Open Cases for this User
     var parameters={};
-    parameters[':assigned_to']=$('#user_id').val();
+    parameters[':assigned_to']=globals.user_id;
     var conditions='t.assigned_to = :assigned_to AND is_closed != 1';
     var order=null;
     var first=0;

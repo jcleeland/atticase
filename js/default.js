@@ -1,3 +1,4 @@
+//GATHER SPCIAL VARIABLES
 $(document).ready(function(){
     //$('.header').height($(window).height());
     $('#goto').keypress(function (e) {

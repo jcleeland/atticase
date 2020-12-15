@@ -17,7 +17,7 @@ function loadCaselist() {
     var order='date_due ASC';
 
     if($('#mycasesOnly').is(":checked")) {
-        parameters[':userid']=$('#user_id').val();
+        parameters[':userid']=globals.user_id;
         conditions+=' AND u.user_id = :userid';
     }
 

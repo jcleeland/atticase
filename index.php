@@ -7,9 +7,14 @@
     
     require_once("helpers/startup.php");
     
+    $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
+    $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
+    setCookie("OpenCaseTracker", json_encode($_SESSION), time()+3600*24*(2), '/', $setDomain, 1, null);
+    
     $user_id=isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $user_name=isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
     $user_real_name=isset($_SESSION['real_name']) ? $_SESSION['real_name'] : null;
+    $is_admin=isset($_SESSION['is_admin']) ? $_SESSION['is_admin'] : null;
     //NAVIGATION
     $page=isset($_GET['page']) ? $_GET['page'] : "dashboard";
     
@@ -37,15 +42,16 @@
         google.charts.load('current', {'packages':['corechart']});
     </script>
     <script src="js/default.js"></script>
-    <script src="js/index.js"></script>    
+    <script src="js/index.js"></script>
+    <script>
+        globals=getSettings();    
+    </script>
     </head>
     <body>
-    <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
-    <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
-    <input type='hidden' name='real_name' id='real_name' value='<?php echo $user_real_name ?>' />
+
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
-    <input type='hidden' name='admin_status' id='admin_status' value='<?php echo "" ?>' />
+    
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
         <?php
             if(!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']){
