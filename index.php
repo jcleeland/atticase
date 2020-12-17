@@ -30,13 +30,13 @@
         $status=stripslashes($status);
         $status=json_decode($status, true);
         if(empty($status)) {
-            $status=array();
+            $status=array("caseviews"=>array());
         }
         if(isset($_GET['case'])) {
             if(isset($status['caseviews'][0]) && $status['caseviews'][0] != $_GET['case']) {
                 array_unshift($status['caseviews'], $_GET['case']);
             }
-            if(count($status['caseviews']) > 10) {
+            if(isset($status['caseviews']) && count($status['caseviews']) > 10) {
                 array_pop($status['caseviews']);
             }
         }
