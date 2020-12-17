@@ -1,5 +1,27 @@
 $(function() {
     loadPois();
+
+    $('#newPoiBtn').click(function() {
+        $('#newPoiForm').toggle();    
+    });
+    
+    $('#submitPoiBtn').click(function() {
+        var userId=globals.user_id;
+        var caseId=$('#caseid').val();
+        var poiComment=$('#poiComment').val();
+        console.log('POI: '+poiComment);
+        var time=Math.floor(Date.now() / 1000);
+        $.when(attachmentCreate(caseId, userId, poiComment, time)).done(function(insert) {
+            if(insert.count=="1") {
+                $('#fileDesc').val('');
+                $('#newAttachmentForm').toggle();
+                historyCreate(caseId, userId, '60', null, null, poiComment);
+                loadPois();
+                loadHistory();
+            }
+        })
+        //Successfully added
+    })
     
     $('#filterPois').keyup(function() {
         //console.log($(this).val());
@@ -61,13 +83,16 @@ function loadPois() {
             $.each(pois.results, function(i, poidata) {
                 
                 var parentDiv='poilist';
-                var uniqueId=poidata.poi_id;
+                var uniqueId='poi'+poidata.poi_id;
                 var name=poidata.firstname+" "+poidata.lastname
                 var primeBox=name;
                 var briefPrimeBox=getInitials(name);
                 var dateBox=timestamp2date(poidata.created, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(poidata.created, 'dd MM YY');
                 var actionPermissions=null;
+                if(globals.user_id==poidata.user_id || globals.is_admin=='1') {
+                    actionPermissions=['edit', 'delete'];    
+                }                
                 var header='<span class="d-xs-block dsm-block d-md-none d-lg-none d-xl-none font-weight-bold">'+name+': </span>'+poidata.organisation;
                 var content=deWordify(poidata.comment);
     

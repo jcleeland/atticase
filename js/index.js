@@ -4,14 +4,15 @@ This file contains all the common javascript functions for OpenCaseTracker
 */
 $(function() {
     $(document).on('click', '.tabActionEdit', function() {
-        console.log('Editing ');
+        //console.log('Editing ');
                                                                               
         var details=this.id.split("_");
         var edits=details[1].split(/([0-9]+)/);
-        console.log(edits);
+        //console.log(edits);
         $(this).hide();
         $('#save_'+details[1]).show();
         $('#rightTabCol_'+details[1]).addClass("tab-being-edited");
+        $('#rightTabCol_'+details[1]).append("<div class='hidden' id='cardbody_old_"+details[1]+"'>"+$('#cardbody_'+details[1]).html()+"</div>");
         $('#cardbody_'+details[1]).attr("contenteditable", "true");
         $('#cardbody_'+details[1]).focus();
 
@@ -23,7 +24,7 @@ $(function() {
         var edits=details[1].split(/([0-9]+)/);
         
         $.when(saveTabEdit(edits[0], edits[1])).done(function(output) {
-            console.log('Database save of tab Edit');
+            console.log('Database save of tab edits');
         })
         
         $(this).hide();
@@ -35,12 +36,99 @@ $(function() {
     $(document).on('click', '.tabActionDelete', function() {
         console.log('Deleting');
         
+        var details=this.id.split("_");
+        var edits=details[1].split(/([0-9]+)/);
+        
+        $.when(deleteTabEdit(edits[0], edits[1])).done(function(output) {
+            console.log('Database delete of tab');    
+        })
+    
+        
+        
     })
 
 })
 
+function deleteTabEdit(method, id) {
+    console.log('Deleting '+id+' using '+method);
+    confirmMessage="Are you sure you want to delete this entry?";
+    if(method!='history') {
+        confirmMessage+="\r\n\r\n* Note that a record of the deletion will be stored in the case history.";
+    } else {
+        confirmMessage+="\r\n\r\n* Note that no record of this deletion will be kept.";
+    }
+    if(confirm(confirmMessage)) {
+            
+        switch(method) {
+            case "poi":
+                console.log('Deleting POI');
+
+                break;
+            case "attachment":
+                console.log('Deleting attachment');
+                var oldDescription=$('#cardbody_attachment'+id).text();
+                $.when(attachmentDelete(id)).done(function(results) {
+                    console.log('hi');
+                    console.log(results);
+                    if(results.count == 0) {
+                        alert('Unable to delete attachment. \r\n\r\nError given: '+results.results);
+                    } else {
+                        historyCreate($('#caseid').val(), globals.user_id, "8", id, oldDescription, null);
+                        loadAttachments();
+                        loadHistory();
+                    }
+                });
+                break;
+            case "comment":
+                var oldComment=$('#cardbody_comment'+id).text();
+                $.when(commentDelete(id)).done(function(output) {
+                    historyCreate($('#caseid').val(), globals.user_id, "5", id, oldComment, null);
+                    loadComments();
+                    loadHistory();
+                })
+                break;
+            case "history":
+                $.when(historyDelete(id)).done(function(output) {
+                    loadHistory();
+                })
+        }
+    }    
+}
+
 function saveTabEdit(method, id) {
     console.log('Saving '+id+' using '+method);
+    switch(method) {
+        case "poi":
+            var oldComment=$('#cardbody_old_poi'+id).text();
+            var newComment=$('#cardbody_poi'+id).text();
+            if(oldComment.trim() != newComment.trim()) {
+                $.when(poiUpdate(id, newComment)).done(function(output) {
+                    historyCreate($('#caseid').val(), globals.user_id, "62", id, oldComment, newComment);
+                    loadHistory();
+                })
+            }
+            break;
+        case "comment":
+            var oldComment=$('#cardbody_old_comment'+id).text();
+            var newComment=$('#cardbody_comment'+id).text()
+            if(oldComment.trim() != newComment.trim()) {
+                $.when(commentUpdate(id, newComment)).done(function(output) {
+                    historyCreate($('#caseid').val(), globals.user_id, "71", id, oldComment, newComment);
+                    loadHistory();
+                })
+            }
+            break;
+        case "attachment":
+            var oldDescription=$('#cardbody_old_attachment'+id).text();
+            var newDescription=$('#cardbody_attachment'+id).text();
+            if(oldDescription.trim() != newDescription.trim()) {
+                $.when(attachmentUpdate(id, newDescription)).done(function(output) {
+                    historyCreate($('#caseid').val(), globals.user_id, "81", id, oldDescription, newDescription);
+                    loadHistory();
+                })
+            }
+            break;
+    }
 }
 
 function caseList(parameters, conditions, order, first, last) {
@@ -64,7 +152,7 @@ function getCase(caseId) {
 }
 
 function getSettings() {
-    var cookiename = "OpenCaseTracker" + "=";
+    var cookiename = "OpenCaseTrackerSystem" + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++)
     {
@@ -80,6 +168,22 @@ function getSettings() {
     
 }
 
+function getStatus() {
+    var cookiename = "OpenCaseTrackerStatus" + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++)
+    {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(cookiename) == 0) {
+            
+            var output=decodeURIComponent(c).substring(cookiename.length,c.length);
+            return JSON.parse(output);
+        }
+    }
+    return null;
+}
+
 function attachmentList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -87,6 +191,24 @@ function attachmentList(parameters, conditions, order, first, last) {
         data: {method: 'attachmentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function attachmentDelete(attachmentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'attachmentDelete', attachmentId: attachmentId},
+        dataType: 'json'
+    })    
+}
+
+function attachmentUpdate(attachmentId, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'attachmentUpdate', attachmentId: attachmentId, newValue: newValue},
+        dataType: 'json'
+    })    
 }
 
 function linkedList(parameters, conditions, order, first, last) {
@@ -134,6 +256,34 @@ function commentList(parameters, conditions, order, first, last) {
     });
 }
 
+function commentCreate(caseId, userId, comment, time) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentCreate', caseId: caseId, userId: userId, comment: comment, time: time},
+        dataType: 'json'
+    })    
+    
+}
+
+function commentDelete(commentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentDelete', commentId: commentId},
+        dataType: 'json'
+    })     
+}
+
+function commentUpdate(commentId, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentUpdate', commentId: commentId, newValue: newValue},
+        dataType: 'json'
+    })    
+}
+
 function historyList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -141,6 +291,44 @@ function historyList(parameters, conditions, order, first, last) {
         data: {method: 'historyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function historyCreate(taskId, userId, eventType, fieldChanged, oldValue, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'historyCreate', taskId: taskId, userId: userId, eventType: eventType, fieldChanged: fieldChanged, oldValue: oldValue, newValue: newValue},
+        dataType: 'json'
+    })
+    /* EVENT TYPES
+            0=>"Field Changed",
+            1=>"Case Opened", 2=>"Case Closed", 3=>"Case Edited"
+            4=>"Note Added", 5=>"Note Deleted", 6=>"Note Deleted", 61=>"Note changed",
+            7=>"Attachment Added", 8=>"Attachment Deleted", 
+            9=>"Notification Added", 10=>"Notification Deleted",
+            11=>"Related Case Added", 12=>"Related Case Deleted",
+            13=>"Case Reopened", 14=>"Case Assigned",
+            15=>"Case Related to Other Case", 16=>"Case unRelated to Other Case",
+            17=>"Reminder Added", 18=>"Reminder Deleted",
+            19=>"Linked Child Case Added", 20=>"Linked Child Case Deleted",
+            21=>"Case made a linked child Case", 22=>"Case no longer a linked child Case",
+            23=>"Linked parent status removed",
+            24=>"Planning Note deleted", 25=>"Planning note marked as read",
+            26=>"Companion task added",  27=>"Companion task removed",
+            28=>"Task made companion of other case", 29=>"Task removed as companion of other case",
+            30=>"Acknowledgement of checklist item"           
+    */
+    //INSERT INTO history task_id, user_id, event_date [unix], event_type, field_changed, old_value, new_value    
+    
+}
+
+function historyDelete(historyId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'historyDelete', historyId: historyId},
+        dataType: 'json'
+    }) 
 }
 
 function notificationsList(parameters, conditions, order, first, last) {
@@ -152,6 +340,14 @@ function notificationsList(parameters, conditions, order, first, last) {
     });    
 }
 
+function notificationsCreate() {
+    
+}
+
+function notificationsDelete() {
+    
+}
+
 function poiList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -159,6 +355,23 @@ function poiList(parameters, conditions, order, first, last) {
         data: {method: 'poiList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function poiCreate() {
+    
+}
+
+function poiUpdate(poiId, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiUpdate', poiId: poiId, newValue: newValue},
+        dataType: 'json'
+    })    
+}
+
+function poiDelete() {
+    
 }
 
 function recentList(parameters, conditions, order, first, last) {

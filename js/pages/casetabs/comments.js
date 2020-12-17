@@ -1,6 +1,28 @@
 $(function() {
     loadComments();
     
+    $('#newCommentBtn').click(function() {
+        $('#newCommentForm').toggle();    
+    });
+    
+    $('#submitCommentBtn').click(function() {
+        var userId=globals.user_id;
+        var caseId=$('#caseid').val();
+        var commentText=$('#newComment').val();
+        console.log('COmment: '+commentText);
+        var time=Math.floor(Date.now() / 1000);
+        $.when(commentCreate(caseId, userId, commentText, time)).done(function(insert) {
+            if(insert.count=="1") {
+                $('#newComment').val('');
+                $('#newCaseForm').toggle();
+                historyCreate(caseId, userId, '4', null, null, commentText);
+                loadComments();
+                loadHistory();
+            }
+        })
+        //Successfully added
+    })
+    
     $('#filterComments').keyup(function() {
         //console.log($(this).val());
         var search=$(this).val();

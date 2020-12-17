@@ -29,6 +29,13 @@ class oct {
         }
     }
     
+    
+    function execute($query, $parameters=array()) {
+          $stmt=$this->db->prepare($query) or die("The prepared statement ($query) does not work");
+          $stmt->execute($parameters);
+          return($stmt->rowCount());
+    }
+    
     function fetch($query, $parameters=array()) {
           $stmt=$this->db->prepare($query) or die("The prepared statement ($query) does not work");
           $stmt->execute($parameters);
@@ -148,6 +155,49 @@ class oct {
           
         return($output);         
     }
+
+    function attachmentDelete($parameters) {
+        //Firstly, delete the actual attachment file from the server
+        $query = "SELECT file_name FROM ".$this->dbprefix."attachments";
+        $query .= "\r\n WHERE attachment_id=:attachment_id";
+        
+        $search=$this->fetch($query, $parameters);
+        
+        //Delete $results['file_name'] from server;
+        $attachmentDir="/var/attachments"; //TODO - Get this from configuration settings
+        
+        $filename=$attachmentDir."/".$search['file_name'];
+        
+        if(file_exists($filename)) {
+            unlink($filename);
+            //When that has been successful, then delete the record from the database
+            $query = "DELETE FROM ".$this->dbprefix."attachments";
+            $query .= "\r\n WHERE attachment_id = :attachment_id";
+
+            $results=$this->execute($query, $parameters);
+            
+            $output=array("results"=>$results." rows deleted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+
+        } else {
+            $output=array("results"=>"File does not exist [".$filename."]", "query"=>$query, "parameters"=>$parameters, "count"=>0, "total"=>0);
+        }
+        
+        return($output);
+    }
+    
+    function attachmentUpdate($parameters=array(), $conditions=null ) {
+        if($conditions===null) {$conditions="1=1";}
+        
+        $query = "UPDATE ".$this->dbprefix."attachments";
+        $query .= "\r\n SET file_desc = :file_desc";
+        $query .= "\r\nWHERE $conditions";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);
+    }
     
     function caseList($parameters=array(), $conditions="is_closed != 1", $order="date_due ASC", $first=0, $last=1000000000) {
         
@@ -207,6 +257,44 @@ class oct {
         return($output);         
     }
     
+    function commentCreate($parameters=array(), $conditions=null) {
+        $query = "INSERT INTO ".$this->dbprefix."comments";
+        $query .= "\r\n (`comment_id`, `task_id`, `date_added`, `user_id`, `comment_text`)";
+        $query .= "\r\n VALUES (NULL, :task_id, :date_added, :user_id, :comment_text)";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);         
+    }
+    
+    function commentDelete($parameters=array(), $conditions=null) {
+        $query = "DELETE FROM ".$this->dbprefix."comments";
+        $query .= "\r\n WHERE comment_id = :comment_id";
+
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows deleted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);         
+            
+    }
+    
+    function commentUpdate($parameters=array(), $conditions=null ) {
+        if($conditions===null) {$conditions="1=1";}
+        
+        $query = "UPDATE ".$this->dbprefix."comments";
+        $query .= "\r\n SET comment_text = :comment_text";
+        $query .= "\r\nWHERE $conditions";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);
+    }
+    
     function historyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="event_date DESC";}
@@ -224,42 +312,54 @@ class oct {
         $results=$this->fetchMany($query, $parameters, $first, $last);
 
         $eventtypes=array(
-            0=>"Field Changed",
-            1=>"Case Opened",
-            2=>"Case Closed",
-            3=>"Case Edited",
-            4=>"Note Added",
-            5=>"Note Deleted",
-            6=>"Note Deleted",
-            7=>"Attachment Added",
-            8=>"Attachment Deleted",
-            9=>"Notification Added",
-            10=>"Notification Deleted",
-            11=>"Related Case Added",
-            12=>"Related Case Deleted",
-            13=>"Case Reopened",
-            14=>"Case Assigned",
+            0=>"Changed Case Field",
+            1=>"Opened Case",
+            2=>"Closed Case",
+            3=>"Edited Case",
+            4=>"Added Note",
+            5=>"Deleted Note",
+            6=>"Deleted Note",
+            7=>"Added Attachment",
+            8=>"Deleted Attachment",
+            9=>"Added Notification",
+            10=>"Deleted Notification",
+            11=>"Added a Case Relationship",
+            12=>"Deleted a Case Relationship",
+            13=>"Reopened Case",
+            14=>"Assigned Case",
             15=>"Case Related to Other Case",
             16=>"Case unRelated to Other Case",
-            17=>"Reminder Added",
-            18=>"Reminder Deleted",
-            19=>"Linked Child Case Added",
-            20=>"Linked Child Case Deleted",
+            17=>"Added Reminder",
+            18=>"Deleted Reminder",
+            19=>"Added Linked Child Case",
+            20=>"Deleted Linked Child Case",
             21=>"Case made a linked child Case",
             22=>"Case no longer a linked child Case",
-            23=>"Linked parent status removed",
-            24=>"Planning Note deleted",
-            25=>"Planning note marked as read",
-            26=>"Companion task added",
-            27=>"Companion task removed",
-            28=>"Task made companion of other case",
-            29=>"Task removed as companion of other case",
-            30=>"Acknowledgement of checklist item",            
+            23=>"Removed Linked parent status",
+            24=>"Deleted Planning Note",
+            25=>"Marked Planning Note as Read",
+            26=>"Added Companion Case",
+            27=>"Removed Companion Case",
+            28=>"Case made companion of other case",
+            29=>"Case removed as companion of other case",
+            30=>"Acknowledged checklist item",
+            60=>"Added person of interest",
+            61=>"Deleted person of interest",
+            62=>"Changed description for person of interest",
+            91=>"Unknown - 91",
+            99=>"Unknown - 99", 
+            71=>"Changed Note",
+            81=>"Changed Attachment Description",           
         );
         
 
         foreach($results['output'] as $key=>$resultitem) {
-            $results['output'][$key]['event_description']=$eventtypes[$resultitem['event_type']];
+            if(isset($eventtypes[$resultitem['event_type']])) {
+                $eventtype=$eventtypes[$resultitem['event_type']];
+            } else {
+                $eventtype="Unknown event - ".$resultitem['event_type'];
+            }
+            $results['output'][$key]['event_description']=$eventtype;
             
         }
 
@@ -270,7 +370,32 @@ class oct {
                 
     }    
     
+    function historyCreate($parameters=array()) {
+        //INSERT INTO `flyspray_history` 
+        // (`history_id`, `task_id`, `user_id`, `event_date`, `event_type`, `field_changed`, `old_value`, `new_value`) 
+        // VALUES (NULL, '10', '2', '154235685', '61', '', 'asdf', 'asdf');
+        $query = "INSERT INTO ".$this->dbprefix."history";
+        $query .= "\r\n (`history_id`, `task_id`, `user_id`, `event_date`, `event_type`, `field_changed`, `old_value`, `new_value`)";
+        $query .= "\r\n VALUES (NULL, :task_id, :user_id, :event_date, :event_type, :field_changed, :old_value, :new_value)";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output); 
+    }
+    
+    function historyDelete($parameters=array(), $conditions=null) {
+        $query = "DELETE FROM ".$this->dbprefix."history";
+        $query .= "\r\n WHERE history_id = :history_id";
 
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows deleted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);              
+    }
+    
     function poiList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
@@ -288,6 +413,21 @@ class oct {
           
         return($output);         
     }
+
+    function poiUpdate($parameters=array(), $conditions=null ) {
+        if($conditions===null) {$conditions="1=1";}
+        
+        $query = "UPDATE ".$this->dbprefix."people_of_interest";
+        $query .= "\r\n SET comment = :comment";
+        $query .= "\r\nWHERE $conditions";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);
+    }
+
     
     function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
@@ -510,7 +650,6 @@ class oct {
                 
     }
 
-    
     function tableList($tablename, $joins, $select, $parameters=array(), $conditions="", $order="", $first=1, $last=1000000000) {
         $query="SELECT ".$select."\r\n";
         $query.="FROM ".$this->dbprefix.$tablename."\r\n";

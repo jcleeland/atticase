@@ -47,28 +47,58 @@ function loadHistory() {
                 var dateBox=timestamp2date(historydata.event_date, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(historydata.event_date, 'dd MM YY');
                 var actionPermissions=null;
+                if(globals.is_admin=='1') {
+                    actionPermissions=['delete'];    
+                }
                 
+                
+                var header='<b>'+historydata.event_description+'</b>';
+                var content='';
                 switch(historydata.event_type) {
                     case "0":
-                        var content='<b>'+historydata.event_description+'</b>: ['+historydata.field_changed+'] "'+historydata.old_value+'" to "'+historydata.new_value+'"';
+                        //Base field change
+                        content+='['+historydata.field_changed+'] "'+historydata.old_value+'" to "'+historydata.new_value+'"';
                         break;
                     case "2":
-                        var content='<b>'+historydata.event_description+'</b>: '+historydata.old_value;
+                        //Case closed
+                        content+=historydata.old_value;
                         break;
                     case "4":
-                        var content='<b>'+historydata.event_description+'</b>: '+$('#cardbody_comment'+historydata.new_value).text();
+                        //Note added
+                        content+=historydata.new_value;
+                        break;
+                    case "5":
+                        //Note deleted
+                        content+=historydata.old_value;
+                        break;
+                    case "6":
+                    case "71":
+                        //Note changed
+                        content+='<b>To:</b> '+historydata.new_value+'<br /><b>From: </b><span class="text-footnote">'+historydata.old_value+'</span>';
+                        break;
+                    case "8":
+                        //Attachment deleted
+                        content+=historydata.old_value;
+                        break; 
+                    case "81":
+                        //Attachment modified
+                        content+='<b>To:</b> '+historydata.new_value+'<br /><b>From: </b><span class="text-footnote">'+historydata.old_value+'</span>';
                         break;
                     case "7":
-                        var content='<b>'+historydata.event_description+'</b>: '+$('#cardbody_'+historydata.new_value).text();
+                        content+=historydata.new_value;
+                        break;
+                    case "14":
+                        //Case assigned
+                        content+='From '+historydata.old_value+' to '+historydata.new_value;
                         break;
                     default:
-                        var content=historydata.event_description;
+                        content+='<b>Field:</b> '+historydata.field_changed+'<br /><b>Old Value:</b> '+historydata.old_value+'<br /><b>New Value:</b> '+historydata.new_value;
                         break;
                 }
                 if(historydata.event_type=="0") {
                     
                 }
-                var header=null;
+                
                 
                 
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);

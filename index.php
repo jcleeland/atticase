@@ -7,10 +7,62 @@
     
     require_once("helpers/startup.php");
     
+    
+    //##########################################################################
+    // COOKIE MANAGEMENT
+    // First cookie is user/system preferences
+    // Second cookie is current status, history, filter settings etc.
     $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
     $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
-    setCookie("OpenCaseTracker", json_encode($_SESSION), time()+3600*24*(2), '/', $setDomain, 1, null);
+    //print_r($prefs);
+    $cookieOptions=array(
+        "expires"=>time()+3600*24*(2),
+        "path"=>'/',
+        "domain"=>$setDomain,
+        "secure"=>false,
+        "httponly"=>false,
+        "samesite"=>"Strict"
+    );
     
+    // Read status cookie
+    $status=isset($_COOKIE['OpenCaseTrackerStatus']) ? $_COOKIE['OpenCaseTrackerStatus'] : array();
+    if(!is_array($status)) {
+        $status=stripslashes($status);
+        $status=json_decode($status, true);
+        if(empty($status)) {
+            $status=array();
+        }
+        if(isset($_GET['case'])) {
+            if(isset($status['caseviews'][0]) && $status['caseviews'][0] != $_GET['case']) {
+                array_unshift($status['caseviews'], $_GET['case']);
+            }
+            if(count($status['caseviews']) > 10) {
+                array_pop($status['caseviews']);
+            }
+        }
+    }
+
+    
+    // Make any changes/alterations to status cookie
+        
+    if(PHP_VERSION_ID < 70300) {
+        setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
+        setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
+    } else {
+        setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions);
+        setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // #########################################################################
+        
     $user_id=isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $user_name=isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
     $user_real_name=isset($_SESSION['real_name']) ? $_SESSION['real_name'] : null;
@@ -44,7 +96,8 @@
     <script src="js/default.js"></script>
     <script src="js/index.js"></script>
     <script>
-        globals=getSettings();    
+        globals=getSettings();
+        status=getStatus();    
     </script>
     </head>
     <body>

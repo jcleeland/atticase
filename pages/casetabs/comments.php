@@ -1,5 +1,20 @@
 <script src="js/pages/casetabs/comments.js"></script>
 
+<div class='justify-content-center'>
+    <div class='float-right pale-green-link rounded mr-3 mb-1 p-1 small' id='newCommentBtn'>
+        <img src='images/plus.svg' width='12px' /> Note
+    </div>
+    <div style='clear: both'></div>
+    <div class='form-group hidden border rounded p-2 m-2' id='newCommentForm'>
+        <h4 class="header">New note</h4>
+        <div class="pager rounded-bottom w-100">&nbsp;</div> 
+        <textarea class="form-control" id='newComment' rows="4" name='newComment' placeholder="Enter your note here"></textarea><br />
+        <button class="form-control pale-green-link" id='submitCommentBtn'>Submit</button>
+        
+    </div>
+</div>
+<div style='clear: both'></div>
+
 <div id='commentlist' class='justify-content-center'>
 </div>
 <?php

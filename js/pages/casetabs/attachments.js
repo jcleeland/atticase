@@ -1,5 +1,27 @@
 $(function() {
     loadAttachments();
+
+    $('#newAttachmentBtn').click(function() {
+        $('#newAttachmentForm').toggle();    
+    });
+    
+    $('#submitAttachmentBtn').click(function() {
+        var userId=globals.user_id;
+        var caseId=$('#caseid').val();
+        var fileDesc=$('#fileDesc').val();
+        console.log('Attachment: '+fileDesc);
+        var time=Math.floor(Date.now() / 1000);
+        $.when(attachmentCreate(caseId, userId, fileDesc, time)).done(function(insert) {
+            if(insert.count=="1") {
+                $('#fileDesc').val('');
+                $('#newAttachmentForm').toggle();
+                historyCreate(caseId, userId, '7', null, null, fileDesc);
+                loadAttachments();
+                loadHistory();
+            }
+        })
+        //Successfully added
+    })    
     
     $('#filterAttachments').keyup(function() {
         //console.log($(this).val());
