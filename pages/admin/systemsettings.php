@@ -4,6 +4,8 @@
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
         <div class="col-sm-12">
+            <img src="images/save.svg" class="floatright pointer img-fluid rounded ml-2" title="Save changes" id="saveDepartmentsBtn"/>
+            <img src="images/undo.svg" class="floatright pointer img-fluid rounded hidden ml-2" width='24px' title="Undo changes" id="undoDepartmentsBtn"/>
             <h4 class="header">System Settings</h4>
             <div class="row border rounded">
                 <div class="col-xs-12 col-sm-6">
@@ -58,7 +60,7 @@
                             Assignable Groups
                         </div>
                         <div class="subSection-field cols-xs-7 m-1">
-                            <input type="checkbox" class="form-checkbox" name="assign_admin" /> Admin
+                            <input type="checkbox" class="form-checkbox" name="assign_admin" /> <label for="assign_admin">Admin</label>
                         </div>                        
                     </div>
                     <div class="row">
@@ -66,7 +68,7 @@
                             Allow task restriction
                         </div>
                         <div class="subSection-field cols-xs-7 m-1">
-                            <input type="checkbox" class="form-checkbox" name="allow_restricted" checked="<?php if($pref['allow_restricted']['value']==1) echo "checked" ?>" />
+                            <input type="checkbox" class="form-checkbox" name="allow_restricted" checked="<?php if($prefs['allow_restricted']['value']==1) echo "checked" ?>" />
                         </div>
                     </div>
                     <div class="row">
@@ -74,7 +76,7 @@
                             Allow anonymous to create
                         </div>
                         <div class="subSection-field cols-xs-7 m-1">
-                            <input type="checkbox" class="form-checkbox" name="anon_open" checked="<?php if($pref['anon_open']['value']==1) echo "checked" ?>" />
+                            <input type="checkbox" class="form-checkbox" name="anon_open" checked="<?php if($prefs['anon_open']['value']==1) echo "checked" ?>" />
                         </div>
                     </div>
                     <div class="row">
@@ -82,7 +84,7 @@
                             Restrict views
                         </div>
                         <div class="subSection-field cols-xs-7 m-1">
-                            <input type="checkbox" class="form-checkbox" name="anon_open" checked="<?php if($pref['restrict_view']['value']==1) echo "checked" ?>" />
+                            <input type="checkbox" class="form-checkbox" name="anon_open" checked="<?php if($prefs['restrict_view']['value']==1) echo "checked" ?>" />
                         </div>
                     </div>
                     <div class="row">

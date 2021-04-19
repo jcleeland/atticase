@@ -3,7 +3,7 @@
   $settings=$oct->fetchMany($query);
   $settings=$settings['output'];
   foreach($settings as $setting) {
-      $prefs['results'][$setting['pref_name']]=array("value"=>$setting['pref_value'], "description"=>$setting['pref_desc']);
+      $prefs[$setting['pref_name']]=array("value"=>$setting['pref_value'], "description"=>$setting['pref_desc']);
   }
   //echo "<pre>"; print_r($prefs); echo "</pre>";
 ?>

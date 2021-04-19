@@ -1,5 +1,29 @@
 $(function() {
     loadRelateds();
+
+    $('#newRelatedBtn').click(function() {
+        $('#newRelatedForm').toggle();    
+    });
+    
+    $('#submitRelatedBtn').click(function() {
+        var userId=globals.user_id;
+        var caseId=$('#caseid').val();
+        var relatedCaseId=$('#relatedCaseId').val();
+        console.log('Related: '+relatedCaseId);
+        var time=Math.floor(Date.now() / 1000);
+        $.when(relatedCreate(caseId, userId, relatedCaseId, time)).done(function(insert) {
+            if(insert.count=="1") {
+                $('#relatedCaseId').val('');
+                $('#newRelatedForm').toggle();
+                historyCreate(caseId, userId, '15', null, null, relatedCaseId);
+                loadRelateds();
+                loadHistory();
+            }
+        })
+        //Successfully added
+    })
+
+
     
     $('#filterRelateds').keyup(function() {
         //console.log($(this).val());

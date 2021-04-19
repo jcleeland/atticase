@@ -497,3 +497,7 @@ a.fa-userlink::after {
 .tab-being-edited {
     border-left: 15px solid #bec8cd;
 }
+
+.floatright {
+    float: right;
+}

@@ -156,6 +156,18 @@ class oct {
         return($output);         
     }
 
+    function attachmentCreate($parameters=array(), $conditions=null) {
+        $query = "INSERT INTO ".$this->dbprefix."attachments";
+        $query .= "\r\n (`attachment_id`, `task_id`, `orig_name`, `file_name`, `file_desc`, `file_type`, `file_size`, `file_date`, `added_by`, `date_added`, `attachments_module`, `url`)";
+        $query .= "\r\n VALUES (NULL, :task_id, :orig_name, :file_name, :file_desc, :file_type, :file_size, '', :added_by, :date_added, '', '')";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+    
+        return($output);         
+    }
+
     function attachmentDelete($parameters) {
         //Firstly, delete the actual attachment file from the server
         $query = "SELECT file_name FROM ".$this->dbprefix."attachments";
@@ -295,6 +307,26 @@ class oct {
         return($output);
     }
     
+    function departmentList($parameters=array(), $conditions="", $order="list_position", $first=0, $last=1000000000) {
+        //All future versions to correct the table name
+        $tablename="list_category";
+        
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="list_position, category_name";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n  FROM ".$this->dbprefix.$tablename;
+        $query .= "\r\n LEFT JOIN ".$this->dbprefix."users ON ".$this->dbprefix.$tablename.".category_owner=".$this->dbprefix."users.user_id";
+        $query .= "\r\n WHERE $conditions";
+        $query .= "\r\n ORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);
+    }
+    
     function historyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="event_date DESC";}
@@ -427,7 +459,6 @@ class oct {
     
         return($output);
     }
-
     
     function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
@@ -588,6 +619,18 @@ class oct {
         
     }
     
+    function relatedCreate($paramaters=array(), $conditions=null) {
+        $query = "INSERT INTO ".$this->dbprefix."related";
+        $query .= "\r\n (`related_id`, `this_task`, `related_task`)";
+        $query .= "\r\n VALUES(NULL, :this_task, :related_task)";
+        
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+        
+        return($output);    
+    }
+    
     function strategyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="comment_date DESC";}
@@ -678,7 +721,22 @@ class oct {
         return($output);
     }
     
-    
+    function userList($parameters=array(), $conditions="", $order="", $first=1, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="group_name, real_name";}
+        
+        $query = "SELECT *";
+        $query .= "\r\nFROM ".$this->dbprefix."users";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."groups.group_id=".$this->dbprefix."users.group_in";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);        
+    }
     
     
     
@@ -724,6 +782,62 @@ class oct {
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
         return($output);         
+    }
+    
+    
+    
+    
+    
+    ##### HELPERS #####
+    ##### Various tools that help simplify actions
+    
+    /**
+    * Builds an HTML select list with data presented. IF the optional "optgroup" value is provided, this function
+    * assumes that the data is already sorted by optgroup first
+    * 
+    * @param mixed $data - a keyed array containing the data to be used
+    * @param mixed $attributes - any additional attributes for the select element (as an array - $key=>$val = $name=>$value) Must include "name"=>"something", "id"=>"something"
+    * @param mixed $value - the key for the $data containing the value for the select options
+    * @param mixed $text - the key for the $data containing the text for the select options
+    * @param mixed $selectedvalue - the value currently selected
+    * @param boolean $pleasechoose - whether or not to include "Please choose..." as the first option with no value (true or false)
+    * @param mixed $optgroup - optional key for the $data containing the optgroup
+    */
+    function buildSelectList($data, $attributes=array(), $value, $text, $selectedvalue=null, $nulloption="Please choose...", $optgroup=null) {
+        //Currently we assume that the data is already sorted by optgroup if provided
+        
+        $select="<select";
+        
+        foreach($attributes as $key=>$val) {
+            $select.=" $key='".$val."'";
+        }
+        $select.=">\r\n";
+        if($nulloption) {
+            $select .= "    <option value=''>$nulloption</option>\r\n";
+        }
+        $currentog="";
+        
+        foreach($data as $row) {
+            if($optgroup) {
+                if($currentog != $row[$optgroup]) {
+                    if($currentog != "") {
+                        $select .= "  </optgroup>\r\n";
+                    }
+                    $currentog=$row[$optgroup];
+                    $select .= "  <optgroup label='".$currentog."'>\r\n";
+                }
+            }
+            $select.="    <option value='".$row[$value]."'";
+            if($row[$value]==$selectedvalue) {
+                $select .= " selected=selected";
+            }
+            $select .= ">".$row[$text]."</option>\r\n";    
+        }
+        if($optgroup) {
+            $select .= "  </optgroup>";
+        }
+        $select .= "</select>";
+        return $select;
     }
     
 }

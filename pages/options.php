@@ -1,3 +1,4 @@
+<script src="js/pages/options.js"></script>
 <?php
 
 $options=array(
@@ -23,7 +24,7 @@ $options=array(
 <?php
     foreach($options as $key=>$value) {
         echo "      <a href='index.php?page=options&option=".$key."' class='list-group-item ";
-        if($_GET['option']==$key) echo "active ";
+        if(isset($_GET['option']) && $_GET['option']==$key) echo "active ";
         echo "'>".$value."</a>\n";
     }
 ?>

@@ -4,6 +4,8 @@
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
         <div class="col-sm-12">
+            <img src="images/save.svg" class="floatright pointer img-fluid rounded ml-2" title="Save changes" id="saveDepartmentsBtn"/>
+            <img src="images/undo.svg" class="floatright pointer img-fluid rounded hidden ml-2" width='24px' title="Undo changes" id="undoDepartmentsBtn"/>
             <h4 class="header">Display Settings</h4>
             <div class="row border rounded">
                 <div class="col-xs-12 col-sm-6">

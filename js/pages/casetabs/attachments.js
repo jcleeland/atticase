@@ -5,23 +5,41 @@ $(function() {
         $('#newAttachmentForm').toggle();    
     });
     
-    $('#submitAttachmentBtn').click(function() {
-        var userId=globals.user_id;
-        var caseId=$('#caseid').val();
-        var fileDesc=$('#fileDesc').val();
-        console.log('Attachment: '+fileDesc);
-        var time=Math.floor(Date.now() / 1000);
-        $.when(attachmentCreate(caseId, userId, fileDesc, time)).done(function(insert) {
-            if(insert.count=="1") {
-                $('#fileDesc').val('');
-                $('#newAttachmentForm').toggle();
-                historyCreate(caseId, userId, '7', null, null, fileDesc);
+    $("#attachmentForm").on('submit',(function(e) {
+        e.preventDefault();
+        var commentText=$('#attachmentFileDesc').val();
+        $.ajax({
+            url: "ajax.php?method=attachmentUpload",
+            type: "POST",
+            data:  new FormData(this),
+            contentType: false,
+            cache: false,
+            processData:false,
+            beforeSend : function()
+            {
+                // $("#preview").fadeOut();
+                // $("#err").fadeOut();
+            },
+            success: function(data)
+            {
+                console.log('Success');
+                console.log(data);
+                
+                $('#attachmentFile').val('');
+                $('#attachmentFileDesc').val('');
+                historyCreate(caseId, userId, '7', null, null, commentText);            
                 loadAttachments();
                 loadHistory();
-            }
-        })
-        //Successfully added
-    })    
+                $('#attachmentFileDesc').reset();
+                $('#attachmentFile').reset();
+            },
+            error: function(e) 
+            {
+                console.log(e);
+                //$("#err").html(e).fadeIn();
+            }          
+        });
+    }));        
     
     $('#filterAttachments').keyup(function() {
         //console.log($(this).val());

@@ -229,6 +229,15 @@ function relatedList(parameters, conditions, order, first, last) {
     });
 }
 
+function relatedCreate(caseId, userId, relatedId, time) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'relatedCreate', caseId: caseId, userId: userId, relatedId: relatedId, time: time},
+        dataType: 'json'
+    })    
+}
+
 function strategyList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -694,7 +703,7 @@ function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, br
     
     if(actionPermissions) {
         if(actionPermissions.includes('edit')) {
-            $('#tabActions_'+uniqueId).append('<img src="images/sign-in.svg" id="save_'+uniqueId+'" title="Save changes" alt="Save changes" style="max-width: 28px; width: 46%" class="tabActionSave hidden clickable rounded pale-green-link img-fluid p-1" />')
+            $('#tabActions_'+uniqueId).append('<img src="images/save.svg" id="save_'+uniqueId+'" title="Save changes" alt="Save changes" style="max-width: 28px; width: 46%" class="tabActionSave hidden clickable rounded pale-green-link img-fluid p-1" />')
             $('#tabActions_'+uniqueId).append('<img src="images/edit.svg" id="edit_'+uniqueId+'" title="Edit" alt="Edit" style="max-width: 28px; width: 46%" class="tabActionEdit clickable img-fluid p-1" />');
         }
         if(actionPermissions.includes('delete')) {

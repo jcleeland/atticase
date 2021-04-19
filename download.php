@@ -15,8 +15,8 @@ if(isset($_GET['attachmentid'])) {
 
         header("Cache-Control: max-age=60"); //Fix for Internet explorer bug
         header("Pragma: public");
-        header("Content-type: $file_type");
-        header("Content-Disposition: attachment; filename=$orig_name");
+        header("Content-type: $filetype");
+        header("Content-Disposition: attachment; filename=$origname");
         header("Content-transfer-encoding: binary\n");
         header("Content-length: " . filesize($path) . "\n");
         
