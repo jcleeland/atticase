@@ -20,11 +20,7 @@ $(document).ready(function(){
         
     }) */
     
-    $('.nav-link-tab').click(function () {
-        if($('#case-card').first().is(":visible")) {
-            $('#toggle-case-card').click();
-        }
-    })
+
                             
     $('.pagerbutton').click(function() {
         console.log(this.id);

@@ -55,8 +55,8 @@ function loadRelateds() {
     
     
     $.when(relatedList(parameters, conditions, order, start, end)).done(function(relateds) {
-        //console.log('Relateds');
-        //console.log(relateds);
+        console.log('Relateds');
+        console.log(relateds);
         if(relateds.count<1) {
             $('#relatedlist').html("<center><br />No related items for this case yet<br />&nbsp;</center>");
             $('#relatedcount').html('');

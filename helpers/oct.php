@@ -96,7 +96,7 @@ class oct {
     function getCase($caseid) {
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
         if($this->externalDb===true) {
-            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+            $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
         }
         $query.="\r\n                 FROM ".$this->dbprefix."tasks t
 
@@ -125,12 +125,41 @@ class oct {
         
         //print_r($results['output'][0]);
         
+        //Get Custom Field Information
+        
+        $query2 = "SELECT * FROM ".$this->dbprefix."custom_fields WHERE task_id = :task_id";
+        $parameters[':task_id']=$caseid;
+        $results2=$this->fetchMany($query2, $parameters);
+        
+        if($results2['records'] > 0) {
+            foreach($results2['output'] as $key=>$val) {
+                $thisname="custom_field_".$val['custom_field_definition_id'];
+                $thisval=$val['custom_field_value'];
+                //print_r($val);
+                if($val != "") {
+                    $customlist[]=$thisname;
+                    $results['output'][0][$thisname]=$thisval;
+                }
+            }
+            if(is_array($customlist)) {
+                $results['output'][0]['customlist']=$customlist;
+            }
+        }
+        //print_r($results2);
+        
+        
         $output=array("results"=>$results['output'][0], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
         //print_r($output);  
         return($output);                
     }
     
-    
+    function getCustomFields($caseid) {
+        $parameters=array(":task_id"=>$caseid);
+        $query = "SELECT * FROM ".$this->dbprefix."custom_fields WHERE task_id = :task_id";
+        $results=$this->fetchMany($query, $parameters);
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        return($output);
+    }
     
     
     
@@ -252,6 +281,57 @@ class oct {
         return($output);        
     }
 
+    function caseTypeList($parameters=array(), $conditions="1=1", $order="list_position asc", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="list_position asc";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."list_tasktype";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\n AND show_in_list=1";
+        $query .= "\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);
+    }
+    
+    function caseTypeGroupList($parameters=array(), $conditions="1=1", $order="list_position asc", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="list_position asc";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."list_tasktype_groups";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\n AND hide_from_list=0";
+        $query .= "\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);
+    }    
+    
+    function caseGroupList($parameters=array(), $conditions="1=1", $order="list_position asc", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="list_position asc";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."list_version";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\n AND show_in_list=1";
+        $query .= "\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);
+    }    
+
     function commentList($parameters=array(), $conditions="is_closed != 1", $order="date_due ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
@@ -307,7 +387,25 @@ class oct {
         return($output);
     }
     
-    function departmentList($parameters=array(), $conditions="", $order="list_position", $first=0, $last=1000000000) {
+    function customFieldList($parameters=array(), $conditions="1=1", $order="custom_field_name", $first=0, $last=1000000000) {
+        $tablename="custom_field_definitions";
+        
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="custom_field_name, custom_field_type";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix.$tablename;
+        $query .= "\r\n WHERE $conditions";
+        $query .= "\r\n ORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+    
+        return($output);
+    }
+    
+    function departmentList($parameters=array(), $conditions="1=1", $order="list_position", $first=0, $last=1000000000) {
         //All future versions to correct the table name
         $tablename="list_category";
         
@@ -428,6 +526,54 @@ class oct {
         return($output);              
     }
     
+    function linkedList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="date_added DESC";}
+        
+        $query = "SELECT t.*, mas.link_id";
+        if($this->externalDb===true) {
+            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+        } else {
+            $query .=", t.name as clientname";
+        } 
+                
+        $query .="\r\n  FROM ".$this->dbprefix."master mas";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = mas.servant_task";
+        if($this->externalDb===true) {
+            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
+                 ";
+        }         
+        
+        $query .="\r\nWHERE $conditions";
+        $query .="\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);         
+        
+                
+    }
+    
+    function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="date_added DESC";}
+        
+        $query = "SELECT u.*, n.*";
+        $query .="\r\n  FROM ".$this->dbprefix."users u";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."notifications n ON n.user_id = u.user_id";
+        $query .="\r\nWHERE $conditions";
+        $query .="\r\nORDER BY $order";
+        
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);         
+    }
+
     function poiList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
@@ -458,54 +604,6 @@ class oct {
         $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
     
         return($output);
-    }
-    
-    function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
-        if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="date_added DESC";}
-        
-        $query = "SELECT u.*, n.*";
-        $query .="\r\n  FROM ".$this->dbprefix."users u";
-        $query .= "\r\n  INNER JOIN ".$this->dbprefix."notifications n ON n.user_id = u.user_id";
-        $query .="\r\nWHERE $conditions";
-        $query .="\r\nORDER BY $order";
-        
-        
-        $results=$this->fetchMany($query, $parameters, $first, $last);
-        
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
-          
-        return($output);         
-    }
-
-    function linkedList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
-        if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="date_added DESC";}
-        
-        $query = "SELECT t.*, mas.link_id";
-        if($this->externalDb===true) {
-            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
-        } else {
-            $query .=", t.name as clientname";
-        } 
-                
-        $query .="\r\n  FROM ".$this->dbprefix."master mas";
-        $query .= "\r\n  INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = mas.servant_task";
-        if($this->externalDb===true) {
-            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
-                 ";
-        }         
-        
-        $query .="\r\nWHERE $conditions";
-        $query .="\r\nORDER BY $order";
-        
-        $results=$this->fetchMany($query, $parameters, $first, $last);
-
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
-          
-        return($output);         
-        
-                
     }
     
     function recentList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
@@ -721,7 +819,7 @@ class oct {
         return($output);
     }
     
-    function userList($parameters=array(), $conditions="", $order="", $first=1, $last=1000000000) {
+    function userList($parameters=array(), $conditions="1=1", $order="group_name, real_name", $first=1, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="group_name, real_name";}
         
@@ -730,9 +828,10 @@ class oct {
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."groups.group_id=".$this->dbprefix."users.group_in";
         $query .= "\r\nWHERE $conditions";
         $query .= "\r\nORDER BY $order";
+        //echo $query;
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
-
+        
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
         return($output);        
@@ -787,6 +886,60 @@ class oct {
     
     
     
+    ##### SAVES #####
+    ##### Creates and updates of the database
+    
+    function insertTable($tablename, $inserts, $wheres, $userid, $debug=0) {
+            
+    }
+    
+    function updateTable($tablename, $updates, $wheres, $userid, $debug=0) {
+        
+        //Gather existing data
+        $caseId=substr($wheres, 8);
+        
+        $existing=$this->fetch("SELECT * FROM ".$this->dbprefix.$tablename."\r\nWHERE task_id=:task_id", array(":task_id"=>$caseId));
+        
+        $parameters=array();
+        $querys=array();
+        $changes=array();
+        
+        $query = "UPDATE ".$this->dbprefix.$tablename."\n\n";
+        $query .= "SET \n";
+        foreach($updates as $key=>$val) {
+            $querys[] = "`$key` = :".$key;
+            $parameters[':'.$key]=$val;
+        }
+        $query .= implode(", ", $querys);
+        
+        $query .= "\r\nWHERE ".$wheres;
+        
+
+        
+        foreach($parameters as $key=>$val) {
+            $value=substr($key, 1);
+            if($existing[$value] != $val) {
+                $changes[$value]=$val;
+            }
+        }
+        
+        $this->execute($query, $parameters);
+        
+        if($debug>0) {
+            echo $query;
+            echo "<hr />";
+            print_r($parameters);
+            echo "<hr />";
+            echo "Changes";
+            print_r($changes);            
+        }
+
+        
+        return null;
+        
+        
+    }
+
     
     ##### HELPERS #####
     ##### Various tools that help simplify actions
@@ -840,6 +993,41 @@ class oct {
         return $select;
     }
     
+    function fieldNameTranslation() {
+        $translation=array(
+            "item_summary"=>array(
+                "old"=>"item_summary", 
+                "description"=>"Item Summary"
+                ),
+            "task_id"=>array(
+                "old"=>"task_id",
+                "description"=>"Case ID"
+                ),
+            "case_type"=>array(
+                "old"=>"case_type",
+                "description"=>"Case Type"
+                ),
+            "detailed_desc"=>array(
+                "old"=>"detailed_desc",
+                "description"=>"Case Outline"
+            ),
+            "case_group"=>array(
+                "old"=>"product_version",
+                "description"=>"Case Group"
+            ),
+            "product_category"=>array(
+                "old"=>"product_category",
+                "description"=>"Department"
+            ),
+            
+        );
+    }    
+    
+    function showArray($array, $title) {
+        echo "<pre><b>$title</b><br />";
+        print_r($array);
+        echo "</pre>";    
+    }
 }
 
 

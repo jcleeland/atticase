@@ -244,7 +244,7 @@ function loadCaseStats() {
                     results[item][label]=parseInt(stats.results[0]['total']);
                     if(typeof graph[tindex]=='undefined') {
                         graph[tindex]=[];
-                        graph[tindex].push(timestamp2date(tindex, "dd MM"));
+                        graph[tindex].push(timestamp2date(tindex, "dd MM")+"->");
                         graph[tindex].push(null);
                         graph[tindex].push(null);
                         graph[tindex].push(null);
@@ -521,7 +521,7 @@ function loadAllCaseStats() {
                     results[item][label]=parseInt(stats.results[0]['total']);
                     if(typeof graph[tindex]=='undefined') {
                         graph[tindex]=[];
-                        graph[tindex].push(timestamp2date(tindex, "dd MM"));
+                        graph[tindex].push(timestamp2date(tindex, "dd MM")+"->");
                         graph[tindex].push(null);
                         graph[tindex].push(null);
                         graph[tindex].push(null);

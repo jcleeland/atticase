@@ -84,15 +84,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">        
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/default.css" />
+    <!-- Jquery -->
     <script src="js/jquery/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="js/jquery/jquery-ui-1.12.1/jquery-ui.min.css" />
     <script src="js/jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <!-- Popper.js (must be before bootstrap and after jquery) -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
+    <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
     </script>
+    <!-- Casetracker javascripts -->
     <script src="js/default.js"></script>
     <script src="js/index.js"></script>
     <script>

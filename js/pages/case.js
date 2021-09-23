@@ -1,18 +1,83 @@
 $(function() {
     loadCase();
-    
 
+    $('#hideCaseDetails').click(function() {
+        toggleCaseDetails();
+    })
+    
+    $('#editCaseDetails').click(function() {
+        //alert('Stub for editing a case');
+        toggleCaseEdit(); 
+    })
+    
+    $('#closeCase').click(function() {
+        alert('Stub for closing a case');
+    })    
+
+    $('.nav-link-tab').click(function () {
+        if($('#case-card').first().is(":visible")) {
+            //toggleCaseDetails('hide');
+        }
+    }); 
+    
+    $('#cancel-case-edits').click(function() {
+        toggleCaseEdit();
+        loadCase();  
+    });
+    
+    $('#save-case-edits').click(function() {
+        var caseId=$('#caseid').val();
+        //Gather all the values
+        var newValues={};
+        $('.updateCase').each(function(i, obj) {
+            if($(this).is(':checkbox')) {
+                if($(this).is(':checked')) {
+                    newValues[this.id.substr(5)]=1;
+                } else {
+                    newValues[this.id.substr(5)]=0;
+                }
+            } else {
+                newValues[this.id.substr(5)]=$(this).val();
+            }
+        });
+        
+        caseUpdate(caseId, newValues);
+        //loadCase();
+    })
+    
+    $('#save-close-case-edits').click(function() {
+        var caseId=$('#caseid').val();
+        //Gather all the values
+        var newValues={};
+        $('.updateCase').each(function(i, obj) {
+            if($(this).is(':checkbox')) {
+                if($(this).is(':checked')) {
+                    newValues[this.id.substr(5)]=1;
+                } else {
+                    newValues[this.id.substr(5)]=0;
+                }
+            } else {
+                newValues[this.id.substr(5)]=$(this).val();
+            }
+        });
+        
+        caseUpdate(caseId, newValues);
+        toggleCaseEdit();
+        loadCase();
+        //loadCase();
+    })       
+    
 });
 
 function loadCase() {
     var today=new Date();
     
     var caseId=$('#caseid').val();
-    
+    console.log('Reloading');
     $.when(getCase(caseId)).done(function(caseDetails) {
-        //console.log('Cases');
+        console.log('Cases');
         casedata=caseDetails.results;
-        //console.log(casedata);
+        //console.log(caseDetails);
         clearCaseForm();
         
         var thisDateDue=timestamp2date(casedata.date_due);
@@ -51,12 +116,50 @@ function loadCase() {
             $("#delegate_cover").html(casedata.local_delegate+" ("+casedata.local_delegate_ph+") <a class='fa-phone' href='tel:'"+casedata.local_delegate_ph+"'></a><a class='fa-chat' href='sms:"+casedata.local_delegate_ph+"'></a>");
         }
         
-        $("#detaileddesc_cover").html(deWordify(casedata.detailed_desc));
-        $("#resolution_cover").html(deWordify(casedata.resolution_sought));
+        $("#detaileddesc_cover").html(deWordify(casedata.detailed_desc).replace(/\n/g, "<br />"));
+        $("#resolution_cover").html(deWordify(casedata.resolution_sought).replace(/\n/g, "<br />"));
         
         $("#dateopened_cover").html(dateOpened);
         $("#openedby_cover").html(casedata.openedby_real_name);
+        
+        //Now insert the custom fields
+        if(typeof casedata.customlist != "undefined") {
+            $.each(casedata.customlist, function(i, name) {
+                console.log(name);
+                var type=$('#'+name+'_cover').prop('nodeName');
+                console.log($('#'+name+'_cover').prop('nodeName'));
+                console.log(casedata[name]);
+                if(type=="INPUT") {
+                    if($('#'+name+'_cover').is(':checkbox')) {
+                        if(casedata[name]!="0") {
+                            $('#'+name+'_cover').prop('checked', true);
+                        } else {
+                            $('#'+name+'_cover').prop('checked', false);
+                        }
+                    } else {
+                        $('#'+name+'_cover').val(casedata[name]);
+                    }
+                } else {
+                    $("#"+name+"_cover").html(casedata[name]);
+                }
+            })
+        }
 
+        //Fill out the edit form
+        $('#edit_item_summary').val(casedata.item_summary);
+        $('#edit_member').val(casedata.member);
+        $('#edit_assigned_to').val(casedata.assigned_to);
+        $('#edit_product_version').val(casedata.version_id);
+        $('#edit_task_type').val(casedata.task_type);
+        $('#edit_product_category').val(casedata.category_id);
+        $('#edit_line_manager').val(casedata.line_manager);
+        $('#edit_line_manager_ph').val(casedata.line_manager_ph);
+        $('#edit_delegate').val(casedata.local_delegate);
+        $('#edit_delegate_ph').val(casedata.local_delegate_ph);
+        $('#edit_detailed_desc').val(casedata.detailed_desc);
+        $('#edit_resolution_sought').val(casedata.resolution_sought);
+        
+        //
             
     }).then(function() {
         toggleCaseCards();
@@ -86,5 +189,33 @@ function clearCaseForm() {
     
     $("#dateopened_cover").html("");
     $("#openedby_cover").html("");    
+}
+
+function toggleCaseDetails(action) {
+    if($('#case-card').is(":visible") || action=="hide") {
+        $('#case-card').hide();
+        $('#hideCaseDetails').html($('#hideCaseDetails').html().replace(' Hide', ' Show'));
+    } else {
+        $('#case-card').show();
+        $('#hideCaseDetails').html($('#hideCaseDetails').html().replace(' Show', ' Hide'));
+
+    }    
+}
+
+function toggleCaseEdit() {
+    
+    if($('#case-edit').is(":visible")) {
+        $('#case-edit').hide();
+        $('#case-card').show();
+        $('#case-tabs').show();
+        
+    } else {
+        //Fill out all the fields
+        
+        $('#case-edit').show();
+        $('#case-card').hide();
+        $('#case-tabs').hide();
+    }
+    
 }
 

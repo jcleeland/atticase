@@ -47,6 +47,7 @@ $(function() {
         
     })
 
+    
 })
 
 function deleteTabEdit(method, id) {
@@ -211,15 +212,6 @@ function attachmentUpdate(attachmentId, newValue) {
     })    
 }
 
-function linkedList(parameters, conditions, order, first, last) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'linkedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
-        dataType: 'json'
-    });
-}
-
 function relatedList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -254,6 +246,15 @@ function timeList(parameters, conditions, order, first, last) {
         data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function caseUpdate(caseId, newValues) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'saveCase', caseId: caseId, newValues: newValues},
+        dataType: 'json'
+    })
 }
 
 function commentList(parameters, conditions, order, first, last) {
@@ -338,6 +339,15 @@ function historyDelete(historyId) {
         data: {method: 'historyDelete', historyId: historyId},
         dataType: 'json'
     }) 
+}
+
+function linkedList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'linkedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
 }
 
 function notificationsList(parameters, conditions, order, first, last) {

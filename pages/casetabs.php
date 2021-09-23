@@ -1,7 +1,7 @@
 <?php
   
 ?>
-<div class='col-sm-12 mb-1'>
+<div class='col-sm-12 mb-1' id='case-tabs'>
     <ul class="nav nav-tabs w-100">
         <li class="nav-item active no-wrap">
             <a class="nav-link nav-link-tab active" data-toggle="tab" href='#comments'>
