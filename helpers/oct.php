@@ -425,6 +425,15 @@ class oct {
         return($output);
     }
     
+    /**
+    * Outputs history table information for a task.
+    * 
+    * @param mixed $parameters     - Parameters passed to the query
+    * @param mixed $conditions     - Conditions - could include, for example, task_id
+    * @param mixed $order
+    * @param mixed $first
+    * @param mixed $last
+    */
     function historyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="event_date DESC";}
@@ -476,10 +485,10 @@ class oct {
             60=>"Added person of interest",
             61=>"Deleted person of interest",
             62=>"Changed description for person of interest",
-            91=>"Unknown - 91",
-            99=>"Unknown - 99", 
             71=>"Changed Note",
             81=>"Changed Attachment Description",           
+            91=>"Unknown - 91",
+            99=>"Unknown - 99", 
         );
         
 
@@ -500,6 +509,13 @@ class oct {
                 
     }    
     
+    /**
+    * Inserts an entry into the history table
+    * 
+    * @param mixed $parameters - an array containing field names (key) and values. 
+    *                           Fields should include task_id, user_id, event_date, event_type, 
+    *                           field_changed (name of field changed), old value and new value
+    */
     function historyCreate($parameters=array()) {
         //INSERT INTO `flyspray_history` 
         // (`history_id`, `task_id`, `user_id`, `event_date`, `event_type`, `field_changed`, `old_value`, `new_value`) 
@@ -889,22 +905,75 @@ class oct {
     ##### SAVES #####
     ##### Creates and updates of the database
     
-    function insertTable($tablename, $inserts, $wheres, $userid, $debug=0) {
+    function insertTable($tablename, $inserts, $debug=0) {
+        
+        $query  = "INSERT INTO ".$this->dbprefix.$tablename."\r\n";
+        
+        $fields=array();
+        $values=array();
+        $parameters=array();
+        
+        foreach($inserts as $key=>$val) {
+            $fields[]=$key;
+            $values[]=$val;
+            $parameters[":".$key]=$val;
+        }
+        
+        $query .= "(`";
+        $query .= implode($fields, "`, `");
+        $query .= "`)\r\n";
+        $query .= "VALUES (:";
+        $query .= implode($fields, ", :");
+        $query .= ")";
+        
+        print_r($inserts);
+        print_r($parameters); 
+        
+        $this->execute($query, $parameters);
+        
+        if($debug > 0) {
+            echo $query;
+            echo "<hr />";
+            print_r($parameters); 
+        }
+    }
+    
+    /**
+    * Returns a list of changed fields prior to performing an update
+    * 
+    * @param mixed $tablename
+    * @param mixed $updates
+    * @param mixed $wheres
+    * @param mixed $userid
+    * @param mixed $debug
+    */
+    function listUpdateChanges($tablename, $updates, $wheres, $userid, $debug=0) {
+    
+        $changes=array();
+        
+        $query  = "SELECT * FROM ".$this->dbprefix.$tablename;
+        $query .= "\r\nWHERE ".$wheres;
+        
+        $existing=$this->fetch($query, array());
+        
+        foreach($updates as $key=>$val) {
+            $value=$key;
+            if($existing[$value] != $val) {
+                $changes[$value]=array("old"=>$existing[$value], "new"=>$val);
+            }
+        }
+        
+        return $changes;
             
     }
     
     function updateTable($tablename, $updates, $wheres, $userid, $debug=0) {
         
-        //Gather existing data
-        $caseId=substr($wheres, 8);
-        
-        $existing=$this->fetch("SELECT * FROM ".$this->dbprefix.$tablename."\r\nWHERE task_id=:task_id", array(":task_id"=>$caseId));
-        
         $parameters=array();
         $querys=array();
-        $changes=array();
         
-        $query = "UPDATE ".$this->dbprefix.$tablename."\n\n";
+        
+        $query = "UPDATE ".$this->dbprefix.$tablename."\r\n";
         $query .= "SET \n";
         foreach($updates as $key=>$val) {
             $querys[] = "`$key` = :".$key;
@@ -916,12 +985,7 @@ class oct {
         
 
         
-        foreach($parameters as $key=>$val) {
-            $value=substr($key, 1);
-            if($existing[$value] != $val) {
-                $changes[$value]=$val;
-            }
-        }
+
         
         $this->execute($query, $parameters);
         
@@ -929,9 +993,7 @@ class oct {
             echo $query;
             echo "<hr />";
             print_r($parameters);
-            echo "<hr />";
-            echo "Changes";
-            print_r($changes);            
+            echo "<hr />";         
         }
 
         

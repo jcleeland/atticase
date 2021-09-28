@@ -27,6 +27,7 @@ $(function() {
     
     $('#save-case-edits').click(function() {
         var caseId=$('#caseid').val();
+        var userId=$('#userid').val();
         //Gather all the values
         var newValues={};
         $('.updateCase').each(function(i, obj) {
@@ -41,12 +42,25 @@ $(function() {
             }
         });
         
-        caseUpdate(caseId, newValues);
+        $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+            console.log('Update completed');
+            console.log(changes);
+            console.log('Create History');
+            console.log('Case ID: '+caseId+', User ID: '+userId);
+            for (var key in changes) {
+                if(changes.hasOwnProperty(key)) {
+                    historyCreate(caseId, userId, '0', 'Case Details: '+key, changes[key]["old"], changes[key]["new"]);
+                }
+            }            
+            loadCase();
+            loadHistory();
+        });
         //loadCase();
     })
     
     $('#save-close-case-edits').click(function() {
         var caseId=$('#caseid').val();
+        var userId=$('#userid').val();
         //Gather all the values
         var newValues={};
         $('.updateCase').each(function(i, obj) {
@@ -61,9 +75,19 @@ $(function() {
             }
         });
         
-        caseUpdate(caseId, newValues);
-        toggleCaseEdit();
-        loadCase();
+        $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+            console.log(changes);
+            console.log('Create History');
+            console.log('Case ID: '+caseId+', User ID: '+userId);
+            for (var key in changes) {
+                if(changes.hasOwnProperty(key)) {
+                    historyCreate(caseId, userId, '0', 'Case Details: '+key, changes[key]["old"], changes[key]["new"]);
+                }
+            }
+            toggleCaseEdit();
+            loadCase();
+            loadHistory();
+        });
         //loadCase();
     })       
     
@@ -133,14 +157,18 @@ function loadCase() {
                     if($('#'+name+'_cover').is(':checkbox')) {
                         if(casedata[name]!="0") {
                             $('#'+name+'_cover').prop('checked', true);
+                            $('#edit_'+name).prop('checked', true);
                         } else {
                             $('#'+name+'_cover').prop('checked', false);
+                            $('#edit_'+name).prop('checked', false);
                         }
                     } else {
                         $('#'+name+'_cover').val(casedata[name]);
+                        $('#edit_'+name).val(casedata[name]);
                     }
                 } else {
                     $("#"+name+"_cover").html(casedata[name]);
+                    $("#edit_"+name).val(casedata[name]);
                 }
             })
         }
@@ -154,8 +182,8 @@ function loadCase() {
         $('#edit_product_category').val(casedata.category_id);
         $('#edit_line_manager').val(casedata.line_manager);
         $('#edit_line_manager_ph').val(casedata.line_manager_ph);
-        $('#edit_delegate').val(casedata.local_delegate);
-        $('#edit_delegate_ph').val(casedata.local_delegate_ph);
+        $('#edit_local_delegate').val(casedata.local_delegate);
+        $('#edit_local_delegate_ph').val(casedata.local_delegate_ph);
         $('#edit_detailed_desc').val(casedata.detailed_desc);
         $('#edit_resolution_sought').val(casedata.resolution_sought);
         

@@ -3,6 +3,7 @@
     //Extract the custom fields from the array
     $standardfields=array();
     $customfields=array();
+    
     foreach($_POST['newValues'] as $key=>$val) {
         if(substr($key, 0, 7) == "custom_") {
             $customfields[substr($key, 13)]=$val;
@@ -13,8 +14,18 @@
     $caseId=intval($_POST['caseId']);
     
     
-    //Update standard fields
-    $output=$oct->updateTable("tasks", $standardfields, "task_id=".$caseId, 2, 0);
+    $changedFields=$oct->listUpdateChanges("tasks", $standardfields, "task_id=".$caseId, 2);
+    foreach($changedFields as $key=>$val) {
+        $updates[$key]=$val["new"];
+    }
+    
+    //$oct->showArray($standardfields, "Original Data");
+    //$oct->showArray($changedFields, "Changed Fields");
+    //Update only the changed fields
+    if(count($changedFields) > 0) {
+        $output=$oct->updateTable("tasks", $updates, "task_id=".$caseId, 2, 0);
+    }
+
     
     //Update custom Fields
     // - first, get a list of all existing records for custom fields for this case
@@ -26,36 +37,37 @@
 
     //Get the existing values
     $existing=$oct->getCustomFields($caseId);
+    $current=array();
     //$oct->showArray($existing, "Existing Custom Field Values");
     foreach($existing['results'] as $key=>$val) {
         $current[$val['custom_field_definition_id']]=$val['custom_field_value'];
     }
-    $oct->showArray($current, "Current Values");
+    //$oct->showArray($current, "Current Values");
     
     $missingCustomFields=array();
     foreach($customfields as $key=>$val) {
         //Iterate through any custom fields in this submission
         //Get the old value
-        echo "Doing $key -> $val<br />";
+        //echo "Doing $key -> $val<br />";
         
         if(isset($current[$key])) {
-            //This custom field already has a value, so update it
-            echo "Updating ".$current[$key];
-            $updatearray=array("custom_field_value"=>$val, "custom_field_old_value"=>$current[$key]);
-            $updatewheres="task_id=".$caseId." AND custom_field_definition_id=".$key;
-            $oct->showArray($updatearray, "Update Array");
-            $oct->showArray($updatewheres, "Update Where Statement");
-            $output=$oct->updateTable("custom_fields", $updatearray, $updatewheres, 2, 0);             
+            //This custom field already has a value, so update it - but only if it has actually changed
+            if($current[$key] != $val) {
+                $updatearray=array("custom_field_value"=>$val, "custom_field_old_value"=>$current[$key]);
+                $updatewheres="task_id=".$caseId." AND custom_field_definition_id=".$key;
+                $changedFields[$key]=array("old"=>$current[$key], "new"=>$val);
+                //$oct->showArray($updatearray, "Update Array");
+                //$oct->showArray($updatewheres, "Update Where Statement");
+                $output=$oct->updateTable("custom_fields", $updatearray, $updatewheres, 2, 0);             
+            }
 
         } else {
             //This custom field does not have a value, so create it
-            $parameters=array(
-                ":task_id"=>$caseId,
-                ":custom_field_definition_id"=>$key,
-                ":custom_field_value"=>$current[$key]
-            );
-            $oct->showArray($parameters, "INSERT Custom Field Parameters");
-            $output=$oct->insertTable();
+            $inserts=array("custom_field_definition_id"=>$key, "task_id"=>$caseId, "custom_field_value"=>$val, "custom_field_old_value"=>"");
+            $wheres=array();
+            //$oct->showArray($parameters, "INSERT Custom Field Parameters");
+            $changedFields[$key]=array("old"=>"", "new"=>$val);
+            $output=$oct->insertTable("custom_fields", $inserts, 0);
         }
 
         //If there is no entry, create one with the new value
@@ -65,5 +77,7 @@
         //Set the new value as "custom_field_value"=$val, "custom_field_old_value"=$oldvalue where "custom_field_definition_id=$key and task_id="case_id"
    
     }
+    
+    $output=$changedFields;
     
 ?>

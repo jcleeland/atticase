@@ -10,6 +10,7 @@
     //echo "<pre>"; print_r($customfields['results']); echo "</pre>";
 ?>
 <input type='hidden' name='caseid' id='caseid' value='<?php echo $_GET['case'] ?>' />
+<input type='hidden' name='userid' id='userid' value='<?php echo $_SESSION['user_id'] ?>' />
 <div class='col-sm-12 mb-1'>
     <div class="card">
         <div class="card-header card-heading border rounded" >
@@ -107,7 +108,7 @@
                                 Delegate
                             </div>
                             <div class="subSection-field col-xs-8 delegate">
-                                <input type="text" id="edit_delegate" />
+                                <input type="text" id="edit_local_delegate" class='updateCase' />
                             </div>
                         </div>
                         
