@@ -10,22 +10,49 @@ function loadCaselist() {
     var today=new Date();
     
     var parameters={};
-    parameters[':isclosed']=1;
+    var conditions='';
+    //parameters[':isclosed']=1;
     
-    var conditions='is_closed != :isclosed';
+    var conditions='1=1';
     
     var order='date_due ASC';
 
-    if($('#mycasesOnly').is(":checked")) {
-        parameters[':userid']=globals.user_id;
+    // Check for filter settings
+    
+    if($('#userSelect').val() != '') {
+        parameters[':userid']=$('#userSelect').val();
         conditions+=' AND u.user_id = :userid';
     }
-
+    
+    if($('#caseTypeSelect').val() != '') {
+        //console.log('Case Type: '+$('#caseTypeSelect').val());
+        parameters[':casetype']=$('#caseTypeSelect').val();
+        conditions+=' AND t.task_type = :casetype';
+    }
+    
+    if($('#departmentSelect').val() != '') {
+        parameters[':department']=$('#departmentSelect').val();
+        conditions+=' AND t.product_category = :department';
+    }
+    
+    if($('#statusSelect').val() != '') {
+        if($('#statusSelect').val()=='1') {
+            parameters[':isClosed']=$('#statusSelect').val();
+            conditions+=' AND t.is_closed = :isClosed';
+        }
+        if($('#statusSelect').val()=='0') {
+            conditions+=' AND t.is_closed != 1';
+        }
+    }
+ 
+ 
+ 
+    console.log(conditions);
     
     var qty=9;
     var start=parseInt($('#caseliststart').val()) || 0;
     var end=parseInt($('#caselistend').val()) || qty;
-    
+    console.log('END: '+end);
     $('#caselist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {

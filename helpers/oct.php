@@ -245,11 +245,12 @@ class oct {
         if($conditions === null) {$conditions="is_closed != 1";}
         if($order===null) {$order="date_due ASC";}
         
+        $county="SELECT count(t.task_id) as total";
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, lvc.*, uo.*, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";
         if($this->externalDb===true) {
             $query .= ", mem.*";
         }
-        $query.="\r\n                 FROM ".$this->dbprefix."tasks t
+        $querybody ="\r\n                 FROM ".$this->dbprefix."tasks t
 
                      LEFT JOIN ".$this->dbprefix."projects p ON t.attached_to_project = p.project_id
                      LEFT JOIN ".$this->dbprefix."list_tasktype lt ON t.task_type = lt.tasktype_id
@@ -265,18 +266,32 @@ class oct {
         
         //External Database Link
         if($this->externalDb===true) {
-            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
+            $querybody .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
                  ";
         }        
         //CONDITIONS         
-        $query .= "WHERE ".$conditions;
+        $querybody .= "WHERE ".$conditions;
         
         //ORDER
-        $query .= " \nORDER BY ".$order;       
-        //echo $query;
-        $results=$this->fetchMany($query, $parameters, $first, $last, false);
+        $querybody .= " \nORDER BY ".$order;       
         
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        //echo $county.$querybody;
+        
+        $countresults=$this->fetchMany($county.$querybody, $parameters, 0, 10000000000, false);
+        //$this->showArray($countresults); 
+        $totalresponses=$countresults['output'][0]['total'];
+        
+        if($totalresponses > 500) {
+            $last=$first+500;
+            $querybody .= " \nLIMIT 500";
+        }
+        //echo "First: $first, Last: $last"; die();
+        $results=$this->fetchMany($query.$querybody, $parameters, $first, $last, false);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
+        //$this->showArray($output);
+        //die();
+        
           
         return($output);        
     }
@@ -856,7 +871,6 @@ class oct {
     
     
     
-    
     ##### STATS #####
     
     function statsCases($parameters, $conditions, $order, $first, $last, $select=null) {
@@ -1085,7 +1099,7 @@ class oct {
         );
     }    
     
-    function showArray($array, $title) {
+    function showArray($array, $title="Showing array (debug)") {
         echo "<pre><b>$title</b><br />";
         print_r($array);
         echo "</pre>";    

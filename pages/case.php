@@ -4,8 +4,12 @@
 <?php
     $casegroups=$oct->caseGroupList();
     $casetypes=$oct->caseTypeList();
-    $departments=$oct->departmentList();
+    $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"edit_task_type", "class"=>"updateCase"), "tasktype_id", "tasktype_name", null, "Select case", null);
+    $departments=$oct->departmentList(array(), "show_in_list=1");
+    $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"edit_product_category", "class"=>"updateCase"), "category_id", "category_name", null, "Select department");
     $users=$oct->userList(array(), "account_enabled=1 AND group_in NOT IN ('9')", null);
+    $userSelect=$oct->buildSelectList($users['results'], array("id"=>"edit_assigned_to", "class"=>"updateCase"), "user_id", "real_name", $user_id, "Select user", "group_name");
+    
     $customfields=$oct->customFieldList(null, "custom_field_visible=1");
     //echo "<pre>"; print_r($customfields['results']); echo "</pre>";
 ?>
@@ -72,13 +76,7 @@
                                 Assigned To
                             </div>
                             <div class="subSection-field col-xs-8 assigned_to">
-                                <select id="edit_assigned_to" class='updateCase'>
-                                    <?php
-                                        foreach($users['results'] as $user) {
-                                            echo "\t\t\t\t\t\t\t<option value='".$user['user_id']."'>".$user['real_name']."</option>\n";
-                                        }
-                                    ?>
-                                </select>
+                                <?php echo $userSelect ?>
                             </div>
                         </div>
                         <div class="row mb-1">
@@ -86,13 +84,7 @@
                                 Case Type
                             </div>
                             <div class="subSection-field col-xs-8 task_type">
-                                <select id="edit_task_type" class='updateCase'>
-                                    <?php
-                                        foreach($casetypes['results'] as $casetype) {
-                                            echo "\t\t\t\t\t\t\t<option value='".$casetype['tasktype_id']."'>".$casetype['tasktype_name']."</option>";
-                                        }
-                                    ?>
-                                </select>
+                                <?php echo $caseTypeSelect ?>
                             </div>
                         </div>
                         <div class="row mb-1">
@@ -186,13 +178,7 @@
                                 Department
                             </div>
                             <div class="subSection-field col-xs-8 product_category">
-                                <select id="edit_product_category" class='updateCase'>
-                                    <?php
-                                        foreach($departments['results'] as $department) {
-                                            echo "\t\t\t\t\t\t\t<option value='".$department['category_id']."'>".$department['category_name']."</option>";
-                                        }
-                                    ?>
-                                </select>
+                                <?php echo $departmentSelect ?>
                             </div>
                         </div>
                         <div class="row mb-1">

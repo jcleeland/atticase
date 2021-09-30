@@ -62,12 +62,19 @@
     
     
     // #########################################################################
-        
+    // GENERIC SETTINGS    
     $user_id=isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $user_name=isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
     $user_real_name=isset($_SESSION['real_name']) ? $_SESSION['real_name'] : null;
     $is_admin=isset($_SESSION['is_admin']) ? $_SESSION['is_admin'] : null;
-    //NAVIGATION
+    
+    // CURRENT FILTER SETTINGS
+    $filter_user_id=isset($_SESSION['filter_user_id']) ? $_SESSION['filter_user_id'] : $user_id;
+    $filter_text=isset($_SESSION['filter_text']) ? $_SESSION['filter_text'] : "";
+    $filter_case_type=isset($_SESSION['filter_case_type']) ? $_SESSION['filter_case_type'] : null;
+    $filter_case_status=isset($_SESSION['filter_case_status']) ? $_SESSION['filter_case_status'] : null;
+    
+    // NAVIGATION
     $page=isset($_GET['page']) ? $_GET['page'] : "dashboard";
     
     //Some useful values for each page
@@ -110,6 +117,7 @@
 
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
+    <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
     
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
         <?php
