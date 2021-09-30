@@ -37,4 +37,8 @@ $(function() {
     $('#statusSelect').change(function() {
         loadCaselist();
     })
+    
+    $('#caseGroupSelect').change(function() {
+        loadCaselist();
+    })
 })

@@ -123,7 +123,11 @@ class oct {
         
         $results=$this->fetchMany($query, $parameters);
         
-        //print_r($results['output'][0]);
+        //$this->showArray($results['output'][0], "Case Output");
+        
+        if($this->externalDb === true && $results['output'][0]['name']=="") {
+            $results['output'][0]['clientname']=$results['output'][0]['member'];
+        }
         
         //Get Custom Field Information
         

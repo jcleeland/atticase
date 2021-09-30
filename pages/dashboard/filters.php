@@ -46,10 +46,12 @@
                     ?>                
                 </div>
                 <div class='form-group m-1'>
-                    <select class='form-control smaller' id='caseGroupSelect'>
-                        <option>All case groups</option>
-                        <option value=''>...</option>
-                    </select>        
+                    <?php
+                        $caseGroups=$oct->caseGroupList(array(), "show_in_list = 1", "list_position, version_name");
+                        $attributes=array("class"=>"form-control smaller", "id"=>"caseGroupSelect");
+                        $casegroupselect=$oct->buildSelectList($caseGroups['results'], $attributes, "version_id", "version_name", null, "All case groups");
+                        echo $casegroupselect;
+                    ?>
                 </div>                                         
 
             </div>

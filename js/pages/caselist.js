@@ -35,6 +35,11 @@ function loadCaselist() {
         conditions+=' AND t.product_category = :department';
     }
     
+    if($('#caseGroupSelect').val() != '') {
+        parameters[':casegroup']=$('#caseGroupSelect').val();
+        conditions += ' AND t.product_version = :casegroup';
+    }
+    
     if($('#statusSelect').val() != '') {
         if($('#statusSelect').val()=='1') {
             parameters[':isClosed']=$('#statusSelect').val();

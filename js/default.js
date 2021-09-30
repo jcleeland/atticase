@@ -7,6 +7,22 @@ $(document).ready(function(){
         }
     })
     
+    $('#navToCases').click(function() {
+        window.location.href="?page=cases";
+    })
+    
+    $('#navToOptions').click(function() {
+        window.location.href="?page=options";
+    })
+    
+    $('#navToAccount').click(function() {
+        window.location.href="?page=account";
+    })
+    
+    $('#navToLogout').click(function() {
+        window.location.href="?logout=true"
+    })    
+    
     /*$('.datepicker').each(function() {
         //console.log($(this));
         //console.log($(this).style.width);

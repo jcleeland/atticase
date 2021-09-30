@@ -8,6 +8,7 @@
           //$stmt=$oct->db->prepare($query) or die("The prepared statement does not work");
           //$stmt->execute(['username'=>$_POST['username']]);
           //$out=$stmt->fetch();
+          //echo crypt($_POST['password'], '4t6dcHiefIkeYcn48B')." || ".$out['user_pass'];
           if(crypt($_POST['password'], '4t6dcHiefIkeYcn48B') == $out['user_pass']) {
               //print_r($out);
               $_SESSION['authenticated']=1;
