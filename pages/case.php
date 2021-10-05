@@ -2,6 +2,8 @@
 <script src="js/pages/case.js"></script>
 
 <?php
+
+    //Gather lists & select html
     $casegroups=$oct->caseGroupList();
     $casetypes=$oct->caseTypeList();
     $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"edit_task_type", "class"=>"updateCase"), "tasktype_id", "tasktype_name", null, "Select case", null);

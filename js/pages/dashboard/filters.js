@@ -1,6 +1,15 @@
 $(function() {
+    //Read the current search/filter settings from status cookie
+    var status=getStatus();
+
+    $.each(status.filter, function (i, element) {
+        $('#'+i).val(element);
+        console.log('FILTER:'+i+"-"+element);
+    })
+    $('#userSelect').change();
+    
     $('#mycasesOnly').click(function() {
-        userId=$('#user_id').val();
+        userId=globals.user_id;
         console.log('Current User is'+userId);
         if($(this).is(':checked')) {
             console.log('Checked');
@@ -10,35 +19,91 @@ $(function() {
             $('#userSelect').val('');
             console.log('Unchecked');
         }
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
+    })
+    
+    $('#clearFilter').click(function() {
+        var status=getStatus();
+        console.log('Old status');
+        console.log('New status');
+        $.each(status.filter, function(i, element) {
+            delete status.filter[i];
+        })
+        setStatus(status);
+        console.log('New Status');
+        console.log(status);
+        
+        $.each($('.filterQuery'), function(i, element) {
+            $(this).val("");
+        })
+        $("#statusSelect").val("0");
+        $("#userSelect").val(globals.user_id);
+        $('#userSelect').change();
+    })
+    
+    $('#FilterSearch').click(function() {
+        //Gather all the options & load cases page
+        var status=getStatus();
+        var queryString='';
+        $.each($('.filterQuery'), function(i, element) {
+            if($(this).val() != "") {
+                queryString+="&"+this.id+"="+$(this).val();
+                //queryString+=
+                //delete status[this.id];
+                if(status.filter == undefined) {
+                    status['filter']={};
+                }
+                status.filter[this.id]=$(this).val();
+                
+            }
+        })
+        setStatus(status);
+        
+        //window.location.href="?page=cases"+queryString;
+        window.location.href="?page=cases";
     })
     
     $('#userSelect').change(function() {
-        if($('#userSelect').val()==globals.userId) {
+        console.log('Checking user selected - '+$('#userSelect').val()+' against current user: '+globals.user_id);
+        if($('#userSelect').val()==globals.user_id) {
             $('#mycasesOnly').prop('checked', true);
         } else {
             $('#mycasesOnly').prop('checked', false);
         }
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     })
     
     $('#caseTypeSelect').change(function() {
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     })
     
     $('#productSelect').change(function() {
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     }) 
     
     $('#departmentSelect').change(function() {
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     })
     
     $('#statusSelect').change(function() {
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     })
     
     $('#caseGroupSelect').change(function() {
-        loadCaselist();
+        if($('#caselist').length) {
+            loadCaselist();
+        }
     })
 })

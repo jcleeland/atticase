@@ -125,8 +125,12 @@ class oct {
         
         //$this->showArray($results['output'][0], "Case Output");
         
-        if($this->externalDb === true && $results['output'][0]['name']=="") {
+        if($this->externalDb === true && ($results['output'][0]['clientname']=="" || $results['output'][0]['clientname']==" ")) {
+
             $results['output'][0]['clientname']=$results['output'][0]['member'];
+            if($results['output'][0]['member']=="0") {
+                $results['output'][0]['clientname']="None";
+            }            
         }
         
         //Get Custom Field Information
@@ -252,7 +256,12 @@ class oct {
         $county="SELECT count(t.task_id) as total";
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, lvc.*, uo.*, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";
         if($this->externalDb===true) {
-            $query .= ", mem.*";
+            //$query .= ", mem.*";
+            $query .= ", mem.data, mem.pref_name, mem.surname,        
+            CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
+                WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
+                ELSE t.member
+            END as clientname";            
         }
         $querybody ="\r\n                 FROM ".$this->dbprefix."tasks t
 
@@ -292,7 +301,7 @@ class oct {
         //echo "First: $first, Last: $last"; die();
         $results=$this->fetchMany($query.$querybody, $parameters, $first, $last, false);
         
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
+        $output=array("results"=>$results['output'], "query"=>$query.$querybody, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
         //$this->showArray($output);
         //die();
         

@@ -185,6 +185,17 @@ function getStatus() {
     return null;
 }
 
+/** 
+* Read the status into an object (getStatus()), then update values, then rewrite the status using setStatus
+* 
+* @param status    - object containing status values
+*/
+function setStatus(status) {
+    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=None; Secure";
+    document.cookie=cookiename;
+    
+}
+
 function attachmentList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -644,10 +655,18 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     //console.log('Inserting Case Card');
     //console.log(casedata);
     var thisDateDue=timestamp2date(casedata.date_due);
-    if(typeof casedata.pref_name !== 'undefined') {
-        var client=casedata.pref_name+' '+casedata.surname;
+    if(typeof casedata.clientname !== 'undefined' && casedata.clientname !== null) {
+        var client=casedata.clientname;
     } else {
-        var client=casedata.member;
+        if(typeof casedata.member !== 'undefined' && casedata.member !== null) {
+            var client=casedata.member;
+        } else {
+            if(typeof casedata.name !== 'undefined' && casedata.name !== null) {
+                var client=casedata.name;
+            } else {
+                var client='None';
+            }
+        }
     }
     var dateclass='date-future';
     if(casedata.date_due < $('#today_start').val()) {dateclass='date-overdue';}

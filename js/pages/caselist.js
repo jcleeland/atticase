@@ -3,7 +3,13 @@ $(function() {
     toggleCaseCards();
     toggleDatepickers();
     
-
+    var status=getStatus();
+    console.log('Status');
+    console.log(status);
+    
+    var settings=getSettings();
+    console.log('Settings');
+    console.log(settings);
 });
 
 function loadCaselist() {
@@ -62,7 +68,7 @@ function loadCaselist() {
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('Cases');
-        //console.log(cases);
+        console.log(cases);
         if(cases.count===0) {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");

@@ -1,7 +1,10 @@
 <script src="js/pages/dashboard/recent.js"></script>
+<div class="float-right m-1 text-muted">
+    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterRecent" title="Search displayed recent items" />
+</div>
 <h4 class="header">Recent</h4>
 <?php 
-    $pagername="recent";
+    $pagername="recent"; 
     include('pages/helpers/pager.php'); 
 ?>
 <div class="overflow-auto" style="max-height: 270px" id="recentlist">
