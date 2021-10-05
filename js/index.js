@@ -191,7 +191,7 @@ function getStatus() {
 * @param status    - object containing status values
 */
 function setStatus(status) {
-    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=None; Secure";
+    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=Strict;";
     document.cookie=cookiename;
     
 }

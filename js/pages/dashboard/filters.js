@@ -4,9 +4,11 @@ $(function() {
 
     $.each(status.filter, function (i, element) {
         $('#'+i).val(element);
-        console.log('FILTER:'+i+"-"+element);
+        //console.log('FILTER:'+i+"-"+element);
     })
-    $('#userSelect').change();
+    
+    console.log('Checking user');
+    myCaseStatus();
     
     $('#mycasesOnly').click(function() {
         userId=globals.user_id;
@@ -40,7 +42,7 @@ $(function() {
         })
         $("#statusSelect").val("0");
         $("#userSelect").val(globals.user_id);
-        $('#userSelect').change();
+        myCaseStatus();
     })
     
     $('#FilterSearch').click(function() {
@@ -59,6 +61,7 @@ $(function() {
                 
             }
         })
+        console.log(status);
         setStatus(status);
         
         //window.location.href="?page=cases"+queryString;
@@ -66,12 +69,7 @@ $(function() {
     })
     
     $('#userSelect').change(function() {
-        console.log('Checking user selected - '+$('#userSelect').val()+' against current user: '+globals.user_id);
-        if($('#userSelect').val()==globals.user_id) {
-            $('#mycasesOnly').prop('checked', true);
-        } else {
-            $('#mycasesOnly').prop('checked', false);
-        }
+        myCaseStatus();
         if($('#caselist').length) {
             loadCaselist();
         }
@@ -107,3 +105,12 @@ $(function() {
         }
     })
 })
+
+function myCaseStatus() {
+    console.log('Checking user selected - '+$('#userSelect').val()+' against current user: '+globals.user_id);
+    if($('#userSelect').val()==globals.user_id) {
+        $('#mycasesOnly').prop('checked', true);
+    } else {
+        $('#mycasesOnly').prop('checked', false);
+    }    
+}
