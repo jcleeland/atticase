@@ -4,12 +4,12 @@ $(function() {
     toggleDatepickers();
     
     var status=getStatus();
-    console.log('Status');
-    console.log(status);
+    //console.log('Status');
+    //console.log(status);
     
     var settings=getSettings();
-    console.log('Settings');
-    console.log(settings);
+    //console.log('Settings');
+    //console.log(settings);
 });
 
 function loadCaselist() {
@@ -58,17 +58,17 @@ function loadCaselist() {
  
  
  
-    console.log(conditions);
+    //console.log(conditions);
     
     var qty=9;
     var start=parseInt($('#caseliststart').val()) || 0;
     var end=parseInt($('#caselistend').val()) || qty;
-    console.log('END: '+end);
+    //console.log('END: '+end);
     $('#caselist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('Cases');
-        console.log(cases);
+        //console.log(cases);
         if(cases.count===0) {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");
@@ -127,7 +127,7 @@ function loadCaselist() {
         toggleCaseCards();
         toggleDatepickers();        
     }).fail(function() {
-        console.log('Nothing found');
+        //console.log('Nothing found');
         $('#todolist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
         pagerNumbers('todo', 0, 0, 0);        
     });    
@@ -137,7 +137,7 @@ function caselistend_pager() {
     var start=parseInt($('#caseliststart').val()) || 0;
     var end=parseInt($('#caselistend').val()) || 9;
     var qty=end-start+1;
-    console.log('Quantity: '+qty);
+    //console.log('Quantity: '+qty);
     $('#caseliststart').val((start+qty));
     $('#caselistend').val((end+qty));
     
