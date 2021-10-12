@@ -59,8 +59,12 @@ function loadHistory() {
                         //Base field change
                         content+='['+historydata.field_changed+'] "'+historydata.old_value+'" to "'+historydata.new_value+'"';
                         break;
+                    case "1":
+                        //Case opened
+                        content+=historydata.new_value;
                     case "2":
                         //Case closed
+                        content+='<b>Case closed by '+userNames[historydata.closed_by]+', '+timestamp2date(historydata.date_closed, "dd/mm/yy")+"</b><br />";
                         content+=historydata.old_value;
                         break;
                     case "4":
@@ -72,24 +76,39 @@ function loadHistory() {
                         content+=historydata.old_value;
                         break;
                     case "6":
+                        break;
+                    case "13":
+                        //Reopened case
+                        content+='<b>Case reopened by user '+historydata.real_name+', '+timestamp2date(historydata.event_date, "dd/mm/yy g:i a")+"</b>";
+                        break;
                     case "71":
                         //Note changed
                         content+='<b>To:</b> '+historydata.new_value+'<br /><b>From: </b><span class="text-footnote">'+historydata.old_value+'</span>';
                         break;
                     case "8":
                         //Attachment deleted
-                        content+=historydata.old_value;
+                        if($('#cardbody_attachment'+historydata.old_value).length) {
+                            content+=$('#cardbody_attachment'+historydata.old_value).text();
+                        } else {
+                            content+='Deleted';
+                        }
                         break; 
                     case "81":
                         //Attachment modified
-                        content+='<b>To:</b> '+historydata.new_value+'<br /><b>From: </b><span class="text-footnote">'+historydata.old_value+'</span>';
+                        content+='<b>To:</b> '+$('#cardbody_attachment'+historydata.new_value).text()+'<br /><b>From: </b><span class="text-footnote">'+$('#cardbody_attachment'+historydata.old_value).text()+'</span>';
                         break;
                     case "7":
-                        content+=historydata.new_value;
+                        //Attachment added
+                        if($('#cardbody_attachment'+historydata.new_value).length) {
+                            content+=$('#cardbody_attachment'+historydata.new_value).text();
+                        } else {
+                            content+='Since deleted ['+historydata.new_value+']';
+                        }
                         break;
                     case "14":
                         //Case assigned
-                        content+='From '+historydata.old_value+' to '+historydata.new_value;
+                        //console.log(userNames);
+                        content+='From '+userNames[historydata.old_value]+' to '+userNames[historydata.new_value];
                         break;
                     default:
                         content+='<b>Field:</b> '+historydata.field_changed+'<br /><b>Old Value:</b> '+historydata.old_value+'<br /><b>New Value:</b> '+historydata.new_value;

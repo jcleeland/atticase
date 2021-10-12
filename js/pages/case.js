@@ -11,7 +11,8 @@ $(function() {
     })
     
     $('#closeCase').click(function() {
-        alert('Stub for closing a case');
+        console.log('Closing case');
+        toggleCloseCase();
     })    
 
     $('.nav-link-tab').click(function () {
@@ -38,7 +39,9 @@ $(function() {
                     newValues[this.id.substr(5)]=0;
                 }
             } else {
-                newValues[this.id.substr(5)]=$(this).val();
+                if(typeof $(this).val() !== "undefined" && $(this).val() != null && $(this).val() != "") {
+                    newValues[this.id.substr(5)]=$(this).val();
+                }                
             }
         });
         
@@ -61,6 +64,7 @@ $(function() {
     $('#save-close-case-edits').click(function() {
         var caseId=$('#caseid').val();
         var userId=$('#userid').val();
+        console.log('Saving and closing');
         //Gather all the values
         var newValues={};
         $('.updateCase').each(function(i, obj) {
@@ -71,7 +75,9 @@ $(function() {
                     newValues[this.id.substr(5)]=0;
                 }
             } else {
-                newValues[this.id.substr(5)]=$(this).val();
+                if(typeof $(this).val() !== "undefined" && $(this).val() != null && $(this).val() != "") {
+                    newValues[this.id.substr(5)]=$(this).val();
+                }
             }
         });
         
@@ -89,7 +95,45 @@ $(function() {
             loadHistory();
         });
         //loadCase();
-    })       
+    }) 
+    
+    $('#date_due').change(function() {
+        
+        var newDate=date2timestamp($(this).val());
+        var caseId=$('#caseid').val();
+        //console.log(globals);
+        //console.log('Change date due for '+caseId+' to '+newDate);
+        var newValues={};
+        newValues['date_due']=newDate
+        $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+            var oldDate=timestamp2date(changes.date_due['old']);
+            var newDate=timestamp2date(changes.date_due['new']);
+            historyCreate(caseId, globals.user_id, '0', 'date_due', oldDate, newDate);
+            loadHistory();    
+        });
+    }) 
+    
+    $('#close_case_btn').click(function() {
+        var caseId=$('#caseid').val();
+        var closeDate=date2timestamp($('#close_closure_date').val());
+        var closeReason=$('#close_resolution_reason').val();
+        var closeNotes=$('#close_closure_comment').val();
+        
+        var newValues={};
+        newValues['date_closed']=closeDate;
+        newValues['resolution_reason']=closeReason;
+        newValues['closure_comment']=closeNotes;
+        newValues['closed_by']=globals.user_id;
+        newValues['is_closed']=1;
+        console.log(newValues);
+        $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+            historyCreate(caseId, globals.user_id, '2', closeNotes, closeReason);
+            loadCase();
+        })
+    })
+        
+        
+         
     
 });
 
@@ -101,8 +145,16 @@ function loadCase() {
     $.when(getCase(caseId)).done(function(caseDetails) {
         console.log('Cases');
         casedata=caseDetails.results;
-        //console.log(caseDetails);
+        console.log(caseDetails);
         clearCaseForm();
+        
+        if(caseDetails.results.is_closed==1) {
+            console.log('Showing closed stamp');
+            $('#closeCase').hide();
+            $('#reopenCase').show();
+            $('#closedStamp').show();
+            $('#closedStampDetails').html('Closed '+timestamp2date(caseDetails.results.date_closed)+' | '+caseDetails.results.closedby_real_name);
+        }
         
         var thisDateDue=timestamp2date(casedata.date_due);
         var dateOpened=timestamp2date(casedata.date_opened);
@@ -245,5 +297,11 @@ function toggleCaseEdit() {
         $('#case-tabs').hide();
     }
     
+}
+
+function toggleCloseCase() {
+    //$('#closeCaseTitle').html(title);
+    //$('#closeCaseMessage').html(message);
+    $('#closeCaseWindow').modal('show');    
 }
 

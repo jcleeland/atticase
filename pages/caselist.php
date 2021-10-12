@@ -1,7 +1,6 @@
 <script src="js/pages/caselist.js"></script>
 <div class="row">
     <div class="col m-2">
-        <div class='create-case float-right border rounded mr-1'>Create Case</div>
         <h4 class='header'>Case list</h4>
 <?php 
     $pagername="caselist";

@@ -94,7 +94,7 @@ class oct {
     }
     
     function getCase($caseid) {
-        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
+        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uc.real_name as closedby_real_name, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
         if($this->externalDb===true) {
             $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
         }
@@ -109,6 +109,7 @@ class oct {
                      LEFT JOIN ".$this->dbprefix."users ue on t.last_edited_by = ue.user_id
                      LEFT JOIN ".$this->dbprefix."list_resolution flr ON t.resolution_reason = flr.resolution_id
                      LEFT JOIN ".$this->dbprefix."master mst ON t.task_id = mst.servant_task
+                     LEFT JOIN ".$this->dbprefix."users uc ON t.closed_by = uc.user_id
                  ";
         
         //External Database Link
@@ -413,6 +414,16 @@ class oct {
         $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
     
         return($output);
+    }
+    
+    function closureCheckList() {
+        $checklist=array(
+            1=>"Person is no longer employed",
+            2=>"Person's job salary/location/classification has changed",
+            3=>"This case should be publicised",
+            4=>"Other (explanation provided in closing comments)"
+        );
+        return($checklist);    
     }
     
     function customFieldList($parameters=array(), $conditions="1=1", $order="custom_field_name", $first=0, $last=1000000000) {
@@ -773,6 +784,22 @@ class oct {
         return($output);    
     }
     
+    function resolutionList($parameters=array(), $conditions="", $order="list_position ASC, resolution_name ASC", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="list_position ASC, resolution_name ASC";}
+        
+        $query = "SELECT *";
+        $query .= "\r\nFROM ".$this->dbprefix."list_resolution";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\n ORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        //$this->showArray($output);  
+        return($output);             
+    }
+    
     function strategyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="comment_date DESC";}
@@ -877,7 +904,7 @@ class oct {
         $results=$this->fetchMany($query, $parameters, $first, $last);
         
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
-          
+        //$this->showArray($output);  
         return($output);        
     }
     
@@ -953,16 +980,20 @@ class oct {
         $query .= implode($fields, ", :");
         $query .= ")";
         
-        print_r($inserts);
-        print_r($parameters); 
+        //print_r($inserts);
+        //print_r($parameters); 
         
         $this->execute($query, $parameters);
+        
+        $newId=$this->db->lastInsertId();
         
         if($debug > 0) {
             echo $query;
             echo "<hr />";
             print_r($parameters); 
         }
+        
+        return $newId;
     }
     
     /**
@@ -992,6 +1023,48 @@ class oct {
         
         return $changes;
             
+    }
+    
+    function createTable($tablename, $values, $userid, $debug=0) {
+        $parameters=array();
+        $querys=array();
+        
+        
+        foreach($values as $key=>$val) {
+            if($val !== "") {
+                $labels[]=$key;
+                $parameters[":".$key]=$val;
+            }
+            
+        }
+        //INSERT INTO `flyspray_tasks` (`task_id`, `attached_to_project`, `task_type`, `date_opened`, `date_due`, `opened_by`, `is_closed`, `date_closed`, `closed_by`, `closure_comment`, `item_summary`, `detailed_desc`, `item_status`, `assigned_to`, `resolution_reason`, `product_category`, `product_version`, `closedby_version`, `operating_system`, `task_severity`, `task_priority`, `last_edited_by`, `last_edited_time`, `percent_complete`, `member`, `name`, `unit`, `line_manager`, `line_manager_ph`, `local_delegate`, `local_delegate_ph`, `resolution_sought`, `is_restricted`, `closure_checklist`, `member_is_delegate`) VALUES (NULL, '0', '0', '', '', '0', '0', '', '0', '', '', '', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '', '', '', '', '', '', '', '0', '', '0');
+        $query = "INSERT INTO ".$this->dbprefix.$tablename."\n";
+        $query .= "(`";
+        $query .= implode("`, `", $labels);
+        $query .= "`)\n";
+        $query .= "VALUES (:";
+        $query .= implode(", :", $labels);
+        $query .= ")";
+        
+        
+        
+        if($debug > 0) {
+            $this->showArray($values);
+            $this->showArray($parameters, "Parameters");
+        }
+        
+        $insert=$this->execute($query, $parameters);
+        
+        $newId=$this->db->lastInsertId();
+        
+        $output=array(
+            "query"=>$query,
+            "values"=>$values,
+            "insertId"=>$newId,
+            "rowsInserted"=>$insert
+        );
+        
+        return $output;
     }
     
     function updateTable($tablename, $updates, $wheres, $userid, $debug=0) {

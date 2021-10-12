@@ -11,12 +11,90 @@
     $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"edit_product_category", "class"=>"updateCase"), "category_id", "category_name", null, "Select department");
     $users=$oct->userList(array(), "account_enabled=1 AND group_in NOT IN ('9')", null);
     $userSelect=$oct->buildSelectList($users['results'], array("id"=>"edit_assigned_to", "class"=>"updateCase"), "user_id", "real_name", $user_id, "Select user", "group_name");
+    $resolutions=$oct->resolutionList(array(), "show_in_list=1");
+    $resolutionsSelect=$oct->buildSelectList($resolutions['results'], array("id"=>"close_resolution_reason", "class"=>"closeCase"), "resolution_id", "resolution_name", null, "Select reason");
     
     $customfields=$oct->customFieldList(null, "custom_field_visible=1");
     //echo "<pre>"; print_r($customfields['results']); echo "</pre>";
 ?>
 <input type='hidden' name='caseid' id='caseid' value='<?php echo $_GET['case'] ?>' />
 <input type='hidden' name='userid' id='userid' value='<?php echo $_SESSION['user_id'] ?>' />
+
+<!-- CLOSE CASE FORM -->
+<div class="modal fade" id="closeCaseWindow" tabindex="-1" role="dialog" aria-labelledby="closeCaseWindowTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header card-header">
+        <h5 class="modal-title" id="closeCaseWindowTitle">Close Case</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      
+      
+      
+      
+      <div class="modal-body" id="closeCaseWindowMessage">
+        <div class="row">
+            <div class="col-xl-4">
+                Closure reason:
+            </div>
+            <div class="col-xl-8">
+                <?php echo $resolutionsSelect ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4">
+                Closure date: 
+            </div>
+            <div class="col-xl-8 calendar-div">                
+                <input type='text' class='datepicker pointer' id='close_closure_date' style='width: 88px; height: 24px; z-index: 1000' class='closeCaseWindowMessage' value='<?php echo date("d/m/Y") ?>' />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4">                
+                Additional comments: 
+            </div>
+            <div class="col-xl-8">                 
+                <textarea class='form-input w-100' id='close_closure_comment'></textarea>
+            </div>
+        </div>
+        <div class="row hidden">
+            <div class="col-xl-12">
+                Checklist:
+                <div class="ml-5">
+            <?php
+                $checklists=$oct->closureCheckList();
+                foreach($checklists as $key=>$val) {
+                    ?>
+                    <div class="smaller">
+                        <input type=checkbox id='close_checklist_<?php echo $key ?>' />
+                        <label for='close_checklist_<?php echo $key ?>'><?php echo $val ?></label>
+                        
+                    </div>
+                    <?php
+                }
+            ?>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="close_case_btn" data-dismiss="modal">Close case</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+
 <div class='col-sm-12 mb-1'>
     <div class="card">
         <div class="card-header card-heading border rounded" >
@@ -33,7 +111,8 @@
                     <a class="dropdown-item pl-1 ml-0" href="#" id="emailCase"><img id="case-email-image" src="images/mail.svg" class="p-1" width="28px" title="Send email" /> Send email</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item pl-1 ml-0" href="#" id="transferCase"><img id="case-transfer-image" src="images/user.svg" class="p-1" width="28px" title="Transfer case " /> Transfer case</a>
-                    <a class="dropdown-item pl-1 ml-0" href="#" id="closeCase"><img id="case-edit-image" src="images/end.svg" class='rounded p-1 red-link ml-0' width='28px' title='Edit case details' /> Close case</a>
+                    <a class="dropdown-item pl-1 ml-0" href="#" id="closeCase"><img id="case-close-image" src="images/end.svg" class='rounded p-1 red-link ml-0' width='28px' title='Close case' /> Close case</a>
+                    <a class="dropdown-item pl-1 ml-0 hidden" href="#" id="reopenCase"><img id="case-reopen-image" src="images/end.svg" class="rounded p-1 pale-green-link ml-0" width="28px" title="Reopen case" /> Reopen case</a>
                     <a class="dropdown-item pl-1 ml-0 disabled" href="#" id="deleteCase"><img id="case-delete-image" src="images/trash.svg" class="p-1" width="28px" title="Delete case" /> Delete case</a>
                 </div>
             </div>            
@@ -69,7 +148,7 @@
                                 Item Summary
                             </div>
                             <div class='subSection-field col-xs-8 item_summary'>
-                                <input type='text' id='edit_item_summary' value='' class='updateCase' />
+                                <input type='text' id='edit_item_summary' value='' class='updateCase w-100' />
                             </div>
                         </div>
 
@@ -295,7 +374,10 @@
     
     
     
-    
+<span class="stamp stamp-red-double float hidden" id="closedStamp">
+    Closed<br />
+    <span class="stamp-details" id="closedStampDetails"></span>
+</span>     
     
     
     <!-- VIEW CASE -->
@@ -340,6 +422,7 @@
                                 
                             </div>
                         </div>
+
                         <?php
                             foreach($customfields['results'] as $key=>$field) {
                                 if(!$key %2) { //Odd numbered entries
@@ -485,6 +568,12 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
 <?php
     include("pages/casetabs.php");
 ?>

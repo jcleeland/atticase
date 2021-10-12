@@ -21,6 +21,7 @@ $(function() {
             $('#userSelect').val('');
             //console.log('Unchecked');
         }
+        saveFilterSettings();
         if($('#caselist').length) {
             loadCaselist();
         }

@@ -118,7 +118,8 @@
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
     <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
-    
+    <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
+    <input type='hidden' name='user_real_name' id='user_real_name' value='<?php echo $user_real_name ?>' />
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
         <?php
             if(!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']){

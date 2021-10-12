@@ -4,9 +4,9 @@
     $userId=isset($_POST['userId']) ? $_POST['userId'] : null;
     $eventDate=isset($_POST['eventDate']) ? $_POST['eventDate'] : date("U");
     $eventType=isset($_POST['eventType']) ? $_POST['eventType'] : null;
-    $fieldChanged=isset($_POST['fieldChanged']) ? $_POST['fieldChanged'] : null;
-    $oldValue=isset($_POST['oldValue']) ? $_POST['oldValue'] : null;
-    $newValue=isset($_POST['newValue']) ? $_POST['newValue'] : null;
+    $fieldChanged=isset($_POST['fieldChanged']) ? $_POST['fieldChanged'] : '';
+    $oldValue=isset($_POST['oldValue']) ? $_POST['oldValue'] : '';
+    $newValue=isset($_POST['newValue']) ? $_POST['newValue'] : '';
     
     
     $parameters[":task_id"]=$taskId;

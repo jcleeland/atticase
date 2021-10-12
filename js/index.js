@@ -2,6 +2,9 @@
 This file contains all the common javascript functions for OpenCaseTracker
 
 */
+
+var userNames={};
+
 $(function() {
     $(document).on('click', '.tabActionEdit', function() {
         //console.log('Editing ');
@@ -47,6 +50,12 @@ $(function() {
         
     })
 
+    $.when(getUsers()).done(function(users) {
+        
+        $.each(users.results, function(i, x) {
+            userNames[x.user_id]=x.real_name;
+        })
+    })
     
 })
 
@@ -185,6 +194,16 @@ function getStatus() {
     return null;
 }
 
+function getUsers(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'usersList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    })    
+}
+
+
 /** 
 * Read the status into an object (getStatus()), then update values, then rewrite the status using setStatus
 * 
@@ -257,6 +276,16 @@ function timeList(parameters, conditions, order, first, last) {
         data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function caseCreate(newValues, user_id) {
+    console.log(newValues);
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'createCase', newValues: newValues, user_id: user_id},
+        dataType: 'json'
+    })    
 }
 
 function caseUpdate(caseId, newValues) {
@@ -449,12 +478,16 @@ function toggleCaseCards() {
 function toggleDatepickers() {
     //console.log('toggling');
     $('.datepicker').each(function() {
+        //console.log(this.id);
         if(!$(this).hasClass('hasDatepicker')) {
+            //console.log(this.id);
             var fontSize=parseInt($(this).css("font-size"));
             $(this).css("width", (($(this).val().length+1)*(fontSize/2))+'px');
             var height=parseInt($(this).css("height"));
             $(this).css("height", (height-2)+'px');
             $(this).datepicker({dateFormat: "dd/mm/yy"});
+        } else {
+            //console.log('Doesnt have date picker class')
         }
         
     })    
@@ -556,7 +589,11 @@ function exportDivWithAttributes(divId, excludes) {
 * @param string
 */
 function deWordify(string) {
-    output=string.replace(/\r\n/g, "<br />").replace(/\u00e2\u20ac\u2122/g,"'").replace(/\u00e2\u20ac\u201c/g, "-").replace(/\u00e2\u20ac\u0153/g, '"').replace(/\u00c2/g, "").replace(/\u00e2\u20ac/g, '"').replace(/\\'/g, "'");
+    if(string != null) {
+        output=string.replace(/\r\n/g, "<br />").replace(/\u00e2\u20ac\u2122/g,"'").replace(/\u00e2\u20ac\u201c/g, "-").replace(/\u00e2\u20ac\u0153/g, '"').replace(/\u00c2/g, "").replace(/\u00e2\u20ac/g, '"').replace(/\\'/g, "'");
+    } else {
+        output='';
+    }
     return output;
 }
 
@@ -568,7 +605,7 @@ function minutes2hours(minutes) {
 }
 
 /**
-* put your comment there...
+* Reformat a timestamp into a nice human readable date
 * 
 * @param timestamp
 * @param {String} format: d/m/y, y/m/d, dd/mm/yy, dd/mm/yy hh:ii, dd/mm/yy g:i a, dd MM, dd MMM, dd MMM YYYY
@@ -620,6 +657,12 @@ function timestamp2date(timestamp, format) {
     
 }
 
+function date2timestamp(strDate) {
+    myDate=strDate.split("/");
+    strDate=new Date(parseInt(myDate[2], 10), parseInt(myDate[1], 10) - 1 , parseInt(myDate[0]), 10).getTime();
+    return strDate/1000;
+}
+
 function pad(n, width, z) {
   z = z || '0';
   n = n + '';
@@ -647,7 +690,17 @@ function pagerNumbers(pagername, start, end, total) {
             
             $('#'+pagername+'position').html((start)+'-'+(displayEnd+1));
             $('#'+pagername+'total').html('of '+total+' cases');  
-            $('#'+pagername+'qty').html('Showing '+qty);  
+            $('#'+pagername+'qty').html('Showing <span" id="'+pagername+'Quantity" value="'+qty+'" />'+qty+'</span>');  
+}
+
+function showMessage(title, message) {
+    $('#messageCentreTitle').html(title);
+    $('#messageCentreMessage').html(message);
+    $('#messageCentre').modal('show');
+};
+
+function showCase(caseId) {
+    window.location.href = "index.php?page=case&case=" + caseId;    
 }
 
 

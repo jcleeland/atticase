@@ -67,6 +67,49 @@
 
             </div>
         </div>
+        <div class='collapse row' id='filterMore'>
+            <div class='form-group m-1 p-1 col-xl'>
+                <div class='form-group m-1'>
+                    <div class="smaller">
+                        <label for='openedAfterDate' class='mb-0'>Opened after </label>
+                        <div class='calendar-div p-1 pointer border rounded float-right'>
+                            <input id='openedAfterDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                        </div>
+                        <div style='clear: both'></div>
+                    </div>
+                </div>
+                <div class='form-group m-1'>
+                    <div class="smaller">
+                        <label for='openedBeforeDate' class='mb-0'>Opened before </label>
+                        <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
+                            <input id='openedBeforeDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                        </div>
+                        <div style='clear: both'></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='form-group m-1 p-1 col-xl'>
+                <div class='form-group m-1'>
+                    <div class="smaller">
+                        <label for='closedAfterDate' class='mb-0'>Closed after </label>
+                        <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
+                            <input id='closedAfterDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                        </div>
+                        <div style='clear: both'></div>
+                    </div>
+                </div>
+                <div class='form-group m-1'>
+                    <div class="smaller">
+                        <label for='closedBeforeDate' class='mb-0'>Closed before</label>&nbsp;
+                        <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
+                            <input id='closedBeforeDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                        </div>
+                        <div style='clear: both'></div>
+                    </div>
+                </div>
+            </div>
+        </div>        
         <div class="row">
             <div class='form-group m-1 p-1 col-xl text-center'>
                 <div class='form-group m-1'>        
@@ -78,7 +121,7 @@
                     <a class='btn btn-info btn-sm smaller' id='clearFilter' href='#clear' role='button'>
                         Clear
                     </a>
-                    <a class='btn btn-secondary btn-sm smaller' data-toggle='collapse' href='#filterMore' role='button' aria-expanded='false' aria-controls='filterMore'>
+                    <a class='btn btn-secondary btn-sm smaller' data-toggle='collapse' href='#filterMore' role='button' aria-expanded='false' aria-controls='filterMore' id='filterMore'>
                         More >>
                     </a>
                 </div>
@@ -86,20 +129,7 @@
  
         </div>
         <p>
-        <div class='collapse m-1' id='filterMore'>
-            <div class='row'>
-                <div class='form-group m-1 w-90'>
-                    <select class='form-control smaller filterQuery' id='dateRange'>
-                        <option value='All'></option>
-                    </select>
-                </div>
 
-            </div>    
-            <div class='row'>
-
-
-            </div> 
-        </div>
         <div class="row">
 
         </div>  

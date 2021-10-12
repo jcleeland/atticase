@@ -20,7 +20,15 @@ $(document).ready(function(){
     })
     
     $('#navToLogout').click(function() {
-        window.location.href="?logout=true"
+        window.location.href="?logout=true";
+    })
+    
+    $('#navToNewCase').click(function() {
+        window.location.href="?page=create&type=case";
+    })
+    
+    $('#navToNewEnquiry').click(function() {
+        window.location.href="?page=create&type=enquiry";
     })    
     
     /*$('.datepicker').each(function() {
