@@ -13,7 +13,8 @@
     // First cookie is user/system preferences
     // Second cookie is current status, history, filter settings etc.
     $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
-    $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
+    //$setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
+    $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? $_SERVER['HTTP_HOST'] : false;
     //print_r($prefs);
     $cookieOptions=array(
         "expires"=>time()+3600*24*(2),
