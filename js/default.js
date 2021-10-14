@@ -47,9 +47,9 @@ $(document).ready(function(){
 
                             
     $('.pagerbutton').click(function() {
-        console.log(this.id);
+        //console.log(this.id);
         var functionname=this.id+'_pager';
-        console.log(functionname);
+        //console.log(functionname);
         window[functionname]();
     }) 
 

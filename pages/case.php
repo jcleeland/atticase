@@ -373,13 +373,7 @@
     
     
     
-    
-<span class="stamp stamp-red-double float hidden" id="closedStamp">
-    Closed<br />
-    <span class="stamp-details" id="closedStampDetails"></span>
-</span>     
-    
-    
+   
     <!-- VIEW CASE -->
     <div class="card mb-2 collapse show" id="case-card">
         <div class="card-body p-0" onDblClick="toggleCaseEdit()">
@@ -561,9 +555,24 @@
                     </div>
                 </div>                  
             </div>
-            <div class="card-footer text-footnote">
+    
+            <div class="stamp-container">    
+                <div class="stamp stamp-red-double" style="display: none" id="closedStamp">
+                    <span class="stamp-title">Closed</span>
+                    <span class="stamp-details" id="closedStampDetails"></span>
+                </div>     
+            </div>        
 
-                Case created on <span id="dateopened_cover"></span> by <span id="openedby_cover"></span>
+
+            <div class="card-footer text-footnote row">
+                <div class="col-lg">
+                    Case created on <span id="dateopened_cover"></span> by <span id="openedby_cover"></span>
+                </div>
+                <div class="col-lg hidden" id="case_closed_details">
+                    <b>Closed <span id='case_closed_date'></span> by <span id='case_closed_name'></span></b><br />
+                    <span id='case_closed_reason' class='title'></span><br />
+                    <span id='case_closed_comments'></span>
+                </div>
             </div>
         </div>
     </div>

@@ -200,8 +200,8 @@ class oct {
         $query .= "\r\n VALUES (NULL, :task_id, :orig_name, :file_name, :file_desc, :file_type, :file_size, '', :added_by, :date_added, '', '')";
         
         $results=$this->execute($query, $parameters);
-        
-        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+        $newId=$this->db->lastInsertId();
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results, "insertId"=>$newId);
     
         return($output);         
     }
@@ -291,16 +291,17 @@ class oct {
         
         //echo $county.$querybody;
         
-        $countresults=$this->fetchMany($county.$querybody, $parameters, 0, 10000000000, false);
+        $countresults=$this->fetchMany($county.$querybody, $parameters, 0, 1000000000, false);
         //$this->showArray($countresults); 
         $totalresponses=$countresults['output'][0]['total'];
+
         
-        if($totalresponses > 500) {
-            $last=$first+500;
-            $querybody .= " \nLIMIT 500";
-        }
+        //if($totalresponses > 500) {
+        //    $last=$first+500;
+        //    $querybody .= " \nLIMIT 500";
+        //}
         //echo "First: $first, Last: $last"; die();
-        $results=$this->fetchMany($query.$querybody, $parameters, $first, $last, false);
+        $results=$this->fetchMany($query.$querybody, $parameters, $first-1, $last-1, false);
         
         $output=array("results"=>$results['output'], "query"=>$query.$querybody, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
         //$this->showArray($output);

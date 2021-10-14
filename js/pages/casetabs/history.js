@@ -88,7 +88,7 @@ function loadHistory() {
                     case "8":
                         //Attachment deleted
                         if($('#cardbody_attachment'+historydata.old_value).length) {
-                            content+=$('#cardbody_attachment'+historydata.old_value).text();
+                            content+='Deleted file: '+$('#cardbody_attachment'+historydata.old_value).text();
                         } else {
                             content+='Deleted';
                         }
@@ -99,10 +99,11 @@ function loadHistory() {
                         break;
                     case "7":
                         //Attachment added
-                        if($('#cardbody_attachment'+historydata.new_value).length) {
-                            content+=$('#cardbody_attachment'+historydata.new_value).text();
+                        //console.log(historydata);  
+                        if($('#cardbody_attachment'+historydata.field_changed).length) {
+                            content+=$('#cardbody_attachment'+historydata.field_changed).text();
                         } else {
-                            content+='Since deleted ['+historydata.new_value+']';
+                            content+=historydata.new_value+' [since deleted]';
                         }
                         break;
                     case "14":

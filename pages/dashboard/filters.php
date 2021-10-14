@@ -7,6 +7,8 @@
     $QuserSelect=isset($_GET['userSelect']) ? $_GET['userSelect'] : $user_id;
     $QcaseGroupSelect=isset($_GET['caseGroupSelect']) ? $_GET['caseGroupSelect'] : null;
     $myCases=($QuserSelect==$user_id) ? "checked" : "";
+    
+    
 ?>
 
         <script src="js/pages/dashboard/filters.js"></script>
@@ -68,12 +70,12 @@
             </div>
         </div>
         <div class='collapse row' id='filterMore'>
-            <div class='form-group m-1 p-1 col-xl'>
+            <div class='form-group m-1 p-1 col-xl border rounded'>
                 <div class='form-group m-1'>
                     <div class="smaller">
                         <label for='openedAfterDate' class='mb-0'>Opened after </label>
                         <div class='calendar-div p-1 pointer border rounded float-right'>
-                            <input id='openedAfterDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                            <input id='openedAfterDate' class='datepicker' style='width: 66px; height: 19px;' type='text' value='01/01/2005' />
                         </div>
                         <div style='clear: both'></div>
                     </div>
@@ -82,19 +84,19 @@
                     <div class="smaller">
                         <label for='openedBeforeDate' class='mb-0'>Opened before </label>
                         <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
-                            <input id='openedBeforeDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                            <input id='openedBeforeDate' class='datepicker' style='width: 66px; height: 19px;' type='text' value='<?php echo date("d/m/Y", $todaystart) ?>' />
                         </div>
                         <div style='clear: both'></div>
                     </div>
                 </div>
             </div>
 
-            <div class='form-group m-1 p-1 col-xl'>
+            <div class='form-group m-1 p-1 col-xl border rounded'>
                 <div class='form-group m-1'>
                     <div class="smaller">
                         <label for='closedAfterDate' class='mb-0'>Closed after </label>
                         <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
-                            <input id='closedAfterDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                            <input id='closedAfterDate' class='datepicker' style='width: 66px; height: 19px;' type='text' value='01/01/2005' />
                         </div>
                         <div style='clear: both'></div>
                     </div>
@@ -103,7 +105,7 @@
                     <div class="smaller">
                         <label for='closedBeforeDate' class='mb-0'>Closed before</label>&nbsp;
                         <div class='calendar-div p-1 pointer border rounded pl-1 pr-1 float-right'>
-                            <input id='closedBeforeDate' class='datepicker' style='width: 66px' type='text' value='05/10/2021' />
+                            <input id='closedBeforeDate' class='datepicker' style='width: 66px; height: 19px;' type='text' value='<?php echo date("d/m/Y", $todaystart) ?>' />
                         </div>
                         <div style='clear: both'></div>
                     </div>

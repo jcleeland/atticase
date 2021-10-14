@@ -11,10 +11,10 @@ $(function() {
     });
 
     $('#statsChooser').change(function() {
-        console.log(globals);
-        console.log('STATS');
+        //console.log(globals);
+        //console.log('STATS');
     
-        console.log($(this).val());
+        //console.log($(this).val());
         var fn='load'+$(this).val();
         
         var choice=window[fn];
@@ -66,7 +66,7 @@ function loadCaseDates() {
             graph.push([result.status, parseInt(result.qty)]);
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googlePieChart('dashboardStatistics', 'My Case Status Overview', graph);
                             
         });
@@ -106,7 +106,7 @@ function loadCaseDepartments() {
             if(colorCount > 3) colorCount=0;    
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googleMultiBarChart('dashboardStatistics', 'My Case Departments', graph);
                             
         });
@@ -145,7 +145,7 @@ function loadCaseTypes() {
             if(colorCount > 3) colorCount=0;    
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googleMultiBarChart('dashboardStatistics', 'My Case Types', graph);
                             
         });
@@ -341,7 +341,7 @@ function loadAllCaseDates() {
             graph.push([result.status, parseInt(result.qty)]);
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googlePieChart('dashboardStatistics', 'Case Status Overview', graph);
                             
         });
@@ -381,7 +381,7 @@ function loadAllCaseDepartments() {
             if(colorCount > 3) colorCount=0;    
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googleMultiBarChart('dashboardStatistics', 'Case Departments', graph);
                             
         });
@@ -420,7 +420,7 @@ function loadAllCaseTypes() {
             if(colorCount > 3) colorCount=0;    
         })
         google.charts.setOnLoadCallback(function () {
-            console.log(graph);
+            //console.log(graph);
             googleMultiBarChart('dashboardStatistics', 'Case Types', graph);
                             
         });
@@ -526,7 +526,7 @@ function loadAllCaseStats() {
                         graph[tindex].push(null);
                         graph[tindex].push(null);
                     }
-                    console.log(stats.parameters[":title"]);
+                    //console.log(stats.parameters[":title"]);
                     if(stats.parameters[":title"]=="Open Cases") {
                         graph[tindex][1]=parseInt(stats.results[0]['total']);
                     } else if(stats.parameters[":title"]=="Closed Cases") {
@@ -551,7 +551,7 @@ function loadAllCaseStats() {
                                     //console.log(graph);                    
 
                                     $.each(graph, function(a,b) {
-                                        console.log(a+'-'+b);
+                                        //console.log(a+'-'+b);
                                         grapharray.push(b);
                                     })
                                     //var grapharray=Object.entries(graph);

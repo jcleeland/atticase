@@ -5,5 +5,6 @@
     <div class="float-right ml-0 mr-0 small pointer pagerbutton" id="<?php echo $pagername ?>start" title='last page' value='0'><img src='images/chevron-left.svg' /></div>
     <div class="float-right ml-1 mr-0 small pointer pagerbutton" id="<?php echo $pagername ?>first" title='first page' value=''><img src='images/start.svg' /></div>
     <div class="float-right mr-1 pl-1 pr-1 text-muted small rounded pagerlight" id="<?php echo $pagername ?>total"></div>
-    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight" id="<?php echo $pagername ?>qty" title="Quantity shown" value='0'></div>
+    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='' /></div>
+    <input type="hidden" id="<?php echo $pagername ?>count" value="" />        
 </div>

@@ -11,8 +11,27 @@ $(function() {
     })
     
     $('#closeCase').click(function() {
-        console.log('Closing case');
+        //console.log('Closing case');
         toggleCloseCase();
+    });
+    
+    $('#reopenCase').click(function() {
+        if (confirm('Are you sure you want to reopen this case?')) {
+            var caseId=$('#caseid').val();
+            var userId=$('#user_id').val();
+            
+            var newValues={};
+            newValues['is_closed']=0;
+            
+            $.when(caseUpdate(caseId, newValues)).done(function(output) {
+                
+                $.when(historyCreate(caseId, userId, 13, null, null, null)).done(function(hOutput) {
+                    loadCase();
+                    loadHistory();
+                });
+            })
+                
+        }
     })    
 
     $('.nav-link-tab').click(function () {
@@ -46,10 +65,10 @@ $(function() {
         });
         
         $.when(caseUpdate(caseId, newValues)).done(function(changes) {
-            console.log('Update completed');
-            console.log(changes);
-            console.log('Create History');
-            console.log('Case ID: '+caseId+', User ID: '+userId);
+            //console.log('Update completed');
+            //console.log(changes);
+            //console.log('Create History');
+            //console.log('Case ID: '+caseId+', User ID: '+userId);
             for (var key in changes) {
                 if(changes.hasOwnProperty(key)) {
                     historyCreate(caseId, userId, '0', 'Case Details: '+key, changes[key]["old"], changes[key]["new"]);
@@ -64,7 +83,7 @@ $(function() {
     $('#save-close-case-edits').click(function() {
         var caseId=$('#caseid').val();
         var userId=$('#userid').val();
-        console.log('Saving and closing');
+        //console.log('Saving and closing');
         //Gather all the values
         var newValues={};
         $('.updateCase').each(function(i, obj) {
@@ -82,9 +101,9 @@ $(function() {
         });
         
         $.when(caseUpdate(caseId, newValues)).done(function(changes) {
-            console.log(changes);
-            console.log('Create History');
-            console.log('Case ID: '+caseId+', User ID: '+userId);
+            //console.log(changes);
+            //console.log('Create History');
+            //console.log('Case ID: '+caseId+', User ID: '+userId);
             for (var key in changes) {
                 if(changes.hasOwnProperty(key)) {
                     historyCreate(caseId, userId, '0', 'Case Details: '+key, changes[key]["old"], changes[key]["new"]);
@@ -125,14 +144,24 @@ $(function() {
         newValues['closure_comment']=closeNotes;
         newValues['closed_by']=globals.user_id;
         newValues['is_closed']=1;
-        console.log(newValues);
+        //console.log(newValues);
         $.when(caseUpdate(caseId, newValues)).done(function(changes) {
             historyCreate(caseId, globals.user_id, '2', closeNotes, closeReason);
             loadCase();
+            loadHistory();
         })
     })
         
+    $('.nav-item').click(function() {
+        //Find the tab which has just been displayed and store it in the cookie against the case number
+        console.log($(this));
+        var status=getStatus();
+        console.log(status);
+        $(this).each(function(det) {
+            console.log(det);
+        })
         
+    })   
          
     
 });
@@ -141,11 +170,11 @@ function loadCase() {
     var today=new Date();
     
     var caseId=$('#caseid').val();
-    console.log('Reloading');
+    //console.log('Reloading');
     $.when(getCase(caseId)).done(function(caseDetails) {
-        console.log('Cases');
+        //console.log('Cases');
         casedata=caseDetails.results;
-        console.log(caseDetails);
+        //console.log(caseDetails);
         clearCaseForm();
         
         if(caseDetails.results.is_closed==1) {
@@ -153,7 +182,17 @@ function loadCase() {
             $('#closeCase').hide();
             $('#reopenCase').show();
             $('#closedStamp').show();
-            $('#closedStampDetails').html('Closed '+timestamp2date(caseDetails.results.date_closed)+' | '+caseDetails.results.closedby_real_name);
+            //$('#closedStampDetails').html('<br /><b>'+caseDetails.results.resolution_name+'</b><br />Closed '+timestamp2date(caseDetails.results.date_closed)+' | '+caseDetails.results.closedby_real_name);
+            $('#case_closed_details').show();
+            $('#case_closed_date').html(timestamp2date(caseDetails.results.date_closed));
+            $('#case_closed_name').html(caseDetails.results.closedby_real_name);
+            $('#case_closed_comments').html(caseDetails.results.closure_comment);
+            $('#case_closed_reason').html(caseDetails.results.resolution_name);
+        } else {
+            $('#closeCase').show();
+            $('#reopenCase').hide();
+            $('#closedStamp').hide();
+            $('#case_closed_details').hide();
         }
         
         var thisDateDue=timestamp2date(casedata.date_due);
@@ -201,10 +240,10 @@ function loadCase() {
         //Now insert the custom fields
         if(typeof casedata.customlist != "undefined") {
             $.each(casedata.customlist, function(i, name) {
-                console.log(name);
+                //console.log(name);
                 var type=$('#'+name+'_cover').prop('nodeName');
-                console.log($('#'+name+'_cover').prop('nodeName'));
-                console.log(casedata[name]);
+                //console.log($('#'+name+'_cover').prop('nodeName'));
+                //console.log(casedata[name]);
                 if(type=="INPUT") {
                     if($('#'+name+'_cover').is(':checkbox')) {
                         if(casedata[name]!="0") {

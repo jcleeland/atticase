@@ -80,6 +80,8 @@
     //Some useful values for each page
     $todaystart=mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     $todayend=mktime(23,59,59, date("m"), date("d"), date("Y"));
+    $monthstart=mktime(0,0,0, date("m"), 1, date("Y"));
+    $yearstart=mktime(0,0,0, 1, 1, date("Y"));
     
 ?>
 <html>

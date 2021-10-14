@@ -10,14 +10,18 @@ $(function() {
     var settings=getSettings();
     //console.log('Settings');
     //console.log(settings);
+    
+    $('#caselistqty').change(function() {
+        loadCaselist();
+    })
+    
 });
 
-function loadCaselist() {
+function loadCaselist(reset) {
     var today=new Date();
     
     var parameters={};
     var conditions='';
-    //parameters[':isclosed']=1;
     
     var conditions='1=1';
     
@@ -57,13 +61,41 @@ function loadCaselist() {
     }
  
  
+    //MANAGE THE PAGER
+    var pagerSettings=pagerNumberSettings('caselist');
+    //console.log('Pager Settings');
+    //console.log(pagerSettings);
+    if(reset && reset == 1) {
+        //IN A NEW SEARCH, RESET THE PAGER VALUES
+        console.log('Resetting pager values');
+        var qty=10;
+        var start=1;
+        var end=10;
+    } else {
+        //IN AN OLD SEARCH, KEEP THE PAGER VALUES
+        //console.log('Reusing old pager values');
+        //console.log($('#caselistqty').val());
+        if(parseInt($('#caselistqty').val())==0 || $('#caselistqty').val()=="") {
+            var qty=parseInt(pagerSettings.qty);
+            if(isNaN(qty)) {
+                qty=10;
+            }       
+            var start=pagerSettings.start;
+            if(isNaN(start)) {
+                start=0;
+            }
+            var end=pagerSettings.start+qty-1;
+            //console.log('Reusing old pager settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        } else {
+            var qty=parseInt($('#caselistqty').val());
+            var start=parseInt($('#caseliststart').attr("value"));
+            var end=qty+start-1;
+            //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        }
+        
+    }
  
-    //console.log(conditions);
-    
-    var qty=9;
-    var start=parseInt($('#caseliststart').val()) || 0;
-    var end=parseInt($('#caselistend').val()) || qty;
-    //console.log('END: '+end);
+ 
     $('#caselist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
@@ -73,6 +105,7 @@ function loadCaselist() {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");
         } else {
+            //console.log('Updating pager with '+start+', '+end+', '+cases.total);
             pagerNumbers('caselist', start, end, cases.total);
             $('#caselist').html('');
             $.each(cases.results, function(i, casedata) {
@@ -91,23 +124,76 @@ function loadCaselist() {
 }
 
 function caselistend_pager() {
-    var start=parseInt($('#caseliststart').val()) || 0;
-    var end=parseInt($('#caselistend').val()) || 9;
-    var qty=end-start+1;
-    //console.log('Quantity: '+qty);
-    $('#caseliststart').val((start+qty));
-    $('#caselistend').val((end+qty));
+    var pagerSettings=pagerNumberSettings('caselist');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start+qty;
+    if(start > parseInt($('#caselistcount').val())) {
+        start=start-qty;
+    }
+
+    var end=start+qty-1;
+    //console.log('CASELISTEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#caseliststart').attr("value",(start));
+    $('#caselistend').attr("value", (end));
     
+    
+    savePagerSettings('caselist', start, end, qty);
     loadCaselist();
 }
 
 function caseliststart_pager() {
-    var start=parseInt($('#caseliststart').val()) || 0;
-    var end=parseInt($('#caselistend').val()) || 9;
-    var qty=end-start+1;
-    $('#caseliststart').val((start-qty));
-    $('#caselistend').val((end-qty));
+    var pagerSettings=pagerNumberSettings('caselist');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start-qty;
+    if(start < 1) {
+        start=1;
+    }
+    var end=start+qty-1;
     
+    
+    //console.log('CASELISTEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#caseliststart').attr("value",(start));
+    $('#caselistend').attr("value", (end));
+    
+    
+    savePagerSettings('caselist', start, end, qty);
     loadCaselist();
+    
 }
+
+function caselistfirst_pager() {
+    var pagerSettings=pagerNumberSettings('caselist');
+    var start=1;
+    var qty=parseInt(pagerSettings.qty);
+    var end=start+qty-1;
+    $('#caseliststart').attr("value",(start));
+    $('#caselistend').attr("value", (end));
+    
+    
+    savePagerSettings('caselist', start, end, qty);
+    loadCaselist();    
+}
+
+function caselistlast_pager() {
+    var pagerSettings=pagerNumberSettings('caselist');
+    var qty=parseInt(pagerSettings.qty);
+    var pages=parseInt($('#caselistcount').val())/qty;
+    pages=parseInt(pages);
+    var start=pages*qty;
+    var end=start+qty-1;
+    $('#caseliststart').attr("value",(start));
+    $('#caselistend').attr("value", (end));
+    
+    
+    savePagerSettings('caselist', start, end, qty);
+    loadCaselist();    
+}
+
+
 

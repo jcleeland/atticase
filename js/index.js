@@ -83,7 +83,7 @@ function deleteTabEdit(method, id) {
                     if(results.count == 0) {
                         alert('Unable to delete attachment. \r\n\r\nError given: '+results.results);
                     } else {
-                        historyCreate($('#caseid').val(), globals.user_id, "8", id, oldDescription, null);
+                        historyCreate($('#caseid').val(), globals.user_id, "8", id, null, oldDescription);
                         loadAttachments();
                         loadHistory();
                     }
@@ -675,22 +675,79 @@ function getInitials(string) {
     return initials;
 }
 
+/**
+* Updates the pager records for the specified pager
+* 
+* @param pagername
+* @param {Number} start - the first record shown
+* @param {Number} end - the last record shown
+* @param total - total shown
+*/
 function pagerNumbers(pagername, start, end, total) {
-            var displayEnd=end+1;
-            //console.log(start+'->'+end)+1;
-            var qty=parseInt(end)-parseInt(start)+1;
-            var start=start+1;
-            if(displayEnd > parseInt(total)) displayEnd=parseInt(total)-1;
-            //console.log('Results found - '+displayEnd);
-            if(total==0) {
-                qty=0;
-                start=0;
-                end=0;
-            }
-            
-            $('#'+pagername+'position').html((start)+'-'+(displayEnd+1));
-            $('#'+pagername+'total').html('of '+total+' cases');  
-            $('#'+pagername+'qty').html('Showing <span" id="'+pagername+'Quantity" value="'+qty+'" />'+qty+'</span>');  
+        //console.log('Pager numbers function');
+        var displayEnd=end;
+        var displayStart=start;
+        //console.log(start+'->'+end)+1;
+        var qty=parseInt(end)-parseInt(start)+1;
+        //console.log('Calculated quantity as '+qty+' (from '+end+' less '+start+')');
+        
+        //var start=start+1;
+        if(displayEnd > parseInt(total)) displayEnd=parseInt(total);
+        
+        //console.log('Results found - '+displayEnd);
+        if(total==0) {
+            qty=0;
+            start=0;
+            end=0;
+        }
+        
+        $('#'+pagername+'start').attr("value", start);
+        $('#'+pagername+'end').attr("value", end);
+        $('#'+pagername+'position').html((displayStart)+'-'+(displayEnd));
+        $('#'+pagername+'total').html('of '+total+' cases');  
+        $('#'+pagername+'count').val(total);
+        //$('#'+pagername+'qty').html('Showing <span" id="'+pagername+'Quantity" value="'+qty+'" />'+qty+'</span>');  
+        $('#'+pagername+'qty').val(qty);
+        
+        //Save the pager details to the cookie
+        savePagerSettings(pagername, start, end, qty);
+}
+
+function savePagerSettings(pagername, start, end, qty) {
+    var status=getStatus();
+    var queryString='';
+    //console.log(status);
+    if(status.pagers == undefined) {
+        status['pagers']={};
+    }
+    if(status.pagers[pagername]==undefined) {
+        status.pagers[pagername]={};
+    }    
+    status.pagers[pagername]['start']=start;
+    status.pagers[pagername]['end']=end;
+    status.pagers[pagername]['qty']=qty;
+    //console.log(status);
+    setStatus(status);    
+}
+
+function pagerNumberSettings(pagername) {
+    var status=getStatus();
+    if(status.pagers!=undefined) {
+        if(status.pagers[pagername]!=undefined) {
+            output=status.pagers[pagername];
+        } else {
+            output={};
+            output['start']=1;
+            output['end']=10;
+            output['qty']=9;
+        }
+    } else {
+            output={};
+            output['start']=0;
+            output['end']=9;
+            output['qty']=10;
+    }
+    return output;
 }
 
 function showMessage(title, message) {

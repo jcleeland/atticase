@@ -12,9 +12,13 @@ $(function() {
             }
         })
     })
+    
+    $('#todoqty').change(function() {
+        loadTodo();
+    })    
 }) 
 
-function loadTodo() {
+function loadTodo(reset) {
     var today=new Date();
     
     var parameters={};
@@ -39,6 +43,41 @@ function loadTodo() {
     }
     
     //console.log('Doing cases, '+start+' to '+end);
+    //MANAGE THE PAGER
+    var pagerSettings=pagerNumberSettings('todo');
+    //console.log('Pager Settings');
+    //console.log(pagerSettings);
+    if(reset && reset == 1) {
+        //IN A NEW SEARCH, RESET THE PAGER VALUES
+        //console.log('Resetting pager values');
+        var qty=10;
+        var start=1;
+        var end=10;
+    } else {
+        //IN AN OLD SEARCH, KEEP THE PAGER VALUES
+        //console.log('Reusing old pager values');
+        //console.log($('#todoqty').val());
+        if(parseInt($('#todoqty').val())==0 || $('#todoqty').val()=="") {
+            var qty=parseInt(pagerSettings.qty);
+            if(isNaN(qty)) {
+                qty=10;
+            }       
+            var start=pagerSettings.start;
+            if(isNaN(start)) {
+                start=0;
+            }
+            var end=pagerSettings.start+qty-1;
+            //console.log('Reusing old pager settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        } else {
+            var qty=parseInt($('#todoqty').val());
+            var start=parseInt($('#todostart').attr("value"));
+            var end=qty+start-1;
+            //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        }
+        
+    }    
+    
+    
     
     $('#todolist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
@@ -86,22 +125,73 @@ function loadTodo() {
 }
 
 function todoend_pager() {
-    var start=parseInt($('#todostart').val()) || 0;
-    var end=parseInt($('#todoend').val()) || 9;
-    var qty=end-start+1;
-    //console.log('Quantity: '+qty);
-    $('#todostart').val((start+qty));
-    $('#todoend').val((end+qty));
+    var pagerSettings=pagerNumberSettings('todo');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start+qty;
+    if(start > parseInt($('#todocount').val())) {
+        start=start-qty;
+    }
+
+    var end=start+qty-1;
+    //console.log('TODOEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#todostart').attr("value",(start));
+    $('#todoend').attr("value", (end));
     
-    loadTodo();
+    
+    savePagerSettings('todo', start, end, qty);
+    loadTodo();    
+
 }
 
 function todostart_pager() {
-    var start=parseInt($('#todostart').val()) || 0;
-    var end=parseInt($('#todoend').val()) || 9;
-    var qty=end-start+1;
-    $('#todostart').val((start-qty));
-    $('#todoend').val((end-qty));
+    var pagerSettings=pagerNumberSettings('todo');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start-qty;
+    if(start < 1) {
+        start=1;
+    }
+    var end=start+qty-1;
     
+    
+    //console.log('CASELISTEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#todostart').attr("value",(start));
+    $('#todoend').attr("value", (end));
+    
+    
+    savePagerSettings('todo', start, end, qty);
     loadTodo();
+}
+
+function todofirst_pager() {
+    var pagerSettings=pagerNumberSettings('todo');
+    var start=1;
+    var qty=parseInt(pagerSettings.qty);
+    var end=start+qty-1;
+    $('#todostart').attr("value",(start));
+    $('#todoend').attr("value", (end));
+    
+    
+    savePagerSettings('todo', start, end, qty);
+    loadTodo();    
+}
+
+function todolast_pager() {
+    var pagerSettings=pagerNumberSettings('todo');
+    var qty=parseInt(pagerSettings.qty);
+    var pages=parseInt($('#todocount').val())/qty;
+    pages=parseInt(pages);
+    var start=pages*qty;
+    var end=start+qty-1;
+    $('#todostart').attr("value",(start));
+    $('#todoend').attr("value", (end));
+    
+    
+    savePagerSettings('todo', start, end, qty);
+    loadTodo();    
 }

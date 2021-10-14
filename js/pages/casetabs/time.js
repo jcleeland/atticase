@@ -44,7 +44,7 @@ function loadTimes() {
             $('#timelist').html('');
             $('#timecount').html(times.total);
             $.each(times.results, function(i, timesdata) {
-                console.log(timesdata);
+                //console.log(timesdata);
                 var timeTaken=minutes2hours(timesdata.time);
                 totalTime+=parseInt(timesdata.time);
                 if(timesdata.invoiced==1) {

@@ -45,7 +45,7 @@ $(function() {
         $("#userSelect").val(globals.user_id);
         myCaseStatus();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }        
     })
     
@@ -61,42 +61,42 @@ $(function() {
         myCaseStatus();
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     })
     
     $('#caseTypeSelect').change(function() {
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     })
     
     $('#productSelect').change(function() {
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     }) 
     
     $('#departmentSelect').change(function() {
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     })
     
     $('#statusSelect').change(function() {
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     })
     
     $('#caseGroupSelect').change(function() {
         saveFilterSettings();
         if($('#caselist').length) {
-            loadCaselist();
+            loadCaselist(1);
         }
     })
 })
@@ -123,6 +123,6 @@ function saveFilterSettings() {
         status.filter[this.id]=$(this).val();
         
     })
-    //console.log(status);
+    console.log(status);
     setStatus(status);    
 }

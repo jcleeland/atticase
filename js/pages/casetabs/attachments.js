@@ -7,6 +7,8 @@ $(function() {
     
     $("#attachmentForm").on('submit',(function(e) {
         e.preventDefault();
+        var caseId=$('#caseid').val();
+        var userId=$('#user_id').val();
         var commentText=$('#attachmentFileDesc').val();
         $.ajax({
             url: "ajax.php?method=attachmentUpload",
@@ -23,15 +25,17 @@ $(function() {
             success: function(data)
             {
                 console.log('Success');
-                console.log(data);
+                var updated=JSON.parse(data);
+                console.log(JSON.parse(data));
                 
                 $('#attachmentFile').val('');
                 $('#attachmentFileDesc').val('');
-                historyCreate(caseId, userId, '7', null, null, commentText);            
+                historyCreate(caseId, userId, '7', updated.insertId, null, commentText);            
                 loadAttachments();
                 loadHistory();
-                $('#attachmentFileDesc').reset();
-                $('#attachmentFile').reset();
+                $('#attachmentFileDesc').trigger("reset");
+                $('#attachmentFile').trigger("reset");
+                $('#newAttachmentForm').toggle();
             },
             error: function(e) 
             {

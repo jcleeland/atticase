@@ -502,36 +502,46 @@ a.fa-userlink::after {
     float: right;
 }
 
+.stamp-container {
+    width: 100%;
+    text-align: center;    
+}
+
 .stamp {
     transform: rotate(25deg);
     text-align: center;
     color: #555
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
     border: 0.25rem solid #555;
     display: inline-block;
     position: absolute;
-    z-index: 1000;
-    left: 40%;
-    top: 30%;
-    padding: 0.25rem 1rem;
+    width: 300px;
+    margin-left: -150px;
+    margin-top: -50px;
+    padding: 0.25rem 1rem 0rem 1rem;
     text-transform: uppercase;
     border-radius: 1rem;
     font-family: 'Courier';
     -webkit-mask-image: url('../images/grunge.png');
     -webkit-mask-size: 944px 604px;    
     mix-blend-mode: multiply;
+    z-index: 9999;
 }
 
 .stamp-red-double {
     color: #D23;
     border: 0.5rem double #D23;
-    transform: rotate(15deg);
+    transform: rotate(-5deg);
     -webkit-mask-position: 2re 3rem;
     font-size: 3rem;
-    z-index: 9999;
+}
+
+.stamp-title {
+    line-height: 85%;    
 }
 
 .stamp-details {
     font-size: 8pt;
+    margin-top: 0;
 }

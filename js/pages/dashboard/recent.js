@@ -5,6 +5,7 @@ $(function() {
         //console.log($(this).val());
         var search=$(this).val();
         $('.recentitem').each(function() {
+            //console.log($(this));
             if($(this).html().toUpperCase().includes(search.toUpperCase())) {
                 $(this).show();
             } else {
@@ -12,9 +13,13 @@ $(function() {
             }
         })
     })
+    
+    $('#recentqty').change(function() {
+        loadRecent();
+    })       
 }) 
 
-function loadRecent() {
+function loadRecent(reset) {
     var today=new Date();
     
     var joins={};
@@ -46,6 +51,43 @@ function loadRecent() {
     }
     //console.log(joins);
     //console.log('Doing cases, '+start+' to '+end);
+    
+    
+    //MANAGE THE PAGER
+    var pagerSettings=pagerNumberSettings('recent');
+    //console.log('Pager Settings');
+    //console.log(pagerSettings);
+    if(reset && reset == 1) {
+        //IN A NEW SEARCH, RESET THE PAGER VALUES
+        //console.log('Resetting pager values');
+        var qty=10;
+        var start=1;
+        var end=10;
+    } else {
+        //IN AN OLD SEARCH, KEEP THE PAGER VALUES
+        //console.log('Reusing old pager values');
+        //console.log($('#recentqty').val());
+        if(parseInt($('#recentqty').val())==0 || $('#recentqty').val()=="") {
+            var qty=parseInt(pagerSettings.qty);
+            if(isNaN(qty)) {
+                qty=10;
+            }       
+            var start=pagerSettings.start;
+            if(isNaN(start)) {
+                start=0;
+            }
+            var end=pagerSettings.start+qty-1;
+            //console.log('Reusing old pager settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        } else {
+            var qty=parseInt($('#recentqty').val());
+            var start=parseInt($('#recentstart').attr("value"));
+            var end=qty+start-1;
+            //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
+        }
+        
+    }        
+    
+    
     
     $('#recentlist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
@@ -87,29 +129,79 @@ function loadRecent() {
         toggleDatepickers();        
     }).fail(function(output) {
         //console.log(output);
-        console.log('Nothing found');
+        //console.log('Nothing found');
         $('#recentlist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
         pagerNumbers('recent', 0, 0, 0);
     });    
 }
 
 function recentend_pager() {
-    var start=parseInt($('#recentstart').val()) || 0;
-    var end=parseInt($('#recentend').val()) || 9;
-    var qty=end-start+1;
-    //console.log('Quantity: '+qty);
-    $('#recentstart').val((start+qty));
-    $('#recentend').val((end+qty));
+    var pagerSettings=pagerNumberSettings('recent');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start+qty;
+    if(start > parseInt($('#recentcount').val())) {
+        start=start-qty;
+    }
+
+    var end=start+qty-1;
+    //console.log('RECENTEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#recentstart').attr("value",(start));
+    $('#recentend').attr("value", (end));
     
+    
+    savePagerSettings('recent', start, end, qty);
     loadRecent();
 }
 
 function recentstart_pager() {
-    var start=parseInt($('#recentstart').val()) || 0;
-    var end=parseInt($('#recentend').val()) || 9;
-    var qty=end-start+1;
-    $('#recentstart').val((start-qty));
-    $('#recentend').val((end-qty));
+    var pagerSettings=pagerNumberSettings('recent');
+    //var start=parseInt($('#caseliststart').val()) || 0;
+    var start=parseInt(pagerSettings.start);
+    //var qty=parseInt($('#caselistqty').val()) || 10;
+    var qty=parseInt(pagerSettings.qty);
+    start=start-qty;
+    if(start < 1) {
+        start=1;
+    }
+    var end=start+qty-1;
     
+    
+    //console.log('RECENTSTART FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
+    $('#recentend').attr("value", (end));
+    $('#recentstart').attr("value",(start));
+    
+    
+    savePagerSettings('recent', start, end, qty);
     loadRecent();
+}
+
+function recentfirst_pager() {
+    var pagerSettings=pagerNumberSettings('recent');
+    var start=1;
+    var qty=parseInt(pagerSettings.qty);
+    var end=start+qty-1;
+    $('#recentstart').attr("value",(start));
+    $('#recentend').attr("value", (end));
+    
+    
+    savePagerSettings('recent', start, end, qty);
+    loadRecent();    
+}
+
+function recentlast_pager() {
+    var pagerSettings=pagerNumberSettings('recent');
+    var qty=parseInt(pagerSettings.qty);
+    var pages=parseInt($('#recentcount').val())/qty;
+    pages=parseInt(pages);
+    var start=pages*qty;
+    var end=start+qty-1;
+    $('#recentstart').attr("value",(start));
+    $('#recentend').attr("value", (end));
+    
+    
+    savePagerSettings('recent', start, end, qty);
+    loadRecent();    
 }
