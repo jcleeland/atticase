@@ -13,6 +13,56 @@ class oct {
     var $db;
     var $externalDb=true;
     
+    var $caseitems=array(
+        "date_due"=>array(
+            "Title"=>"Review date",
+            "Sort"=>array(
+                "DESC"=>"Oldest first",
+                "ASC"=>"Most recent first"
+            )
+        ),
+        "date_closed"=>array(
+            "Title"=>"Date closed",
+            "Sort"=>array(
+                "DESC"=>"Oldest first",
+                "ASC"=>"Most recent first"
+            )
+        ),
+        "item_summary"=>array(
+            "Title"=>"Summary",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse Alphabetically"
+            ),
+        ),
+        "name"=>array(
+            "Title"=>"Client",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse alphabetically"
+            )
+        ),
+        "assigned_to"=>array(
+            "Title"=>"Officer",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse alphabetically"
+            )
+        ),
+        "category_name"=>array(
+            "Title"=>"Department",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse alphabetically"
+            )
+        ),        
+    );
+    
+    var $displayitems=array(
+    
+    );
+    
+    
     function connect() {
         $dsn=$this->dbtype.":host=".$this->dbhost.";dbname=".$this->dbname.";charset=UTF8";
         $options = [

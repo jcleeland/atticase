@@ -152,14 +152,14 @@ $(function() {
         })
     })
         
-    $('.nav-item').click(function() {
+    $('.nav-link-tab').click(function() {
         //Find the tab which has just been displayed and store it in the cookie against the case number
-        console.log($(this));
         var status=getStatus();
-        console.log(status);
-        $(this).each(function(det) {
-            console.log(det);
-        })
+        console.log($(this).attr("href"));
+        var caseId=$('#caseid').val();
+        var lasttab=$(this).attr("href");
+        var timestamp=parseInt(Date.now()/1000);
+        saveCaseView(caseId, timestamp, lasttab);
         
     })   
          
@@ -282,7 +282,16 @@ function loadCase() {
             
     }).then(function() {
         toggleCaseCards();
-        toggleDatepickers();        
+        toggleDatepickers(); 
+        var status=getStatus();
+        if(typeof status.caseviews[caseId] !== "undefined") {
+            //Get the last tab loaded & select it
+            if(typeof status.caseviews[caseId]['lasttab'] !== "undefined") {
+                var link=$('a[href="'+status.caseviews[caseId]['lasttab']+'"]');
+                link.trigger('click');
+            }
+
+        }
     }).fail(function() {
         console.log('Nothing found');
         $('#todolist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");

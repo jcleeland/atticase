@@ -657,6 +657,58 @@ function timestamp2date(timestamp, format) {
     
 }
 
+function countProperties(obj) {
+    var count=0;
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+function saveCaseView(caseId, timestamp, lasttab) {
+    var status=getStatus();
+    console.log(status);
+    var queryString='';
+    if(status.caseviews == undefined) {
+        status['caseviews']={};
+    }
+    if(status.caseviews[caseId]==undefined) {
+        status.caseviews[caseId]={};
+    }
+    status.caseviews[caseId]['timestamp']=timestamp;
+    status.caseviews[caseId]['lasttab']=lasttab;
+    status.caseviews[caseId]['caseid']=caseId;
+    //console.log(status);
+    //status.caseviews={};
+    //count how many statuses there are and trim if there are more than 25
+    var count=countProperties(status.caseviews);
+    if(count > 25) {
+        //Trim oldest items
+        var sortable=[];
+        for (var timestamp in status.caseviews) {
+            sortable.push(status.caseviews[timestamp]);
+        }
+        sortable.sort(function(a, b) {
+            return a[1] - b[1];
+        })
+        
+        status.caseviews={}; //Clear the object
+        
+        //Iterate through sortable and only leave the first 50
+        $.each(sortable, function(i, me) {
+            if(i < 25) {
+                status.caseviews[me.caseid]=me;
+            }
+        })       
+    }
+    
+    setStatus(status);
+}
+
+
+
 function date2timestamp(strDate) {
     myDate=strDate.split("/");
     strDate=new Date(parseInt(myDate[2], 10), parseInt(myDate[1], 10) - 1 , parseInt(myDate[0]), 10).getTime();
@@ -673,6 +725,106 @@ function getInitials(string) {
     var matches = string.match(/\b(\w)/g);
     var initials=matches.join('');
     return initials;
+}
+
+function savePagerOrder(pagerName, orderField, orderMethod) {
+    var status = getStatus();
+    //console.log(status);
+    
+    if(status.orders==undefined) {
+        status['orders']={};
+    }
+    
+    if(status.orders[pagerName]==undefined) {
+        status.orders[pagerName]={};
+    }
+    status.orders[pagerName][orderField]=orderMethod;
+    //status.orders[pagerName]['method']=orderMethod;
+    
+    setStatus(status);
+}
+
+function clearPagerOrder(pagerName, orderField) {
+    var status=getStatus();
+    if(status.orders[pagerName]==undefined) {
+        //Nothing to do here
+    } else {
+        if(!orderField) {
+            delete status.orders[pagerName];
+            $('#pager_name_'+pagerName).find('.fieldcheckmark').remove();
+            $('#pager_name_'+pagerName).find('.methodcheckmark').remove();
+        } else {
+            delete status.orders[pagerName][orderField];
+        }
+    }
+    setStatus(status);
+}
+
+function loadPagerOrder(pagerName) {
+    var status=getStatus();
+    console.log(status);
+    
+    if(status.orders==undefined) {
+        status['orders']={};
+    }
+    
+    if(status.orders[pagerName]!==undefined) {
+        //status.orders[pagerName]={};
+        const orders=status.orders[pagerName];
+        //console.log('There ARE order settings for '+pagerName);
+        for(const key in orders) {
+            //console.log(`${key}: ${orders[key]}`);
+            addPagerOrder(pagerName, key, orders[key]);
+        }
+    } else {
+        //console.log('No order settings for '+pagerName);
+    }   
+}
+
+function addPagerOrder(pagerName, orderField, orderMethod) {
+    console.log('Adding order setting to '+pagerName+' for '+orderField+' by '+orderMethod);
+    //$('#'+pagerName+'_order').append('<div class="border rounded float-left smaller mt-1">'+orderField+'</div>');
+    //clearPagerOrder(pagerName, 'date_closed');
+    //Tick the item selected
+    var parentItem=pagerName+'_order_field_'+orderField;
+    var childItem=pagerName+'_order_field_'+orderField+'_order_method_'+orderMethod;
+    
+    //First check if the parent has been selected already, because if it has, we need to unselect the child options
+    if($('#'+parentItem).hasClass('fieldchecked')) {
+        //console.log('This item already has an order set on it');
+        if($('#'+childItem).hasClass('methodchecked')) {
+            //console.log('This item already has an order method set on it');
+            //IN THIS CASE - REMOVE THE ORDER
+            $('#'+childItem).find('.methodcheckmark').remove();
+            $('#'+childItem).removeClass('methodchecked');
+            $('#'+parentItem).find('.fieldcheckmark').remove();
+            $('#'+parentItem).removeClass('fieldchecked');
+            clearPagerOrder(pagerName, orderField);
+            
+        } else {
+            //IN THIS CASE - WE ARE CHANGING THE ORDER METHOD
+            $('#'+parentItem).find('.methodcheckmark').remove();
+            $('#'+parentItem).find('.methodchecked').removeClass('methodchecked');
+            $('#'+childItem).prepend('<img src="images/checkmark.svg" width="8px" class="mb-1 mr-1 methodcheckmark" />');
+            $('#'+childItem).addClass('methodchecked');
+            savePagerOrder(pagerName, orderField, orderMethod);
+                        
+        }
+    } else {
+        $('#'+parentItem).prepend('<img src="images/checkmark.svg" width="10px" class="mb-1 fieldcheckmark" />');
+        $('#'+parentItem).addClass('fieldchecked');
+        //console.log('Ticking item in '+childItem);
+        $('#'+childItem).prepend('<img src="images/checkmark.svg" width="8px" class="mb-1 mr-1 methodcheckmark" />');
+        $('#'+childItem).addClass('methodchecked');  
+        
+        savePagerOrder(pagerName, orderField, orderMethod);      
+    }
+    
+    
+}
+
+function removePagerOrder(pagerName, orderField, orderMethod) {
+    
 }
 
 /**
@@ -759,7 +911,6 @@ function showMessage(title, message) {
 function showCase(caseId) {
     window.location.href = "index.php?page=case&case=" + caseId;    
 }
-
 
 function insertCaseCard(parentDiv, uniqueId, casedata) {
     //console.log('Inserting Case Card');
