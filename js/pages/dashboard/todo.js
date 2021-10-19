@@ -30,25 +30,26 @@ function loadTodo(reset) {
     
     var order='date_due ASC';
     var status=getStatus();
-    if(status.orders.todo !== undefined) {
-        const orders=status.orders['todo'];
-        var counter=0;
-        for (const key in orders) {
-            if(counter==0) {
-                order='';
+    if(status.orders != undefined) {
+        if(status.orders.todo !== undefined) {
+            const orders=status.orders['todo'];
+            var counter=0;
+            for (const key in orders) {
+                if(counter==0) {
+                    order='';
+                }
+                //console.log(`${key}: ${orders[key]}`);
+                if(counter > 0) {
+                    order+=', ';
+                }
+                order+=key+' '+orders[key]+'';
+                counter++;
             }
-            //console.log(`${key}: ${orders[key]}`);
-            if(counter > 0) {
-                order+=', ';
-            }
-            order+=key+' '+orders[key]+'';
-            counter++;
-        }
-        //console.log('ORDERS:');
-        //console.log(orders); 
-        //console.log(order);       
-    }    
-    
+            //console.log('ORDERS:');
+            //console.log(orders); 
+            //console.log(order);       
+        }    
+    }
     
     var start=parseInt($('#todostart').val()) || 0;
     var end=parseInt($('#todoend').val()) || 9;

@@ -38,26 +38,27 @@ function loadRecent(reset) {
     
     var order='event_date DESC LIMIT 100';
     var status=getStatus();
-    if(status.orders.recent !== undefined) {
-        const orders=status.orders['recent'];
-        var counter=0;
-        for (const key in orders) {
-            if(counter==0) {
-                order='';
+    if(status.orders != undefined) {
+        if(status.orders.recent !== undefined) {
+            const orders=status.orders['recent'];
+            var counter=0;
+            for (const key in orders) {
+                if(counter==0) {
+                    order='';
+                }
+                //console.log(`${key}: ${orders[key]}`);
+                if(counter > 0) {
+                    order+=', ';
+                }
+                order+=key+' '+orders[key]+'';
+                counter++;
             }
-            //console.log(`${key}: ${orders[key]}`);
-            if(counter > 0) {
-                order+=', ';
-            }
-            order+=key+' '+orders[key]+'';
-            counter++;
-        }
-        order+=' LIMIT 100';
-        //console.log('ORDERS:');
-        //console.log(orders); 
-        //console.log(order);       
-    }    
-    
+            order+=' LIMIT 100';
+            //console.log('ORDERS:');
+            //console.log(orders); 
+            //console.log(order);       
+        }    
+    }
     var start=parseInt($('#recentstart').val()) || 0;
     var end=parseInt($('#recentend').val()) || 9;
     
