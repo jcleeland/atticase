@@ -556,6 +556,18 @@ a.fa-userlink::after {
     z-index: 9999;
 }
 
+.stamp-tiny {
+    font-size: 0.7rem !important;
+    width: 50px !important;
+    margin-left: 50px !important;
+    margin-top: -52px !important;
+    border: 0.3rem double #D23 !important;
+    padding: 0.1rem 0.1rem 0rem 0.1rem !important;
+    border-radius: 0.75rem !important;
+    width: 75px !important;
+    transform: rotate(-10deg) !important;
+}
+
 .stamp-red-double {
     color: #D23;
     border: 0.5rem double #D23;

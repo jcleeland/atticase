@@ -11,7 +11,7 @@ $(document).ready(function(){
     e.preventDefault();
   });
   
-  $('#clearAllOrders').click(function() {
+  $('.clearAllOrders').click(function() {
       clearPagerOrder('<?php echo $pagername ?>');
       loadPagerOrder('<?php echo $pagername ?>');
       var functionname='load<?php echo ucfirst($pagername) ?>';
@@ -30,7 +30,7 @@ $(document).ready(function(){
     <div class="float-right ml-0 mr-0 small pointer pagerbutton" id="<?php echo $pagername ?>start" title='last page' value='0'><img src='images/chevron-left.svg' /></div>
     <div class="float-right ml-1 mr-0 small pointer pagerbutton" id="<?php echo $pagername ?>first" title='first page' value=''><img src='images/start.svg' /></div>
     <div class="float-right mr-1 pl-1 pr-1 text-muted small rounded pagerlight" id="<?php echo $pagername ?>total"></div>
-    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='' /></div>
+    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='10' /></div>
     
     <div class="float-left ml-1 pl-1 pr-0 text-muted smaller pagerlight">
     
@@ -53,7 +53,7 @@ $(document).ready(function(){
                 }
                 ?>
                 <li class="small p-1 m-1">
-                    <span class="pointer" id="clearAllOrders" >Clear all</span>
+                    <span class="pointer clearAllOrders" id="<?php echo $pagername ?>-clearAllOrders" >Clear all</span>
                 </li>
             </ul>
         </div>        

@@ -59,6 +59,10 @@ $(function() {
     
 })
 
+function gotoCase(caseId) {
+    window.location.href="index.php?page=case&case="+caseId;        
+}
+
 function deleteTabEdit(method, id) {
     console.log('Deleting '+id+' using '+method);
     confirmMessage="Are you sure you want to delete this entry?";
@@ -918,6 +922,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     //console.log('Inserting Case Card');
     //console.log(casedata);
     var thisDateDue=timestamp2date(casedata.date_due);
+    var caseId=uniqueId.substr(parentDiv.length);
     if(typeof casedata.clientname !== 'undefined' && casedata.clientname !== null) {
         var client=casedata.clientname;
     } else {
@@ -939,7 +944,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
     //console.log(parentDiv+' for case '+casedata.task_id+': Date Due: '+casedata.date_due+' - today_start: '+$('#today_start').val());
     
-    $('#'+parentDiv).append('<div class="row m-1" id="caseCardParent_'+uniqueId+'"></div>');
+    $('#'+parentDiv).append('<div class="row m-1" id="caseCardParent_'+uniqueId+'" onDblClick="gotoCase(\''+caseId+'\')"></div>');
         
     //The "leftCaseCol_" div contains the Case Number
     $('#caseCardParent_'+uniqueId).append('<div class="float-left p-0 col m-0" style="min-width: 56px; max-width: 65px;" id="leftCaseCol_'+uniqueId+'"></div>');
@@ -948,7 +953,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     $('#caseCardParent_'+uniqueId).append('<div class="float-left col p-0 " style="border-top: 1px solid #6ab446" id="rightCaseCol_'+uniqueId+'"></div>');
     
         //The "casePrimeBox" div contains the case number
-        $('#leftCaseCol_'+uniqueId).append('<div id="casePrimeBox_'+uniqueId+'" class="casePrimeBox text-center case-link h-100"></div>');
+        $('#leftCaseCol_'+uniqueId).append('<div id="casePrimeBox_'+uniqueId+'" class="casePrimeBox text-center case-link h-100" onClick="gotoCase(\''+caseId+'\')"></div>');
         //The "caseMain_" div doesn't contain anything and can probably be removed
         //$('#rightCaseCol_'+uniqueId).append('<div id="caseMain_'+uniqueId+'" class="card-body p-0"></div>');
     
@@ -969,13 +974,13 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1 w-20x overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+assignedto+"</div>");
                         
         //Client/Member name field
-        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-2 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden'>"+client+"<a class='fa-userlink' href=''></a></div>");
+        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden'>"+client+"<a class='fa-userlink' href=''></a></div>");
         
         //Case type field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none caselist-casetype float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none caselist-casetype float-left border rounded pl-1 pr-1 mr-1 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
         
         //Department field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none caselist-department float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none caselist-department float-left border rounded pl-1 pr-1 mr-0 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
         
         
         //Item summary
@@ -986,6 +991,12 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
         $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 small' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
 
+        console.log(casedata.is_closed);
+        if(casedata.is_closed==1) {
+            console.log('Stamping closed');
+            $('#leftCaseCol_'+uniqueId).append('<div class="stamp stamp-red-double stamp-tiny">Closed</div>');    
+        }
+        
 }
 
 function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content) {

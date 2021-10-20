@@ -724,29 +724,29 @@ class oct {
     function recentList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
-        //print_r($parameters);
-        //SELECT h.*, t.*, mem.surname, mem.pref_name, u.real_name as assigned_real_name
-        //FROM flyspray_history h
-        //INNER JOIN flyspray_tasks t ON t.task_id = h.task_id
-        //INNER JOIN flyspray_member_cache mem ON mem.member=t.member
-        //LEFT JOIN flyspray_users u ON t.assigned_to=u.user_id
-        //WHERE h.user_id = :user_id
-        //ORDER BY event_date DESC LIMIT 50
+        $order=str_replace("_dot_", ".", $order);
         
         /* select h.*, t.* 
         from flyspray_tasks t 
         inner join (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id=61 GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id */
-        $query = "SELECT h.*, t.*, u.real_name as assigned_real_name ";
+        $query = "SELECT h.*, t.*, lt.*, lc.*, u.real_name as assigned_real_name ";
         if($this->externalDb===true) {
-            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
-        } else {
-            $query .=", t.name as clientname";
-        } 
+            //$query .= ", mem.*";
+            $query .= ", mem.data, mem.pref_name, mem.surname,        
+            CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
+                WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
+                ELSE t.member
+            END as clientname";            
+        }
                 
         $query .="\r\n  FROM ".$this->dbprefix."tasks t";
         $query .="\r\n  INNER JOIN ".$this->dbprefix."users u ON t.assigned_to=u.user_id";
         $query .= "\r\n  inner join (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id=".$parameters[':user_id']." GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id";
+        $query .= "\r\n  LEFT JOIN ".$this->dbprefix."list_tasktype lt ON t.task_type = lt.tasktype_id";
+        $query .= "\r\n LEFT JOIN ".$this->dbprefix."list_category lc ON t.product_category = lc.category_id";
+ 
         if($this->externalDb===true) {
+            
             $query .= "\r\n LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
                  ";
         }         

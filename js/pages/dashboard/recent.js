@@ -46,6 +46,7 @@ function loadRecent(reset) {
                 if(counter==0) {
                     order='';
                 }
+                console.log(order);
                 //console.log(`${key}: ${orders[key]}`);
                 if(counter > 0) {
                     order+=', ';
@@ -53,12 +54,15 @@ function loadRecent(reset) {
                 order+=key+' '+orders[key]+'';
                 counter++;
             }
-            order+=' LIMIT 100';
+            if(counter > 0) {
+                order+=' LIMIT 100';
+            }
             //console.log('ORDERS:');
             //console.log(orders); 
             //console.log(order);       
         }    
     }
+    console.log('ORDER: '+order);
     var start=parseInt($('#recentstart').val()) || 0;
     var end=parseInt($('#recentend').val()) || 9;
     
