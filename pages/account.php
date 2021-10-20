@@ -1,6 +1,7 @@
 <?php
 
 ?>
+<script src="js/pages/account.js"></script>
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
         <div class="col-sm-8">
@@ -163,8 +164,27 @@
         </div>
 
     </div>
-    <div class="row">
-    
+
+</div>
+<div class="col-sm-12 mb-1 ">
+    <div class="row justify-content-sm-center">
+        <div class="col-sm-8">
+            <h4 class="header">Session</h4>
+            <div class="row border rounded">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="row">
+                        <div class="subSection-label col-xs-4 m-1">
+                            Case Viewing History
+                        </div>
+                        <div class="subSection-field cols-xs-7 m-1">
+                            <div id="case_viewing_history">
+                            </div>
+                            <button id="clear_case_history">Clear Case History</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?php
