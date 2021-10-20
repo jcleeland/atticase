@@ -53,7 +53,7 @@ function loadTodo(reset) {
     
     var start=parseInt($('#todostart').val()) || 0;
     var end=parseInt($('#todoend').val()) || 9;
-    
+    console.log('Todo start = '+start);
     if(start<0) {
         start=0;
         $('#todostart').val(0);

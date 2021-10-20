@@ -41,11 +41,11 @@ $(document).ready(function(){
             <ul class='dropdown-menu small p-1 m-1' style="background-color: rgba(186, 232, 163, 0.8);" id="pager_name_<?php echo $pagername ?>">
                 <?php
                 foreach($oct->caseitems as $key=>$val) { ?>
-                <li class="dropdown-submenu" id="<?php echo $pagername ?>_order_field_<?php echo $key ?>">
+                <li class="dropdown-submenu" id="<?php echo $pagername ?>-order-field-<?php echo $key ?>">
                     <span class="<?php echo $pagername ?>ddmenu pointer" ><?php echo $val['Title'] ?></span>
                     <ul class="dropdown-menu smaller p-1 m-1 last-menu" style="background-color: rgba(186, 232, 163, 0.8);"><?php
                     foreach($val['Sort'] as $skey=>$sval) {?>
-                        <li><span class="pointer filterOrder" id="<?php echo $pagername ?>_order_field_<?php echo $key ?>_order_method_<?php echo $skey ?>"><?php echo $sval ?></span></li>    
+                        <li><span class="pointer filterOrder" id="<?php echo $pagername ?>-order-field-<?php echo $key ?>-order-method-<?php echo $skey ?>"><?php echo $sval ?></span></li>    
                     <?php } ?>
                     </ul>
                 </li>

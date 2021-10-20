@@ -746,6 +746,8 @@ function savePagerOrder(pagerName, orderField, orderMethod) {
 
 function clearPagerOrder(pagerName, orderField) {
     var status=getStatus();
+    console.log(status);
+    console.log('Deleting '+orderField+' from '+pagerName);
     if(status.orders[pagerName]==undefined) {
         //Nothing to do here
     } else {
@@ -753,10 +755,13 @@ function clearPagerOrder(pagerName, orderField) {
             delete status.orders[pagerName];
             $('#pager_name_'+pagerName).find('.fieldcheckmark').remove();
             $('#pager_name_'+pagerName).find('.methodcheckmark').remove();
+            $('#pager_name_'+pagerName).find('.methodchecked').removeClass('methodchecked');
+            $('#pager_name_'+pagerName).find('.fieldchecked').removeClass('fieldchecked');
         } else {
             delete status.orders[pagerName][orderField];
         }
     }
+    console.log(status);
     setStatus(status);
 }
 
@@ -786,8 +791,8 @@ function addPagerOrder(pagerName, orderField, orderMethod) {
     //$('#'+pagerName+'_order').append('<div class="border rounded float-left smaller mt-1">'+orderField+'</div>');
     //clearPagerOrder(pagerName, 'date_closed');
     //Tick the item selected
-    var parentItem=pagerName+'_order_field_'+orderField;
-    var childItem=pagerName+'_order_field_'+orderField+'_order_method_'+orderMethod;
+    var parentItem=pagerName+'-order-field-'+orderField;
+    var childItem=pagerName+'-order-field-'+orderField+'-order-method-'+orderMethod;
     
     //First check if the parent has been selected already, because if it has, we need to unselect the child options
     if($('#'+parentItem).hasClass('fieldchecked')) {
@@ -823,9 +828,6 @@ function addPagerOrder(pagerName, orderField, orderMethod) {
     
 }
 
-function removePagerOrder(pagerName, orderField, orderMethod) {
-    
-}
 
 /**
 * Updates the pager records for the specified pager

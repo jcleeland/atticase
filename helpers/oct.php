@@ -17,15 +17,15 @@ class oct {
         "date_due"=>array(
             "Title"=>"Review date",
             "Sort"=>array(
-                "DESC"=>"Oldest first",
-                "ASC"=>"Most recent first"
+                "ASC"=>"Most recent first",
+                "DESC"=>"Oldest first"
             )
         ),
         "date_closed"=>array(
             "Title"=>"Date closed",
             "Sort"=>array(
-                "DESC"=>"Oldest first",
-                "ASC"=>"Most recent first"
+                "ASC"=>"Most recent first",
+                "DESC"=>"Oldest first"
             )
         ),
         "item_summary"=>array(
@@ -35,14 +35,14 @@ class oct {
                 "DESC"=>"Reverse Alphabetically"
             ),
         ),
-        "name"=>array(
+        "client_name"=>array(
             "Title"=>"Client",
             "Sort"=>array(
                 "ASC"=>"Alphabetically",
                 "DESC"=>"Reverse alphabetically"
             )
         ),
-        "assigned_to"=>array(
+        "u_dot_real_name"=>array(
             "Title"=>"Officer",
             "Sort"=>array(
                 "ASC"=>"Alphabetically",
@@ -303,6 +303,7 @@ class oct {
         
         if($conditions === null) {$conditions="is_closed != 1";}
         if($order===null) {$order="date_due ASC";}
+        $order=str_replace("_dot_", ".", $order);
         
         $county="SELECT count(t.task_id) as total";
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, lvc.*, uo.*, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";

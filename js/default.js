@@ -54,10 +54,9 @@ $(document).ready(function(){
     })
     
     $('.filterOrder').click(function() {
-        var position=this.id.split('_', 7).join('_').length+1;
+        var position=this.id.split('-', 6).join('-').length+1;
         var orderMethod=this.id.substring(position); //13
-        console.log(orderMethod);
-        var position=$(this).parent().parent().parent().attr('id').split('_', 3).join('_').length+1;
+        var position=$(this).parent().parent().parent().attr('id').split('-', 3).join('-').length+1;
         var orderField=$(this).parent().parent().parent().attr('id').substr(position);
         console.log(orderField);
         var pagerName=$(this).parent().parent().parent().parent().attr('id').substr(11);
