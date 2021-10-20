@@ -941,29 +941,50 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     
     $('#'+parentDiv).append('<div class="row m-1" id="caseCardParent_'+uniqueId+'"></div>');
         
+    //The "leftCaseCol_" div contains the Case Number
     $('#caseCardParent_'+uniqueId).append('<div class="float-left p-0 col m-0" style="min-width: 56px; max-width: 65px;" id="leftCaseCol_'+uniqueId+'"></div>');
+    
+    //The "rightCaseCol_" div contains the case details
     $('#caseCardParent_'+uniqueId).append('<div class="float-left col p-0 " style="border-top: 1px solid #6ab446" id="rightCaseCol_'+uniqueId+'"></div>');
     
-    $('#leftCaseCol_'+uniqueId).append('<div id="casePrimeBox_'+uniqueId+'" class="casePrimeBox text-center case-link"></div>');
-    $('#rightCaseCol_'+uniqueId).append('<div id="caseMain_'+uniqueId+'" class="card-body p-0"></div>');
+        //The "casePrimeBox" div contains the case number
+        $('#leftCaseCol_'+uniqueId).append('<div id="casePrimeBox_'+uniqueId+'" class="casePrimeBox text-center case-link h-100"></div>');
+        //The "caseMain_" div doesn't contain anything and can probably be removed
+        //$('#rightCaseCol_'+uniqueId).append('<div id="caseMain_'+uniqueId+'" class="card-body p-0"></div>');
     
-    $('#rightCaseCol_'+uniqueId).append('<div class="card-header small p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
-    $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1" id="casedetails_'+uniqueId+'"></div>');
-    //$('#rightCaseCol_case'+casedata.task_id).append('<div class="card-footer small font-italic pt-1 pb-1 text-muted" id="casefooter_'+casedata.task_id+'"></div>');
+        //The "caseheader_" div contains data lists
+        $('#rightCaseCol_'+uniqueId).append('<div class="card-header small p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
+        //The "casedetails_" div contains the detailed description of the case & only shows if selected
+        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1" id="casedetails_'+uniqueId+'"></div>');
+        //$('#rightCaseCol_case'+casedata.task_id).append('<div class="card-footer small font-italic pt-1 pb-1 text-muted" id="casefooter_'+casedata.task_id+'"></div>');
+        
+        $('#casePrimeBox_'+uniqueId).append(casedata.task_id);
     
-    $('#casePrimeBox_'+uniqueId).append(casedata.task_id);
-    
-    //Right Col
-    $('#caseheader_'+uniqueId).append("<div class='float-right mr-2 border rounded pl-1 pr-1 calendar-div pointer "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
-    //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
-    $('#caseheader_'+uniqueId).append("<div class='d-lg-none d-xl-block d-none d-md-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
-                    
-    $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-2 client-link userlink-"+casedata.member_status+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
-    $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7'><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span  onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
-    $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
-    //Case description
-    $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
-    $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 small' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
+        //Right Col
+        //Date due field
+        $('#caseheader_'+uniqueId).append("<div class='float-right mr-2 border rounded pl-1 pr-1 calendar-div pointer "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
+        //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
+        
+        //Assigned to field
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1 w-20x overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+assignedto+"</div>");
+                        
+        //Client/Member name field
+        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-2 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden'>"+client+"<a class='fa-userlink' href=''></a></div>");
+        
+        //Case type field
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none casetype float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
+        
+        //Department field
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none department float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
+        
+        
+        //Item summary
+        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 w-100'><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span  onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
+        $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
+
+        //Case description
+        $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
+        $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 small' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
 
 }
 

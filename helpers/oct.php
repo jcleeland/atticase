@@ -42,6 +42,20 @@ class oct {
                 "DESC"=>"Reverse alphabetically"
             )
         ),
+        "tasktype_name"=>array(
+            "Title"=>"Case type",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse alphabetically",
+            )
+        ),         
+        "category_name"=>array(
+            "Title"=>"Department",
+            "Sort"=>array(
+                "ASC"=>"Alphabetically",
+                "DESC"=>"Reverse alphabetically"
+            )
+        ),       
         "u_dot_real_name"=>array(
             "Title"=>"Officer",
             "Sort"=>array(
@@ -49,13 +63,7 @@ class oct {
                 "DESC"=>"Reverse alphabetically"
             )
         ),
-        "category_name"=>array(
-            "Title"=>"Department",
-            "Sort"=>array(
-                "ASC"=>"Alphabetically",
-                "DESC"=>"Reverse alphabetically"
-            )
-        ),        
+
     );
     
     var $displayitems=array(

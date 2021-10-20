@@ -77,6 +77,28 @@ body {
     border-bottom: 0.2rem solid #bae8a3;
     padding: 0px;
 }
+
+.officer {
+    background-color: rgba(240, 248, 255, 0.6);
+    min-width: 80px;
+    text-align: center;
+    max-height: 1.8em;
+}
+
+.casetype {
+    background-color: rgba(197, 239, 247, 0.6);
+    min-width: 80px;
+    text-align: center;
+    max-height: 1.8em;
+}
+
+.department {
+    background-color: rgba(228, 241, 254, 0.6);
+    min-width: 80px;
+    text-align: center;
+    max-height: 1.8em;    
+}
+
 .case-link, .green-link{
     background-color: #6ab446;
     cursor: pointer;
@@ -88,10 +110,11 @@ body {
     color: white;
 }
 .client-link {
-    min-width: 130px;
+    min-width: 80px;
     text-align: center;
     background-color: rgba(70, 141, 180, 0.2);
     cursor: pointer;
+    max-height: 1.8em;
 }
 
 .red-link {
@@ -313,9 +336,14 @@ a.fa-userlink::after {
 .w-30 {
     width: 29% !important;
 }
-
 .w-30x {
-    width: calc(100% / 3);
+    width: calc(100% / 3) !important;
+}
+.w-20x {
+    width: calc(100% / 5) !important;
+}
+.w-25x {
+    width: calc(100% / 4) !important; 
 }
 .smaller {
     font-size: 75%;
@@ -360,11 +388,6 @@ a.fa-userlink::after {
     min-width: 20px;
     text-align: center;
     margin-top: 1px !important;
-}
-.officer {
-    background-color: rgba(222, 226, 230, 0.6);
-    min-width: 100px;
-    text-align: center;
 }
 .tabcounter {
     float: right;
@@ -475,7 +498,7 @@ a.fa-userlink::after {
 }
 .green-curtain {
     background-color:  #d5eec6;
-    margin-top: -9px !important;
+    margin-top: -8px !important;
 }
 
 .form-control-xs {
