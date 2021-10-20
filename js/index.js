@@ -972,14 +972,14 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-2 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden'>"+client+"<a class='fa-userlink' href=''></a></div>");
         
         //Case type field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none casetype float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none caselist-casetype float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
         
         //Department field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none department float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none caselist-department float-left border rounded pl-1 pr-1 mr-2 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
         
         
         //Item summary
-        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 w-100'><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span  onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
+        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 w-100 '><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span class='caselist-itemsummary' onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
         $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
 
         //Case description
