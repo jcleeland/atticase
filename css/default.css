@@ -553,7 +553,7 @@ a.fa-userlink::after {
     -webkit-mask-image: url('../images/grunge.png');
     -webkit-mask-size: 944px 604px;    
     mix-blend-mode: multiply;
-    z-index: 9999;
+    z-index: 100; 
 }
 
 .stamp-tiny {

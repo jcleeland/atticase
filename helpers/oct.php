@@ -321,7 +321,14 @@ class oct {
             CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
                 WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
                 ELSE t.member
-            END as clientname";            
+            END as clientname";
+            if(strpos($order, "client_name") > -1) {
+                $order=str_replace("client_name", "CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname) WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None' ELSE t.member END", $order );
+            }            
+        } else {
+            if(strpos($order, "client_name") > -1) {
+                $order=str_replace('client_name', 'name', $order);
+            }
         }
         $querybody ="\r\n                 FROM ".$this->dbprefix."tasks t
 
@@ -361,7 +368,6 @@ class oct {
         //}
         //echo "First: $first, Last: $last"; die();
         $results=$this->fetchMany($query.$querybody, $parameters, $first-1, $last-1, false);
-        
         $output=array("results"=>$results['output'], "query"=>$query.$querybody, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
         //$this->showArray($output);
         //die();
@@ -736,7 +742,14 @@ class oct {
             CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
                 WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
                 ELSE t.member
-            END as clientname";            
+            END as clientname"; 
+            if(strpos($order, "client_name") > -1) {
+                $order=str_replace("client_name", "CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname) WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None' ELSE t.member END", $order );
+            }        
+        } else {
+            if(strpos($order, "client_name") > -1) {
+                $order=str_replace('client_name', 'name', $order);
+            }
         }
                 
         $query .="\r\n  FROM ".$this->dbprefix."tasks t";
@@ -954,7 +967,7 @@ class oct {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="group_name, real_name";}
         
-        $query = "SELECT *";
+        $query = "SELECT user_id, user_name, real_name, group_in, email_address, notify_type, account_enabled, default_version, self_notify, group_id, group_name, group_desc, is_admin, can_open_jobs, can_attach_files, can_vote, group_open, restrict_versions";
         $query .= "\r\nFROM ".$this->dbprefix."users";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."groups.group_id=".$this->dbprefix."users.group_in";
         $query .= "\r\nWHERE $conditions";
