@@ -338,6 +338,15 @@ function commentUpdate(commentId, newValue) {
     })    
 }
 
+function getLastComment(caseid) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'getLastComment', caseid: caseid},
+        dataType: 'json'
+    });    
+}
+
 function historyList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -961,6 +970,9 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#rightCaseCol_'+uniqueId).append('<div class="card-header small p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
         //The "casedetails_" div contains the detailed description of the case & only shows if selected
         $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1" id="casedetails_'+uniqueId+'"></div>');
+        
+        //The empty div for displaying most recent comment:
+        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-0 m-1 casecomment border rounded " id="casecomment_'+uniqueId+'"><p class="m-1 card-text small overflow-auto mb-0" id="casecomment_text_'+uniqueId+'"></p><p class="card-text small overflow-auto mt-0 text-right font-italic" id="casecomment_details_'+uniqueId+'"></p></div>');
         //$('#rightCaseCol_case'+casedata.task_id).append('<div class="card-footer small font-italic pt-1 pb-1 text-muted" id="casefooter_'+casedata.task_id+'"></div>');
         
         $('#casePrimeBox_'+uniqueId).append(casedata.task_id);
@@ -982,15 +994,26 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         //Department field
         $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none caselist-department float-left border rounded pl-1 pr-1 mr-0 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
         
+        $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
         
+
+
         //Item summary
-        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 w-100 '><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/caret-bottom.svg' class='img-thumbnail float-left mr-2 mt-1 toggledetails' width='20px' title='Show case details' /></a><span class='caselist-itemsummary' onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
+        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 '><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/folder.svg' class='img-thumbnail float-left mr-0 mt-1 toggledetails pale-green-link' width='20px' title='Show case details' /></a><a data-toggle='collapse' href='#comment-card' aria-expanded='true' aria-controls='comment-card' id='toggle-comment-card_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\", \""+caseId+"\")' ><img id='togglecomments_"+uniqueId+"' src='images/message.svg' class='img-thumbnail float-left mr-2 mt-1 togglecomments pale-green-link' width='20px' title='Show most recent note' /></a><span class='caselist-itemsummary' id='lastComment_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\")'></span><span class='caselist-itemsummary' onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
+
+        //Comment toggle
+        //$('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7'></div>");
+
         $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
 
         //Case description
         $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
         $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 small' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
 
+        //Comment space
+        $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'></p>");
+        
+        
         console.log(casedata.is_closed);
         if(casedata.is_closed==1) {
             console.log('Stamping closed');
@@ -1045,16 +1068,42 @@ function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, br
 function toggleDetails(id) {
     console.log('Toggling id: '+id);
     //console.log($('#toggledetails_'+id).attr('src'));
-    if($('#toggledetails_'+id).attr('src')=="images/caret-top.svg") {
+    if($('#toggledetails_'+id).attr('src')=="images/folder-open.svg") {
         console.log('Toggling icon to view');
-        $('#toggledetails_'+id).attr("src", "images/caret-bottom.svg");
+        $('#toggledetails_'+id).attr("src", "images/folder.svg");
         $('#case-card-toggle-image').attr("title", "View case details");
         $('#casedetails_'+id).hide(); 
     } else {
         console.log('Toggling icon to hide');
-        $('#toggledetails_'+id).attr("src", "images/caret-top.svg");
+        $('#toggledetails_'+id).attr("src", "images/folder-open.svg");
         $('#toggledetails_'+id).attr("title", "Hide case details");
         $('#casedetails_'+id).show();
+    }
+}
+
+function toggleLastComment(id, taskId) {
+    console.log('COMMENT for Task: '+id+', task_id: '+taskId);
+    if($('#togglecomments_'+id).attr('src')=="images/caret-top.svg") {
+        $('#togglecomments_'+id).attr("src", "images/message.svg");
+        $('#comment-card-toggle-image').attr("title", "View comment details");
+        $('#casecomment_'+id).hide();
+    } else {
+        if($('#casecomment_'+id).text()=="") {
+            //Get the latest comment
+            $.when(getLastComment(taskId)).done(function(output) {
+                console.log(output);
+                if(output.count > 0) {
+                    $('#casecomment_text_'+id).html(deWordify(output.results[0].comment_text));
+                    $('#casecomment_details_'+id).html(output.results[0].real_name);
+                    $('#casecomment_details_'+id).append(" ");
+                    $('#casecomment_details_'+id).append(timestamp2date(output.results[0].date_added, "dd/mm/yy"));
+                    
+                }
+            })
+        }
+        $('#togglecomments_'+id).attr('src', 'images/caret-top.svg');
+        $('#comment-card-toggle-image').attr('title', 'Hide comment details');
+        $('#casecomment_'+id).show();
     }
 }
 

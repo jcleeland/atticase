@@ -10,9 +10,8 @@
                 </div>
                 <div class='col-sm report border rounded m-1 bg-white'>
                 <?php
-                    include("pages/reports/default.php");
+                    include("reports/default.php");
                 ?>
-                  blah
                 </div>
             </div>
         </div>

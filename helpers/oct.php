@@ -228,7 +228,18 @@ class oct {
         return($output);
     }
     
-    
+    function getLastComment($caseid) {
+        $query = "SELECT *";
+        $query .="\r\n  FROM ".$this->dbprefix."comments";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."users ON ".$this->dbprefix."comments.user_id = ".$this->dbprefix."users.user_id";
+        $query .="\r\nWHERE task_id=$caseid";
+        $query .="\r\nORDER BY date_added DESC\r\nLIMIT 1";
+        
+        $results=$this->fetchMany($query, array(), 0, 1);
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>null, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output); 
+    }
     
     
     ##### LISTS ######
@@ -1226,6 +1237,75 @@ class oct {
         }
         $select .= "</select>";
         return $select;
+    }
+    
+    /**
+    * Lists all items in a directory as an keyed array
+    * 
+    * @param mixed $dir
+    */
+    function directoryList($dir, $recursive=false) {
+
+        $result = array();
+
+        $cdir = scandir($dir);
+        foreach ($cdir as $key => $value)
+        {
+          if (!in_array($value,array(".","..")))
+          {
+             if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) 
+                if($recursive) {
+                    {
+                    $result[$value] = $this->directoryList($dir . DIRECTORY_SEPARATOR . $value);
+                    }
+                } else {
+                    //Don't add the name to the array
+                }
+             else
+             {
+                $result[] = $value;
+             }
+          }
+        }
+
+        return $result;        
+    }
+    
+    function getReportList($dir) {
+        //Get a list of all the reports
+        $reports=$this->directoryList($dir, false);
+        $reportGroups=$this->directoryList($dir."/groups", false);
+        //Get the descriptions for all the reports
+        $reportList=array();
+        foreach($reports as $reportName) {
+            //Report Name
+            $reportList[$reportName]['Name']=ucwords(substr($reportName, 0 , strrpos($reportName, ".")));
+            
+            //Report Description
+            $descfile=$dir."/descriptions/".$reportName.".desc";
+            $description='';
+            if(file_exists($descfile)) {
+                $fh=fopen($descfile, 'r');
+                while($line=fgets($fh)) {
+                    $description.=$line;
+                }
+            } else {
+                $description='No description provided';
+            }
+            $reportList[$reportName]['Description']=$description;
+            
+            //ReportGroup 
+            foreach($reportGroups as $reportGroup) {
+                if(strchr($reportGroup, $reportName) > -1) {
+                    $group=substr($reportGroup, strlen($reportName)+1);
+                    
+                } else {
+                    $group='Default';
+                }
+                $reportList[$reportName]['Group']=$group;
+            }          
+        }
+        return $reportList;
     }
     
     function fieldNameTranslation() {

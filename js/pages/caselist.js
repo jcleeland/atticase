@@ -51,8 +51,13 @@ function loadCaselist(reset) {
     // Check for filter settings
     
     if($('#userSelect').val() != '') {
-        parameters[':userid']=$('#userSelect').val();
-        conditions+=' AND u.user_id = :userid';
+        if($('#userSelect').val() == 'null') {
+            conditions+=' AND u.user_id is null';
+        } else {
+            parameters[':userid']=$('#userSelect').val();
+            conditions+=' AND u.user_id = :userid';
+        }
+        
     }
     
     if($('#caseTypeSelect').val() != '') {

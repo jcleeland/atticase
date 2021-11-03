@@ -7,6 +7,8 @@ $(function() {
         //console.log('FILTER:'+i+"-"+element);
     })
     
+    $('#userSelect').prepend("<option value='null'>Unassigned</option>\n");
+    
     //console.log('Checking user');
     myCaseStatus();
     
