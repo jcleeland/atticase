@@ -969,10 +969,10 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         //The "caseheader_" div contains data lists
         $('#rightCaseCol_'+uniqueId).append('<div class="card-header small p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
         //The "casedetails_" div contains the detailed description of the case & only shows if selected
-        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1" id="casedetails_'+uniqueId+'"></div>');
+        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1 m-1 border rounded" id="casedetails_'+uniqueId+'"></div>');
         
         //The empty div for displaying most recent comment:
-        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-0 m-1 casecomment border rounded " id="casecomment_'+uniqueId+'"><p class="m-1 card-text small overflow-auto mb-0" id="casecomment_text_'+uniqueId+'"></p><p class="card-text small overflow-auto mt-0 text-right font-italic" id="casecomment_details_'+uniqueId+'"></p></div>');
+        $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-0 m-1 pl-1 pr-1 casecomment border rounded " id="casecomment_'+uniqueId+'"></div>');
         //$('#rightCaseCol_case'+casedata.task_id).append('<div class="card-footer small font-italic pt-1 pb-1 text-muted" id="casefooter_'+casedata.task_id+'"></div>');
         
         $('#casePrimeBox_'+uniqueId).append(casedata.task_id);
@@ -1093,10 +1093,18 @@ function toggleLastComment(id, taskId) {
             $.when(getLastComment(taskId)).done(function(output) {
                 console.log(output);
                 if(output.count > 0) {
-                    $('#casecomment_text_'+id).html(deWordify(output.results[0].comment_text));
-                    $('#casecomment_details_'+id).html(output.results[0].real_name);
-                    $('#casecomment_details_'+id).append(" ");
-                    $('#casecomment_details_'+id).append(timestamp2date(output.results[0].date_added, "dd/mm/yy"));
+                    var parentDiv='casecomment_'+id;
+                    var uniqueId=id;
+                    var dateBox=timestamp2date(output.results[0].date_added, 'dd/mm/yy g:i a');
+                    var briefDateBox=timestamp2date(output.results[0].date_added, 'dd MM YY');
+                    var primeBox=output.results[0].real_name;
+                    var briefPrimeBox=getInitials(output.results[0].real_name);
+                    var actionPermissions=null;
+                    var header=null
+                    var content=deWordify(output.results[0].comment_text);
+                                        
+                    insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);
+
                     
                 }
             })
