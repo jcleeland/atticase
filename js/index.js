@@ -2,7 +2,6 @@
 This file contains all the common javascript functions for OpenCaseTracker
 
 */
-
 var userNames={};
 
 $(function() {
@@ -166,7 +165,7 @@ function getCase(caseId) {
 }
 
 function getSettings() {
-    var cookiename = "OpenCaseTrackerSystem" + "=";
+    var cookiename = "" + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++)
     {
@@ -932,6 +931,9 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     //console.log(casedata);
     var thisDateDue=timestamp2date(casedata.date_due);
     var caseId=uniqueId.substr(parentDiv.length);
+    
+    
+    //Gather the client name
     if(typeof casedata.clientname !== 'undefined' && casedata.clientname !== null) {
         var client=casedata.clientname;
     } else {

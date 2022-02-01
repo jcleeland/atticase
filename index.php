@@ -113,6 +113,8 @@
     <script src="js/index.js"></script>
     <script>
         globals=getSettings();
+        console.log('GLOBALS SET');
+        console.log(globals);
         status=getStatus();    
     </script>
     </head>
