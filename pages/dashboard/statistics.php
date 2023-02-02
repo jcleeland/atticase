@@ -1,7 +1,7 @@
 <script src="js/pages/dashboard/homeStats.js"></script>
 <h4 class="header">Statistics</h4>
 <div class="pager rounded-bottom">&nbsp;
-    <select id='statsChooser' name='statsChooser' class='form-control-xs float-right p0' style='font-size: 8pt !important;'>
+    <select id='statsChooser' name='statsChooser' class='form-control-xs float-right p-0 w-25x mr-1' style='font-size: 8pt !important; height: 20px'>
         <optgroup label='My stats'>
             <option value='CaseStats'>Case Load</option>
             <option value='CaseDepartments'>Case departments</option>

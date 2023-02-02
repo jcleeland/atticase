@@ -123,7 +123,7 @@
                     <a class='btn btn-info btn-sm smaller' id='clearFilter' href='#clear' role='button'>
                         Clear
                     </a>
-                    <a class='btn btn-secondary btn-sm smaller' data-toggle='collapse' href='#filterMore' role='button' aria-expanded='false' aria-controls='filterMore' id='filterMore'>
+                    <a class='btn btn-secondary btn-sm smaller' data-toggle='collapse' href='#filterMore' role='button' aria-expanded='false' aria-controls='filterMore' id='filterMoreBtn'>
                         More >>
                     </a>
                 </div>

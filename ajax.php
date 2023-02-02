@@ -15,7 +15,6 @@
     if(!isset($_POST['method']) && isset($_GET['method'])) $_POST['method']=$_GET['method'];
     if(!isset($_POST['method']) || $_POST['method']=="") die("ERROR No method called");
     require_once("helpers/startup.php");
-    
     $functionFile="helpers/ajax/".$_POST['method'].".php";
     if(!file_exists($functionFile)) die("ERROR Function does not exist ($functionFile)");
     

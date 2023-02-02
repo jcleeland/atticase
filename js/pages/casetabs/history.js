@@ -69,7 +69,7 @@ function loadHistory() {
                         break;
                     case "4":
                         //Note added
-                        content+=historydata.new_value;
+                        content+=$('#cardbody_comment'+historydata.new_value).html();
                         break;
                     case "5":
                         //Note deleted
@@ -99,9 +99,8 @@ function loadHistory() {
                         break;
                     case "7":
                         //Attachment added
-                        //console.log(historydata);  
-                        if($('#cardbody_attachment'+historydata.field_changed).length) {
-                            content+=$('#cardbody_attachment'+historydata.field_changed).text();
+                        if($('#cardbody_attachment'+historydata.new_value).length > 0) {
+                            content+=$('#cardbody_attachment'+historydata.new_value).text()+'<br />('+$('#cardheader_attachment'+historydata.new_value).html()+')';
                         } else {
                             content+=historydata.new_value+' [since deleted]';
                         }
