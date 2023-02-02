@@ -4,7 +4,7 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
     /*                                                      */
-    
+
     require_once("helpers/startup.php");
     
     
@@ -27,6 +27,7 @@
     
     // Read status cookie
     $status=isset($_COOKIE['OpenCaseTrackerStatus']) ? $_COOKIE['OpenCaseTrackerStatus'] : array();
+
     if(!is_array($status)) {
         $status=stripslashes($status);
         $status=json_decode($status, true);
@@ -112,10 +113,9 @@
     <script src="js/default.js"></script>
     <script src="js/index.js"></script>
     <script>
-        globals=getSettings();
-        console.log('GLOBALS SET');
-        console.log(globals);
-        status=getStatus();    
+        globals=getSettings('OpenCaseTrackerSystem');
+        status=getSettings('OpenCaseTrackerStatus');
+        //status=getStatus();    
     </script>
     </head>
     <body>

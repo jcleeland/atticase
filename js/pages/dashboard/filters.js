@@ -101,6 +101,11 @@ $(function() {
             loadCaselist(1);
         }
     })
+    
+    $('#filterMoreBtn').click(function() {
+        console.log('Click');
+        if($('#filterMore').is(':visible')) {$('#filterMoreBtn').html('More >>')} else {$('#filterMoreBtn').html('Less <<');}
+    })
 })
 
 function myCaseStatus() {

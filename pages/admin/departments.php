@@ -1,7 +1,8 @@
 <?php
-//Get a list of departments
+
 $users=$oct->userList(array(), null, null, 0, 1000000000);
 
+//Get a list of departments
 //echo "<pre class='overflow-auto' style='max-height: 270px'>"; print_r($userselect); echo "</pre>";
 $departments=$oct->departmentList(array(), null, null, 0, 10000000);
 //echo "<pre class='overflow-auto' style='max-height: 270px'>"; print_r($departments); echo "</pre>";

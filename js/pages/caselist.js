@@ -125,8 +125,8 @@ function loadCaselist(reset) {
     $('#caselist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
-        //console.log('Cases');
-        //console.log(cases);
+        console.log('Cases');
+        console.log(cases);
         if(cases.count===0) {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");

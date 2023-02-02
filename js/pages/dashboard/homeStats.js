@@ -28,6 +28,7 @@ var colors=[];
 colors=['#1F4F5B', '#2F7789', '#3E9EB6', '#67B7CB'];
 
 function loadCaseDates() {
+    console.log('Loading Case Dates');
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     
     var parameters={};
@@ -61,7 +62,7 @@ function loadCaseDates() {
     
     
     $.when(statsCases(parameters, conditions, order, first, last, select)).done(function(stats) {
-        //console.log(graph);
+        console.log(stats);
         $.each(stats.results, function(i, result) {
             graph.push([result.status, parseInt(result.qty)]);
         })
@@ -153,6 +154,7 @@ function loadCaseTypes() {
 }
 
 function loadCaseStats() {
+    console.log('Loading case load stats');
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     //Currently Open Cases for this User
     var parameters={};
@@ -204,7 +206,8 @@ function loadCaseStats() {
         resultstotal++;
     })
     
-    
+    console.log('My Results:');
+    console.log(results);
     
     $.each(results, function(item, contents) {
         
@@ -275,6 +278,8 @@ function loadCaseStats() {
                                         grapharray.push(b);
                                     })
                                     //var grapharray=Object.entries(graph);
+                                    console.log('Pushing "my" stats graph now');
+                                    console.log(grapharray);
                                     google.charts.setOnLoadCallback(function () {
                                         //drawLineChart(z, y, 'dashboardStatistics', 'Date', 'Cases', null, null, 'none');
                                         googleMultiLineChart('dashboardStatistics', 'My Cases', grapharray);
@@ -428,6 +433,7 @@ function loadAllCaseTypes() {
 }
 
 function loadAllCaseStats() {
+    console.log('Showing all case stats');
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     //Currently Open Cases for this User
     var parameters={};
@@ -479,7 +485,8 @@ function loadAllCaseStats() {
         resultstotal++;
     })
     
-    
+    console.log('All results:');
+    console.log(results);
     
     $.each(results, function(item, contents) {
         
@@ -555,9 +562,11 @@ function loadAllCaseStats() {
                                         grapharray.push(b);
                                     })
                                     //var grapharray=Object.entries(graph);
+                                    console.log('Pushing chart now:');
+                                    console.log(grapharray);
                                     google.charts.setOnLoadCallback(function () {
                                         //drawLineChart(z, y, 'dashboardStatistics', 'Date', 'Cases', null, null, 'none');
-                                        googleMultiLineChart('dashboardStatistics', 'My Cases', grapharray);
+                                        googleMultiLineChart('dashboardStatistics', 'Cases', grapharray);
                                                         
                                     });
                             }

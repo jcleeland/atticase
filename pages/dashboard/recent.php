@@ -1,8 +1,15 @@
 <script src="js/pages/dashboard/recent.js"></script>
-<div class="float-right m-1 text-muted">
-    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterRecent" title="Search displayed recent items" />
+<div class="float-right mt-1 text-muted">
+    <select class="form-control-sm form-transparent-sm text-muted" id="recentFocus">
+        <option>Mine</option>
+        <option>All</option>
+    </select>
+    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />
 </div>
-<h4 class="header">Recent</h4>
+
+<h4 class="header" class="float-left">Recent</h4>
+
+
 <?php 
     $pagername="recent"; 
     include('pages/helpers/pager.php'); 

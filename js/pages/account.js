@@ -14,5 +14,10 @@ $(function() {
             setStatus(status);
         }
     })
+    $('#logoutcookies').click(function() {
+        if (confirm('Are you sure you want to clear your entire cookie? This will also log you out.')) {
+            window.location.href="index.php?logout=true&clearcookies=true";    
+        }
+    })
     
 });

@@ -364,7 +364,7 @@ class oct {
         $querybody .= "WHERE ".$conditions;
         
         //ORDER
-        $querybody .= " \nORDER BY ".$order;       
+        $querybody .= " \r\nORDER BY ".$order;       
         
         //echo $county.$querybody;
         
@@ -373,13 +373,14 @@ class oct {
         $totalresponses=$countresults['output'][0]['total'];
 
         
-        //if($totalresponses > 500) {
-        //    $last=$first+500;
-        //    $querybody .= " \nLIMIT 500";
-        //}
+        if($totalresponses > ($last-$first)) {
+            $qty=$last-$first+1;
+            $last=$first+500; 
+            $querybody .= " \r\nLIMIT $qty OFFSET $first";
+        }
         //echo "First: $first, Last: $last"; die();
         $results=$this->fetchMany($query.$querybody, $parameters, $first-1, $last-1, false);
-        $output=array("results"=>$results['output'], "query"=>$query.$querybody, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses);
+        $output=array("results"=>$results['output'], "query"=>str_replace("\r\n", " ", $query.$querybody), "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses, "offset"=>$first);
         //$this->showArray($output);
         //die();
         
@@ -539,6 +540,41 @@ class oct {
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
         
         return($output);
+    }
+
+    /**
+    * a list of email templates
+    * 
+    * @param mixed $parameters
+    * @param mixed $conditions
+    * @param mixed $order
+    * @param mixed $first
+    * @param mixed $last
+    */
+    function emailTemplateList($parameters=array(), $conditions="1=1", $order="name, subject", $first=0, $last=1000000000) {
+        $tablename="emailtemplates";
+        
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="name, subject";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix.$tablename;
+        $query .= "\r\n where $conditions";
+        $query .= "\r\n ORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("restuls"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);    
+    }
+    
+    /**
+    * a list of files available in the email attachments directory
+    * 
+    */
+    function emailAttachmentsList() {
+        
     }
     
     /**
@@ -742,7 +778,6 @@ class oct {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
         $order=str_replace("_dot_", ".", $order);
-        
         /* select h.*, t.* 
         from flyspray_tasks t 
         inner join (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id=61 GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id */
@@ -765,7 +800,7 @@ class oct {
                 
         $query .="\r\n  FROM ".$this->dbprefix."tasks t";
         $query .="\r\n  INNER JOIN ".$this->dbprefix."users u ON t.assigned_to=u.user_id";
-        $query .= "\r\n  inner join (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id=".$parameters[':user_id']." GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id";
+        $query .= "\r\n  INNER JOIN (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id LIKE '".$parameters[':user_id']."' GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id";
         $query .= "\r\n  LEFT JOIN ".$this->dbprefix."list_tasktype lt ON t.task_type = lt.tasktype_id";
         $query .= "\r\n LEFT JOIN ".$this->dbprefix."list_category lc ON t.product_category = lc.category_id";
  
@@ -782,7 +817,7 @@ class oct {
         //echo $query;
         //die();
         
-        $results=$this->fetchMany($query, $parameters, $first, $last);
+        $results=$this->fetchMany($query, $parameters, $first, $last, false);
 
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
@@ -978,7 +1013,7 @@ class oct {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="group_name, real_name";}
         
-        $query = "SELECT user_id, user_name, real_name, group_in, email_address, notify_type, account_enabled, default_version, self_notify, group_id, group_name, group_desc, is_admin, can_open_jobs, can_attach_files, can_vote, group_open, restrict_versions";
+        $query = "SELECT user_id, user_name, real_name, group_in, email_address, notify_type, account_enabled, default_version, self_notify, default_task_view, last_notice, group_id, group_name, group_desc, is_admin, can_open_jobs, can_attach_files, can_vote, group_open, restrict_versions";
         $query .= "\r\nFROM ".$this->dbprefix."users";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."groups.group_id=".$this->dbprefix."users.group_in";
         $query .= "\r\nWHERE $conditions";
@@ -992,6 +1027,22 @@ class oct {
         return($output);        
     }
     
+    function userGroupList($parameters=array(), $conditions="1=1", $order="group_name, real_name", $first=1, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="group_name, group_desc";}
+        
+        $query = "SELECT *";
+        $query .= "\r\nFROM ".$this->dbprefix."groups";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\nORDER BY $order";
+        //echo $query;
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        //$this->showArray($output);  
+        return($output);        
+    }
     
     
     

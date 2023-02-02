@@ -145,7 +145,7 @@ function saveTabEdit(method, id) {
 }
 
 function caseList(parameters, conditions, order, first, last) {
-    //console.log(parameters);
+    console.log(parameters);
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
@@ -164,15 +164,23 @@ function getCase(caseId) {
     })
 }
 
-function getSettings() {
-    var cookiename = "" + "=";
-    var ca = document.cookie.split(';');
+function getSettings(name) {
+    var cookiename = name + "="; //this is looking for an empty cookie name (?)
+    //console.log(cookiename);
+    var thisCookie=(decodeURIComponent(document.cookie));
+    //console.log(thisCookie);
+    var ca = thisCookie.split('; ');
+    //sconsole.log(ca);
+    //ca=decodeURIComponent(ca);
     for(var i=0;i < ca.length;i++)
     {
         var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        while (c.charAt(0)==' ') {
+            c = c.substring(1,c.length);
+        }
+        //console.log(c);
         if (c.indexOf(cookiename) == 0) {
-            
+            //console.log('Found '+cookiename);
             var output=decodeURIComponent(c).substring(cookiename.length,c.length);
             return JSON.parse(output);
         }
@@ -183,12 +191,15 @@ function getSettings() {
 
 function getStatus() {
     var cookiename = "OpenCaseTrackerStatus" + "=";
-    var ca = document.cookie.split(';');
+    var thisCookie=decodeURIComponent(document.cookie);
+    var ca = thisCookie.split('; ');
+    //ca=decodeURIComponent(ca);
     for(var i=0;i < ca.length;i++)
     {
         var c = ca[i];
         while (c.charAt(0)==' ') c = c.substring(1,c.length);
         if (c.indexOf(cookiename) == 0) {
+            //console.log('Found '+cookiename);
             
             var output=decodeURIComponent(c).substring(cookiename.length,c.length);
             return JSON.parse(output);
@@ -213,9 +224,14 @@ function getUsers(parameters, conditions, order, first, last) {
 * @param status    - object containing status values
 */
 function setStatus(status) {
-    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=Strict;";
+    console.log('Setting status cookie');
+    //console.log(status);
+    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=Strict; path=/";
+    //console.log(cookiename);
     document.cookie=cookiename;
-    
+                                 
+    //console.log("After setting, cookie looks like this");
+    //console.log(document.cookie);
 }
 
 function attachmentList(parameters, conditions, order, first, last) {
@@ -988,7 +1004,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1 w-20x overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+assignedto+"</div>");
                         
         //Client/Member name field
-        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden'>"+client+"<a class='fa-userlink' href=''></a></div>");
+        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden' title='"+client+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
         
         //Case type field
         $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none caselist-casetype float-left border rounded pl-1 pr-1 mr-1 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
@@ -1018,7 +1034,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         
         console.log(casedata.is_closed);
         if(casedata.is_closed==1) {
-            console.log('Stamping closed');
+            //console.log('Stamping closed');
             $('#leftCaseCol_'+uniqueId).append('<div class="stamp stamp-red-double stamp-tiny">Closed</div>');    
         }
         

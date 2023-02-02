@@ -158,6 +158,7 @@
                         <div class='subSection-field w-100 m-1'>
                             <button class='btn btn-primary float-right m-2'>Update</button>
                             <button class='btn btn-secondary float-right m-2' id='logout' onClick='window.location.href="index.php?logout=true"'>Logout</button>
+                            <button class='btn btn-secondary float-right m-2' id='logoutcookies' onClick='logoutCookies()'>Clear cookies and logout</button>
                         </div>
                     </div>            
                 </div>

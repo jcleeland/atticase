@@ -16,25 +16,45 @@ $(function() {
     
     $('#recentqty').change(function() {
         loadRecent();
-    })       
+    }) 
+    
+    $('#recentFocus').change(function(){loadRecent(true);});      
 }) 
 
+/**
+* Load recent case list (ie: cases that have been modified recently)
+* 
+* @param reset - set to true if you want to reset the pager and have a new search
+*/
 function loadRecent(reset) {
     var today=new Date();
-    
+    var focus=$('#recentFocus').val();
+    console.log(focus);
     var joins={};
     joins['tasks']="INNER JOIN tasks t ON t.task_id = h.task_id";
     joins['member_cache']="INNER JOIN member_cache mem ON mem.member=t.member";
-    joins['users']="LEFT JOIN users u ON t.assigned_to=u.user_id"
+    joins['users']="LEFT JOIN users u ON t.assigned_to=u.user_id";
     
+    console.log('Joins:');
+    console.log(joins);
     var parameters={};
-    parameters[':user_id']=globals.user_id;
+    console.log('Parameters');
+    if(focus=="Mine") {
+        parameters[':user_id']=globals.user_id;
+    } else {
+        parameters[':user_id']="%";
+        //parameters['1']=1;
+    }
     //parameters[':isclosed']=1;
     //parameters[':datedue']=today.getTime() / 1000 | 0;
-    
+    console.log(parameters);
     //var select="h.*, t.*, mem.surname, mem.pref_name, u.real_name as assigned_real_name";
     
-    var conditions='h.user_id = :user_id';
+    if(focus=="Mine") {
+        var conditions='h.user_id = :user_id';
+    } else {
+        var conditions='h.user_id = "%"';
+    }
     
     var order='event_date DESC LIMIT 100';
     var status=getStatus();
@@ -118,8 +138,8 @@ function loadRecent(reset) {
     
     
     $.when(recentList(parameters, conditions, order, start, end)).done(function(cases) {
-        //console.log('RECENTS');
-        //console.log(cases);
+        console.log('RECENTS');
+        console.log(cases);
         if(cases.results.length<0) {
             //console.log('Nothing');
             $('#recentlist').html("No cases in recent list");
@@ -130,7 +150,7 @@ function loadRecent(reset) {
                 /* Put formatting into a standalone script */
                 if(!$('#caseCardParent_recentlist'+casedata.task_id).length) {
                     insertCaseCard('recentlist', 'recentlist'+casedata.task_id, casedata);
-                    $('#caseheader_recentlist'+casedata.task_id).prepend('<div class="text-muted green-curtain p-0 pl-1 pr-1 m-0 mb-1 smaller" >You modified this case on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
+                    $('#caseheader_recentlist'+casedata.task_id).prepend('<div class="text-muted green-curtain p-0 pl-1 pr-1 m-0 mb-1 smaller" >This case was modified on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
                 }
                 //console.log(casedata);
                 /* var thisDateDue=timestamp2date(casedata.event_date);
