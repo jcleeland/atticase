@@ -41,7 +41,7 @@ class CaseTracker extends oct {
     
     
     //OMS SPECIFIC FUNCTIONALITY
-    function curl_put($username=null, $password=null, $url, $httpheader=array('Content-type: application/json'), $useragent='', $jsondata, $debug=false) {
+    function curl_put($username=null, $password=null, $url=null, $httpheader=array('Content-type: application/json'), $useragent='', $jsondata=null, $debug=false) {
         $ch=curl_init();
         
         if($username) $this->username=$username;
@@ -85,7 +85,7 @@ class CaseTracker extends oct {
         return $output;        
     }
 
-    function curl_post($username=null, $password=null, $url, $httpheader=array('Content-type: application/json'), $useragent='', $jsondata, $debug=false) {
+    function curl_post($username=null, $password=null, $url=null, $httpheader=array('Content-type: application/json'), $useragent='', $jsondata=null, $debug=false) {
         $ch=curl_init();
         
         if($username) $this->username=$username;
@@ -127,7 +127,7 @@ class CaseTracker extends oct {
         return $output;        
     }
     
-    function curl_call($username=null, $password=null, $url, $httpheader=array('Content-type: application/json'), $useragent='', $debug=null) {
+    function curl_call($username=null, $password=null, $url=null, $httpheader=array('Content-type: application/json'), $useragent='', $debug=null) {
         $ch=curl_init();
         
         if($username) $this->username=$username;
@@ -164,7 +164,7 @@ class CaseTracker extends oct {
         return $output;
     }
 
-    function curl_delete($username=null, $password=null, $url, $httpheader=array('Content-type: application/json'), $useragent='', $debug=null) {
+    function curl_delete($username=null, $password=null, $url=null, $httpheader=array('Content-type: application/json'), $useragent='', $debug=null) {
         $ch=curl_init();
         
         if($username) $this->username=$username;

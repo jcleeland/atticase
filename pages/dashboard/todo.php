@@ -1,6 +1,6 @@
 <script src="js/pages/dashboard/todo.js"></script>
 <div class="float-right m-1 text-muted">
-    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />
+    <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />-->
 </div>
 <h4 class="p-0 header" id='todoheader'>To do</h4>
 <?php 

@@ -4,6 +4,21 @@ This file contains all the common javascript functions for OpenCaseTracker
 */
 var userNames={};
 
+/** Add a delay before running a function
+* eg: delay(function() {
+*       runThisFunction(value1, value2);
+*     }, 2000);
+*    runs the "runThisFunction" function with values value1 and value 2 after a 2000 millisecond dealy
+* 
+*/
+var delay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
 $(function() {
     $(document).on('click', '.tabActionEdit', function() {
         //console.log('Editing ');
@@ -167,7 +182,7 @@ function getCase(caseId) {
 function getSettings(name) {
     var cookiename = name + "="; //this is looking for an empty cookie name (?)
     //console.log(cookiename);
-    var thisCookie=(decodeURIComponent(document.cookie));
+    var thisCookie=document.cookie;
     //console.log(thisCookie);
     var ca = thisCookie.split('; ');
     //sconsole.log(ca);
@@ -190,22 +205,39 @@ function getSettings(name) {
 }
 
 function getStatus() {
+    console.log('Reading status cookie');
     var cookiename = "OpenCaseTrackerStatus" + "=";
-    var thisCookie=decodeURIComponent(document.cookie);
+    var thisCookie=document.cookie;
+    //var thisCookie=document.cookie;
+    //console.log(thisCookie);
     var ca = thisCookie.split('; ');
     //ca=decodeURIComponent(ca);
+    //console.log('CA');
+    //console.log(ca);
+    //console.log(ca[8]);
+    var output=null;
     for(var i=0;i < ca.length;i++)
     {
         var c = ca[i];
         while (c.charAt(0)==' ') c = c.substring(1,c.length);
         if (c.indexOf(cookiename) == 0) {
-            //console.log('Found '+cookiename);
-            
-            var output=decodeURIComponent(c).substring(cookiename.length,c.length);
-            return JSON.parse(output);
+            output=decodeURIComponent(c).substring(cookiename.length,c.length);
         }
     }
-    return null;
+    var theend=JSON.parse(output);
+    var deleteditems=false; 
+    for(const key in theend.caseviews) {
+        console.log(key);
+        if(key.substring(0,4) != 'case') {
+            deleteditems=true;
+            delete theend.caseviews[key];
+        }
+    }
+    if(deleteditems) {
+        //write the fixed cookie
+        setStatus(theend);
+    }
+    return theend;
 }
 
 function getUsers(parameters, conditions, order, first, last) {
@@ -217,7 +249,6 @@ function getUsers(parameters, conditions, order, first, last) {
     })    
 }
 
-
 /** 
 * Read the status into an object (getStatus()), then update values, then rewrite the status using setStatus
 * 
@@ -226,6 +257,8 @@ function getUsers(parameters, conditions, order, first, last) {
 function setStatus(status) {
     console.log('Setting status cookie');
     //console.log(status);
+    //console.log('Stringified');
+    //console.log(JSON.stringify(status));
     var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=Strict; path=/";
     //console.log(cookiename);
     document.cookie=cookiename;
@@ -297,6 +330,15 @@ function timeList(parameters, conditions, order, first, last) {
     });
 }
 
+function accountUpdate(userId, newValues) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'saveAccount', userId: userId, newValues: newValues},
+        dataType: 'json'
+    })
+}
+
 function caseCreate(newValues, user_id) {
     console.log(newValues);
     return $.ajax({
@@ -353,6 +395,15 @@ function commentUpdate(commentId, newValue) {
     })    
 }
 
+function departmentNotificationsList(departmentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentNotificationsList', departmentId: departmentId},
+        dataType: 'json'
+    })
+}
+
 function getLastComment(caseid) {
     return $.ajax({
         url: 'ajax.php',
@@ -360,6 +411,33 @@ function getLastComment(caseid) {
         data: {method: 'getLastComment', caseid: caseid},
         dataType: 'json'
     });    
+}
+
+function groupCreate(groupName) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'groupCreate', groupName: groupName},
+        dataType: 'json'
+    })     
+}
+
+function groupDelete(groupId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'groupDelete', groupId: groupId},
+        dataType: 'json'
+    })       
+}
+
+function groupUpdate(groupId, fieldName, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'groupUpdate', groupId: groupId, fieldName: fieldName, newValue: newValue},
+        dataType: 'json'
+    })    
 }
 
 function historyList(parameters, conditions, order, first, last) {
@@ -470,6 +548,53 @@ function recentList(parameters, conditions, order, first, last) {
     });
 }
 
+function restrictVersionList(groupId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'restrictVersionList', groupId: groupId},
+        dataType: 'json'
+    })
+}
+
+function restrictVersionUpdate(groupId, versionId, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'restrictVersionUpdate', groupId: groupId, versionId: versionId, newValue: newValue},
+        dataType: 'json'
+    })    
+}
+function statsCases(parameters, conditions, order, first, last, select) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'statsCases', parameters: parameters, conditions: conditions, order: order, first: first, last: last, select: select},
+        dataType: 'json'
+    });
+}
+
+function systemSettingsCreate(values) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'systemSettingsCreate', values: values},
+        dataType: 'json'
+    })
+}
+
+function systemSettingsUpdate(values, wheres) {
+    console.log('Values');
+    console.log(values);
+    console.log('Wheres: '+wheres);
+    return $.ajax({
+        url:'ajax.php',
+        method: 'POST',
+        data: {method: 'systemSettingsUpdate', values: values, wheres: wheres},
+        dataType: 'json'
+    })
+}
+
 function tableList(tablename, joins, select, parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -479,14 +604,9 @@ function tableList(tablename, joins, select, parameters, conditions, order, firs
     })
 }
 
-function statsCases(parameters, conditions, order, first, last, select) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'statsCases', parameters: parameters, conditions: conditions, order: order, first: first, last: last, select: select},
-        dataType: 'json'
-    });
-}
+
+
+
 
 
 
@@ -676,6 +796,7 @@ function timestamp2date(timestamp, format) {
     if(format=='dd/mm/yy hh:ii') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year+' '+hours+':'+minutes;
     if(format=='dd/mm/yy g:i a') var time=pad(day, 2)+'/'+pad(month, 2)+'/'+year+' '+hours12+':'+minutes+' '+hoursMeridian;
     if(format=='yy/mm/dd g:i a') var time=year+'/'+pad(month, 2)+'/'+pad(day, 2)+' '+hours12+':'+minutes+' '+hoursMeridian;
+    if(format=='g:ia dd MM yy') var time=hours12+':'+minutes+hoursMeridian+' '+day+' '+monthNamesShort[monthSearch]+' '+year;
     if(format=='dd MM') var time=day+' '+monthNamesShort[monthSearch];
     if(format=='dd MMM') var time=day+' '+monthNamesLong[monthSearch];
     if(format=='dd MM YY') var time=day+' '+monthNamesShort[monthSearch]+' '+year;
@@ -697,7 +818,7 @@ function countProperties(obj) {
 
 function saveCaseView(caseId, timestamp, lasttab) {
     var status=getStatus();
-    console.log(status);
+    //console.log(status);
     var queryString='';
     if(status.caseviews == undefined) {
         status['caseviews']={};
@@ -1081,6 +1202,70 @@ function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, br
     }
     $('#cardbody_'+uniqueId).append(content);
     
+}
+
+/**
+* Sorts the divs inside parentDiv alphabetically based on an attribute
+* 
+* @param parentDiv
+* @param sortAttribute
+* @param sortOrder  "asc" or "desc"
+*/
+function sortDivsByAttribute(parentDiv, sortAttribute, sortOrder) {
+    var sortedDivs = $(parentDiv).children("div").sort(function(a, b) {
+      return (sortOrder === "desc") ?
+        $(b).attr(sortAttribute) - $(a).attr(sortAttribute) :
+        $(a).attr(sortAttribute) - $(b).attr(sortAttribute);
+    });
+    $(parentDiv).html(sortedDivs);
+}
+
+function searchDivsByText(parentDiv, searchTerm, hideCardsOnClear) {
+    //Clear highlights from previous searches
+    $("span.searchHighlight").replaceWith(function() {
+      return $(this).html();
+    });    
+    $('#'+parentDiv).find("div").each(function() {
+        $(this).show();
+    })
+    // Ensure the search text is lowercase for case-insensitivity
+    searchText = searchTerm.toLowerCase();
+
+    // Get all the child divs of the parent element
+    var childDivs = $('#'+parentDiv).find("div");
+
+    // Loop through all the child divs
+    childDivs.each(function () {
+        var div = $(this);
+        var divHtml = div.html();
+        var divText = div.text().toLowerCase();
+
+        if(searchTerm=='') {
+            div.show();
+            if(hideCardsOnClear && hideCardsOnClear==1) {
+                $('.card-body').each(function() {
+                    $(this).hide();
+                })
+            }
+        } else {
+            // Check if the search text is present in the div text
+            if (divText.indexOf(searchText) === -1) {
+              // If not, hide the div
+              div.hide();
+            } else {
+              // If the search text is present, show the div and highlight the searched text
+              console.log('showing');
+              div.show();
+
+              // Use a regular expression to match the searched text only if it is not part of an HTML tag
+              div.html(divHtml.replace(
+                new RegExp("(?![^<]*>)(" + searchText + ")", "gi"),
+                "<span class='searchHighlight'>$1</span>"
+              ));
+            }            
+        }
+
+    });           
 }
 
 function toggleDetails(id) {

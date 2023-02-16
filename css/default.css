@@ -664,3 +664,7 @@ a.fa-userlink::after {
 .bg-datacontent {
   background-color: #ecf5e7;
 }
+
+.searchHighlight {
+    background-color: yellow !important;     
+}

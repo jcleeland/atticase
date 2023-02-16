@@ -1,6 +1,14 @@
 <?php
     session_start();
+    
+    //Turn off for production installation
+    ini_set('display_errors', 1);
     error_reporting(E_ALL);
+    
+    /** Simple testing
+    *   run ajax.php?test=yes
+    */
+    
     if(isset($_GET['test']) && $_GET['test']=="yes") {
         $_GET['parameters'][':assignedto']=2;
         $_GET['parameters'][':isclosed']=1;
@@ -12,6 +20,8 @@
         
         $_POST=$_GET;
     }
+    
+    
     if(!isset($_POST['method']) && isset($_GET['method'])) $_POST['method']=$_GET['method'];
     if(!isset($_POST['method']) || $_POST['method']=="") die("ERROR No method called");
     require_once("helpers/startup.php");

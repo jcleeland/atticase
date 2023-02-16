@@ -1,5 +1,7 @@
 $(function() {
-    loadLinkeds();
+    if($('#nocase').val() != 0) {
+        loadLinkeds();
+    }
     
     $('#filterLinkeds').keyup(function() {
         //console.log($(this).val());

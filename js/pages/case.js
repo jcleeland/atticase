@@ -94,12 +94,12 @@ $(function() {
                     newValues[this.id.substr(5)]=0;
                 }
             } else {
-                if(typeof $(this).val() !== "undefined" && $(this).val() != null && $(this).val() != "") {
+                if(typeof $(this).val() !== "undefined" && $(this).val() != null) {  //Removed && $(this).val() != "" to allow updating to empty values
                     newValues[this.id.substr(5)]=$(this).val();
                 }
             }
         });
-        
+        console.log(newValues);
         $.when(caseUpdate(caseId, newValues)).done(function(changes) {
             //console.log(changes);
             //console.log('Create History');
@@ -162,6 +162,23 @@ $(function() {
         saveCaseView(caseId, timestamp, lasttab);
         
     })   
+    
+    $('#is_restricted').click(function() {
+        console.log($('#edit_is_restricted').val())
+        if($('#edit_is_restricted').val()==1) {
+            $('#edit_is_restricted').val('0');
+            $('#is_restricted').removeClass('bg-danger');
+            $('#is_restricted').addClass('bg-light');
+            $('#is_restricted').attr('title', 'This case is not restricted');
+            $('#is_restricted_image').attr('src', 'images/unlock.svg'); 
+        } else {
+            $('#edit_is_restricted').val('1');
+            $('#is_restricted').removeClass('bg-light');
+            $('#is_restricted').addClass('bg-danger');
+            $('#is_restricted').attr('title', 'This case has restricted access to only administrators and the user it is assigned to');
+            $('#is_restricted_image').attr('src', 'images/lock.svg');  
+        }
+    })
          
     
 });
@@ -176,107 +193,162 @@ function loadCase() {
         casedata=caseDetails.results;
         //console.log(caseDetails);
         clearCaseForm();
-        
-        if(caseDetails.results.is_closed==1) {
-            console.log('Showing closed stamp');
-            $('#closeCase').hide();
-            $('#reopenCase').show();
-            $('#closedStamp').show();
-            //$('#closedStampDetails').html('<br /><b>'+caseDetails.results.resolution_name+'</b><br />Closed '+timestamp2date(caseDetails.results.date_closed)+' | '+caseDetails.results.closedby_real_name);
-            $('#case_closed_details').show();
-            $('#case_closed_date').html(timestamp2date(caseDetails.results.date_closed));
-            $('#case_closed_name').html(caseDetails.results.closedby_real_name);
-            $('#case_closed_comments').html(caseDetails.results.closure_comment);
-            $('#case_closed_reason').html(caseDetails.results.resolution_name);
-        } else {
-            $('#closeCase').show();
-            $('#reopenCase').hide();
-            $('#closedStamp').hide();
-            $('#case_closed_details').hide();
-        }
-        
-        var thisDateDue=timestamp2date(casedata.date_due);
-        var dateOpened=timestamp2date(casedata.date_opened);
-        if(typeof casedata.pref_name !== 'undefined') {
-            var client=casedata.pref_name+' '+casedata.surname;
-        } else {
-            var client=casedata.member;
-        }
-        var dateclass='date-future';
-        var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
-        var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
-        if(casedata.date_due < $('#today_start').val()) {dateclass='date-overdue';}
-        if(casedata.date_due >= $('#today_start').val() && casedata.date_due <= $('#today_end').val()) {dateclass='date-due';}
+        //console.log(caseDetails);
+        if(caseDetails.count > 0) {
+            if(caseDetails.results.is_closed==1) {
+                console.log('Showing closed stamp');
+                $('#closeCase').hide();
+                $('#reopenCase').show();
+                $('#closedStamp').show();
+                //$('#closedStampDetails').html('<br /><b>'+caseDetails.results.resolution_name+'</b><br />Closed '+timestamp2date(caseDetails.results.date_closed)+' | '+caseDetails.results.closedby_real_name);
+                $('#case_closed_details').show();
+                $('#case_closed_date').html(timestamp2date(caseDetails.results.date_closed));
+                $('#case_closed_name').html(caseDetails.results.closedby_real_name);
+                $('#case_closed_comments').html(caseDetails.results.closure_comment);
+                $('#case_closed_reason').html(caseDetails.results.resolution_name);
+            } else {
+                $('#closeCase').show();
+                $('#reopenCase').hide();
+                $('#closedStamp').hide();
+                $('#case_closed_details').hide();
+            }
+            
+            var thisDateDue=timestamp2date(casedata.date_due);
+            var dateOpened=timestamp2date(casedata.date_opened);
+            if(typeof casedata.pref_name !== 'undefined') {
+                var client=casedata.pref_name+' '+casedata.surname;
+            } else {
+                var client=casedata.member;
+            }
+            var dateclass='date-future';
+            var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
+            var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
+            if(casedata.date_due < $('#today_start').val()) {dateclass='date-overdue';}
+            if(casedata.date_due >= $('#today_start').val() && casedata.date_due <= $('#today_end').val()) {dateclass='date-due';}
 
-        //console.log(casedata.results[0]);
-        
-        $('#caseid_header').html(casedata.task_id);
-        //toggleCaseCards();
-        $('#clientname').html(casedata.clientname+"<a class='fa-userlink' href='"+casedata.member+"'></a>");
-        $('#itemsummary').html(casedata.item_summary);
-        //console.log(thisDateDue);
-        
-        $('#date_due').val(thisDateDue);
-        $('#date_due_parent').addClass(dateclass);
-        
-        $('#assignedto_cover').html(casedata.assigned_real_name);
-        $("#casetype_cover").html(casedata.tasktype_name);
-        if(casedata.line_manager) {
-            $("#linemanager_cover").html(casedata.line_manager+" ("+casedata.line_manager_ph+") <a class='fa-phone' href='tel:"+casedata.line_manager_ph+"'></a><a class='fa-chat' href='sms:"+casedata.line_manager_ph+"'></a>");
-        }
-        $('#casegroup_cover').html(casedata.version_name);
-        $("#department_cover").html(casedata.category_name);
-        $("#unit_cover").html(casedata.unit);
-        if(casedata.local_delegate) {
-            $("#delegate_cover").html(casedata.local_delegate+" ("+casedata.local_delegate_ph+") <a class='fa-phone' href='tel:'"+casedata.local_delegate_ph+"'></a><a class='fa-chat' href='sms:"+casedata.local_delegate_ph+"'></a>");
-        }
-        
-        $("#detaileddesc_cover").html(deWordify(casedata.detailed_desc).replace(/\n/g, "<br />"));
-        $("#resolution_cover").html(deWordify(casedata.resolution_sought).replace(/\n/g, "<br />"));
-        
-        $("#dateopened_cover").html(dateOpened);
-        $("#openedby_cover").html(casedata.openedby_real_name);
-        
-        //Now insert the custom fields
-        if(typeof casedata.customlist != "undefined") {
-            $.each(casedata.customlist, function(i, name) {
-                //console.log(name);
-                var type=$('#'+name+'_cover').prop('nodeName');
-                //console.log($('#'+name+'_cover').prop('nodeName'));
-                //console.log(casedata[name]);
-                if(type=="INPUT") {
-                    if($('#'+name+'_cover').is(':checkbox')) {
-                        if(casedata[name]!="0") {
-                            $('#'+name+'_cover').prop('checked', true);
-                            $('#edit_'+name).prop('checked', true);
+
+
+
+            //Update Cookie (caseviews)
+            var octStatus=getStatus();
+            //octStatus.caseviews['#'+casedata.task_id] = {};
+            if(!octStatus.caseviews) {
+                delete octStatus.caseviews;
+                octStatus.caseviews={};
+            }
+            let newProperty='case'+caseId;
+            let newValue={
+                    userid: $('#userid').val(),
+                    caseid: casedata.task_id, 
+                    title: casedata.item_summary, 
+                    client: casedata.clientname, 
+                    viewed: parseInt(Date.now()/1000),
+            };
+
+            //Save case in caseviews cookie
+            let updatedCaseviews = {};
+            for (let prop in octStatus.caseviews) {
+              let encodedProp = encodeURIComponent(prop);
+              let encodedValue = encodeURIComponent(JSON.stringify(octStatus.caseviews[prop]));
+              updatedCaseviews[encodedProp] = JSON.parse(decodeURIComponent(encodedValue));
+            }
+            updatedCaseviews[encodeURIComponent(newProperty)] = newValue;
+            octStatus.caseviews = updatedCaseviews;
+            setStatus(octStatus);
+            
+
+            $('#caseid_header').html();
+            //toggleCaseCards();
+            $('#clientname').html(casedata.clientname+"<a class='fa-userlink' href='"+casedata.member+"'></a>");
+            $('#itemsummary').html(casedata.item_summary);
+            //console.log(thisDateDue);
+            
+            $('#date_due').val(thisDateDue);
+            $('#date_due_parent').addClass(dateclass);
+            
+            if(casedata.is_restricted == 1) {
+                $('#isrestricted_cover').removeClass('bg-light');
+                $('#isrestricted_cover').addClass('bg-danger');
+                $('#isrestricted_cover').attr('title', 'This case has restricted access to only administrators and the user it is assigned to');
+                $('#isrestricted_image').attr('src', 'images/lock.svg');    
+                $('#is_restricted').removeClass('bg-light');
+                $('#is_restricted').addClass('bg-danger');
+                $('#is_restricted').attr('title', 'This case has restricted access to only administrators and the user it is assigned to');
+                $('#is_restricted_image').attr('src', 'images/lock.svg');    
+
+            }
+            
+            $('#assignedto_cover').html(casedata.assigned_real_name);
+            $("#casetype_cover").html(casedata.tasktype_name);
+            if(casedata.line_manager) {
+                $("#linemanager_cover").html(casedata.line_manager)
+                if(casedata.line_manager_ph != '') {
+                    $('#linemanager_cover').append(" ("+casedata.line_manager_ph+") <a class='fa-phone' href='tel:"+casedata.line_manager_ph+"'></a><a class='fa-chat' href='sms:"+casedata.line_manager_ph+"'></a>");
+                }
+            }
+            $('#casegroup_cover').html(casedata.version_name);
+            $("#department_cover").html(casedata.category_name);
+            $("#unit_cover").html(casedata.unit);
+            if(casedata.local_delegate) {
+                $("#delegate_cover").html(casedata.local_delegate)
+                if(casedata.local_delegate_ph!='') {
+                    $('#delegate_cover').append(" ("+casedata.local_delegate_ph+") <a class='fa-phone' href='tel:'"+casedata.local_delegate_ph+"'></a><a class='fa-chat' href='sms:"+casedata.local_delegate_ph+"'></a>");
+                }
+            }
+            
+            $("#detaileddesc_cover").html(deWordify(casedata.detailed_desc).replace(/\n/g, "<br />"));
+            $("#resolution_cover").html(deWordify(casedata.resolution_sought).replace(/\n/g, "<br />"));
+            
+            $("#dateopened_cover").html(dateOpened);
+            $("#openedby_cover").html(casedata.openedby_real_name);
+            
+            //Now insert the custom fields
+            if(typeof casedata.customlist != "undefined") {
+                $.each(casedata.customlist, function(i, name) {
+                    //console.log(name);
+                    var type=$('#'+name+'_cover').prop('nodeName');
+                    //console.log($('#'+name+'_cover').prop('nodeName'));
+                    //console.log(casedata[name]);
+                    if(type=="INPUT") {
+                        if($('#'+name+'_cover').is(':checkbox')) {
+                            if(casedata[name]!="0") {
+                                $('#'+name+'_cover').prop('checked', true);
+                                $('#edit_'+name).prop('checked', true);
+                            } else {
+                                $('#'+name+'_cover').prop('checked', false);
+                                $('#edit_'+name).prop('checked', false);
+                            }
                         } else {
-                            $('#'+name+'_cover').prop('checked', false);
-                            $('#edit_'+name).prop('checked', false);
+                            $('#'+name+'_cover').val(casedata[name]);
+                            $('#edit_'+name).val(casedata[name]);
                         }
                     } else {
-                        $('#'+name+'_cover').val(casedata[name]);
-                        $('#edit_'+name).val(casedata[name]);
+                        $("#"+name+"_cover").html(casedata[name]);
+                        $("#edit_"+name).val(casedata[name]);
                     }
-                } else {
-                    $("#"+name+"_cover").html(casedata[name]);
-                    $("#edit_"+name).val(casedata[name]);
-                }
-            })
-        }
+                })
+            }
 
-        //Fill out the edit form
-        $('#edit_item_summary').val(casedata.item_summary);
-        $('#edit_member').val(casedata.member);
-        $('#edit_assigned_to').val(casedata.assigned_to);
-        $('#edit_product_version').val(casedata.version_id);
-        $('#edit_task_type').val(casedata.task_type);
-        $('#edit_product_category').val(casedata.category_id);
-        $('#edit_line_manager').val(casedata.line_manager);
-        $('#edit_line_manager_ph').val(casedata.line_manager_ph);
-        $('#edit_local_delegate').val(casedata.local_delegate);
-        $('#edit_local_delegate_ph').val(casedata.local_delegate_ph);
-        $('#edit_detailed_desc').val(casedata.detailed_desc);
-        $('#edit_resolution_sought').val(casedata.resolution_sought);
+            //Fill out the edit form
+            $('#edit_item_summary').val(casedata.item_summary);
+            $('#edit_member').val(casedata.member);
+            $('#edit_assigned_to').val(casedata.assigned_to);
+            $('#edit_product_version').val(casedata.version_id);
+            $('#edit_task_type').val(casedata.task_type);
+            $('#edit_product_category').val(casedata.category_id);
+            $('#edit_line_manager').val(casedata.line_manager);
+            $('#edit_line_manager_ph').val(casedata.line_manager_ph);
+            $('#edit_local_delegate').val(casedata.local_delegate);
+            $('#edit_local_delegate_ph').val(casedata.local_delegate_ph);
+            $('#edit_detailed_desc').val(casedata.detailed_desc);
+            $('#edit_resolution_sought').val(casedata.resolution_sought);    
+            $('#edit_is_restricted').val(casedata.is_restricted); 
+            $('#case-cover-sheet').append('<input type="hidden" id="nocase" value="0" />')       
+        } else {
+            $('#case-cover-sheet').html('<div class="p-5 bg-light rounded m-5 text-center" style="height: 20%;">Case not available</div><input type="hidden" id="nocase" value="1" />');
+            $('#case-tabs').hide();
+        }
+        
         
         //
             

@@ -15,6 +15,14 @@ $(function() {
         loadCaselist();
     })
     
+    $('#caselist-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('caselist', text, 1);    
+        }, 1500);
+    })
+    
 });
 
 function loadCaselist(reset) {
@@ -92,7 +100,7 @@ function loadCaselist(reset) {
     //console.log('Pager Settings');
     //console.log(pagerSettings);
     if(reset && reset == 1) {
-        //IN A NEW SEARCH, RESET THE PAGER VALUES
+        //IN A NEW SEARCH, RESET THE PAGER VALUES (reset value has been set to 1)
         console.log('Resetting pager values');
         var qty=10;
         var start=1;
@@ -111,12 +119,12 @@ function loadCaselist(reset) {
                 start=0;
             }
             var end=pagerSettings.start+qty-1;
-            //console.log('Reusing old pager settings: Qty-'+qty+', Start-'+start+', End-'+end);
+            console.log('Old pager quantity setting was zero or absent - resetting to default (10)');
         } else {
             var qty=parseInt($('#caselistqty').val());
             var start=parseInt($('#caseliststart').attr("value"));
             var end=qty+start-1;
-            //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
+            console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
         }
         
     }
@@ -127,6 +135,7 @@ function loadCaselist(reset) {
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
         console.log('Cases');
         console.log(cases);
+        console.log(cases.query);
         if(cases.count===0) {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");
@@ -177,9 +186,9 @@ function caseliststart_pager() {
     //var qty=parseInt($('#caselistqty').val()) || 10;
     var qty=parseInt(pagerSettings.qty);
     start=start-qty;
-    if(start < 1) {
+    /*if(start < 1) {
         start=1;
-    }
+    }*/
     var end=start+qty-1;
     
     
@@ -195,7 +204,7 @@ function caseliststart_pager() {
 
 function caselistfirst_pager() {
     var pagerSettings=pagerNumberSettings('caselist');
-    var start=1;
+    var start=0;
     var qty=parseInt(pagerSettings.qty);
     var end=start+qty-1;
     $('#caseliststart').attr("value",(start));

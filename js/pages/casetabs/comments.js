@@ -1,5 +1,7 @@
 $(function() {
-    loadComments();
+    if($('#nocase').val() != 0) {
+        loadComments();
+    }
     
     $('#newCommentBtn').click(function() {
         $('#newCommentForm').toggle();    
@@ -23,17 +25,13 @@ $(function() {
         //Successfully added
     })
     
-    $('#filterComments').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.commentitem').each(function() {
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
-    })
+    $('#comments-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('commentlist', text);    
+        }, 1500);
+    })    
 }) 
 
 function loadComments() {

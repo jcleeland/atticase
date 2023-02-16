@@ -1,0 +1,16 @@
+{
+	"name": "aptigence/opencasetracker3",
+    "description": "Industrial relations case management system",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Jason Cleeland",
+            "email": "jason@cleeland.org"
+        }
+    ],
+    "require": {
+        "microsoft/microsoft-graph": "^1.88",
+		"adldap2/adldap2": "^10.4"
+    }
+}

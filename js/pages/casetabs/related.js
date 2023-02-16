@@ -1,6 +1,8 @@
 $(function() {
-    loadRelateds();
-
+    if($('#nocase').val() != 0) {
+        loadRelateds();
+    }
+    
     $('#newRelatedBtn').click(function() {
         $('#newRelatedForm').toggle();    
     });

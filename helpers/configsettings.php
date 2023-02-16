@@ -51,7 +51,11 @@ $configsettings=array(
                 'title'         => 'External DB Name',
                 'description'   => 'The name of the external db (class directory name)',
                 'type'          => 'string',
-                'default'       => 'casetracker',
+                'default'       => '',
+                'select'       => array(
+                    ''=>'none',
+                    'oms'=>'oms',
+                )
             ),
         'extdbuser'         =>  array(
                 'title'         => 'External DB Username',
@@ -69,9 +73,14 @@ $configsettings=array(
     'email'         => array(
         'retrievalmethod'   =>  array(
                 'title'         => 'Email Retrieval Method',
-                'description'   => 'The method used to retrieve emails (pop or imap)',
+                'description'   => 'The method used to retrieve emails',
                 'type'          => 'string',
-                'default'       => 'imap',
+                'default'       => '',
+                'select'        => array(
+                    'microsoft'     => 'Microsoft 365 Exchange',
+                    'imap'          => 'iMap',
+                    'pop'           => 'POP3'
+                )
             ),
         'retrievalhost'     =>  array(
                 'title'         => 'Email Retrieval Host',
@@ -96,6 +105,13 @@ $configsettings=array(
                 'description'   => 'If using POP, which protocal (ie: tcp, ssl, sslv2, sslv3, tls)',
                 'type'          => 'string',
                 'default'       => 'tls',
+                'select'        => array(
+                    'ssl'           => 'SSL',
+                    'sslv2'         => 'SSL Version 2',
+                    'sslv3'         => 'SSL Version 3',
+                    'tcp'           => 'TCP',
+                    'tls'           => 'TLS',
+                )
             ),
         'pop3port'          =>  array(
                 'title'         => 'Pop3 Port',
@@ -277,18 +293,74 @@ $configsettings=array(
             ),
     ),
     'notifications' => array(
-        'admin_email'       =>  array(
+        'admin_email'           =>  array(
                 'title'         => 'Administrator email',
                 'description'   => 'Send administration emails to this address',
                 'type'          => 'string',
                 'default'       => 'admin@casetracker.com',
         ),
-        'additional_admins_p4' =>  array(
+        'additional_admins_p4'  =>  array(
                 'title'         => 'Additional admin emails',
                 'description'   => 'Send additional administration emails to these addresses (separate with comma)',
                 'type'          => 'string',
                 'default'       => '',
         ),
+    ),
+    'ldap'      =>  array(
+        'useldap'               =>  array(
+                'title'         =>  'Use LDAP',
+                'description'   =>  'Use LDAP for authentication',
+                'type'          =>  'boolean',
+                'default'       =>  false,
+        ),
+        'ldaphost'              =>  array(
+                'title'         =>  'LDAP Host IP',
+                'description'   =>  'The IP address of the LDAP host',
+                'type'          =>  'string',
+                'default'       =>  '',
+        ),
+        'ldapport'              =>  array(
+                'title'         =>  'LDAP Port',
+                'description'   =>  'The port used by LDAP host',
+                'type'          =>  'string',
+                'default'       =>  '389',
+        ),
+        'ldapbasedn'            =>  array(
+                'title'         =>  'LDAP Base Domain',
+                'description'   =>  'Base domain for LDAP Host',
+                'type'          =>  'string',
+                'default'       =>  'DC=domain,DC=dom",'
+        ),
+        'ldapacsuffix'          =>  array(
+                'title'         =>  'LDAP AC Suffix',
+                'description'   =>  'LDAP AC Suffix',
+                'type'          =>  'string',
+                'default'       =>  '@domain.com',
+        ),
+        'ldapadminuser'         =>  array(
+                'title'         =>  'LDAP Admin User',
+                'description'   =>  'LDAP Admin Username (optional, enter null if not required)',
+                'type'          =>  'string',
+                'default'       =>  'null',
+        ),
+        'ldapadminpassword'     =>  array(
+                'title'         =>  'LDAP Admin user Password',
+                'description'   =>  'The password for LDAP admin user (optional, enter null if not required)',
+                'type'          =>  'string',
+                'default'       =>  'null',
+        ),
+        'ldaplocaladmin'        =>  array(
+                'title'         =>  'OpenCaseTracker admin user',
+                'description'   =>  'The OpenCaseTracker username who can login without LDAP permission',
+                'type'          =>  'string',
+                'default'       =>  'admin',                
+        ),
+        'ldapnewusergroup'      =>  array(
+                'title'         =>  'LDAP New User Group',
+                'description'   =>  'User group to put new/unknown LDAP users into (use group ID number)',
+                'type'          =>  'integer',
+                'default'       =>  '0',
+        )
     ),
     'general'   =>  array(
         'project_title' =>  array(
@@ -336,4 +408,34 @@ $configsettings=array(
         )
     )
 );  
+
+//Now load all the database preferences
+$query="SELECT * FROM ".$oct->dbprefix."prefs ORDER BY pref_name";
+$settings=$oct->fetchMany($query);
+$settings=$settings['output'];
+foreach($settings as $setting) {
+  $prefs[$setting['pref_name']]=array("value"=>$setting['pref_value'], "description"=>$setting['pref_desc']);
+}
+//$oct->showArray($prefs);
+// Go through configsettings and populate it with saved settings, or defaults as required
+foreach($configsettings as $group=>$groupprefs) {
+    foreach($groupprefs as $preftitle=>$prefvalues) {
+        if(isset($prefs[$preftitle])) {
+            $configsettings[$group][$preftitle]['value']=$prefs[$preftitle]['value'];
+            unset($prefs[$preftitle]);
+        } else {
+            $configsettings[$group][$preftitle]['value']=$configsettings[$group][$preftitle]['default'];
+        }
+    } 
+}
+foreach($prefs as $key=>$val) {
+    $configsettings['other'][$key]=$val;
+    $configsettings['other'][$key]['title']=$key;
+    $configsettings['other'][$key]['type']='string';
+    $configsettings['other'][$key]['default']=null;
+}
+//$oct->showArray($prefs);
+unset($prefs);
+//$oct->showArray($configsettings);
+$oct->config=$configsettings;
 ?>

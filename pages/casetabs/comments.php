@@ -4,6 +4,9 @@
     <div class='float-right pale-green-link rounded mr-3 mb-1 p-1 small' id='newCommentBtn'>
         <img src='images/plus.svg' width='12px' /> Note
     </div>
+    <div class='float-right m-2'>
+        <input type='text' class='roundedcorners ml-4 form-control-sm form-transparent-sm text-muted' id='comments-inpage_filter' title='Search currently showing results...' />
+    </div>
     <div style='clear: both'></div>
     <div class='form-group hidden border rounded p-2 m-2' id='newCommentForm'>
         <h4 class="header">New note</h4>

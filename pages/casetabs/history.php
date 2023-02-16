@@ -1,5 +1,12 @@
 <script src="js/pages/casetabs/history.js"></script>
 
+<div class='justify-content-center'>
+    <div class='float-right m-2'>
+        <input type='text' class='roundedcorners ml-4 form-control-sm form-transparent-sm text-muted' id='history-inpage_filter' title='Search currently showing results...' />
+    </div>    
+    <div style='clear: both'></div>
+</div>
+    
 <div id='historylist' class='justify-content-center'>
 </div>
 <?php

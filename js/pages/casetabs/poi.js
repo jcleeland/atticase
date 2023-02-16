@@ -1,6 +1,8 @@
 $(function() {
-    loadPois();
-
+    if($('#nocase').val() != 0) {
+        loadPois();
+    }
+    
     $('#newPoiBtn').click(function() {
         $('#newPoiForm').toggle();    
     });

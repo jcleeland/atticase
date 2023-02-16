@@ -1,5 +1,12 @@
 $(function() {
-    loadAttachments();
+    if($('#nocase').val != 0) {
+        loadAttachments();
+        console.log('Loading attachments');
+    } else {
+        console.log('No Case!');
+        console.log($('#nocase').length);
+        console.log($('#nocase').val());
+    }
 
     $('#newAttachmentBtn').click(function() {
         $('#newAttachmentForm').toggle();    
@@ -45,17 +52,13 @@ $(function() {
         });
     }));        
     
-    $('#filterAttachments').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.attachmenttitem').each(function() {
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
-    })
+    $('#attachments-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('attachmentlist', text);    
+        }, 1500);
+    }) 
 }) 
 
 function loadAttachments() {

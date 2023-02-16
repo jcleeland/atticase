@@ -1,24 +1,19 @@
 $(function() {
     loadRecent();
-    
-    $('#filterRecent').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.recentitem').each(function() {
-            //console.log($(this));
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
-    })
-    
+
     $('#recentqty').change(function() {
         loadRecent();
     }) 
     
-    $('#recentFocus').change(function(){loadRecent(true);});      
+    $('#recentFocus').change(function(){loadRecent(true);});  
+    
+    $('#recent-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('recentlist', text, 1);    
+        }, 1500);
+    })           
 }) 
 
 /**

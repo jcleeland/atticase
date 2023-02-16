@@ -5,7 +5,7 @@ require_once("helpers/startup.php");
 
 if(isset($_GET['attachmentid'])) {
     $fileinfo=$oct->getAttachment($_GET['attachmentid']);
-    $attachmentdir="/var/attachments/";
+    $attachmentdir=$oct->getSetting("installation", "attachmentdir");
     $filename=$fileinfo['results']['file_name'];
     $origname=$fileinfo['results']['orig_name'];
     $filetype=$fileinfo['results']['file_type'];

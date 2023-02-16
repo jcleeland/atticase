@@ -4,7 +4,7 @@
         <option>Mine</option>
         <option>All</option>
     </select>
-    <input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />
+    <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />-->
 </div>
 
 <h4 class="header" class="float-left">Recent</h4>

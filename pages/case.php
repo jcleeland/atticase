@@ -15,7 +15,7 @@
     $resolutionsSelect=$oct->buildSelectList($resolutions['results'], array("id"=>"close_resolution_reason", "class"=>"closeCase"), "resolution_id", "resolution_name", null, "Select reason");
     
     $customfields=$oct->customFieldList(null, "custom_field_visible=1");
-    //echo "<pre>"; print_r($customfields['results']); echo "</pre>";
+    
 ?>
 <input type='hidden' name='caseid' id='caseid' value='<?php echo $_GET['case'] ?>' />
 <input type='hidden' name='userid' id='userid' value='<?php echo $_SESSION['user_id'] ?>' />
@@ -95,7 +95,7 @@
 </div>
 
 
-<div class='col-sm-12 mb-1'>
+<div class='col-sm-12 mb-1' id='case-cover-sheet'>
     <div class="card">
         <div class="card-header card-heading border rounded" >
             <div class="float-left card-heading-border border rounded pl-1 pr-1 mr-2 case-link" id='caseid_header'></div>
@@ -140,6 +140,12 @@
     <div class="card mb-2 collapse hide" id="case-edit">
         <div class="card-body p-0">
             <div class="card-header border rounded">
+                <div class="float-right">
+                    <span class='btn btn-light border rounded' title='Access is not restricted' id='is_restricted'><img src='images/unlock.svg' id='is_restricted_image' />
+                    <input type='hidden' class='updateCase' id='edit_is_restricted' value='' />
+                    </span>
+                    <!--<button class='btn btn-danger' title='Access is restricted'><img src='images/lock.svg' /></button>-->
+                </div>            
                 <div class="row">
                     <!-- Column 1 -->
                     <div class="col-xs-12 col-sm-6">
@@ -378,6 +384,10 @@
     <div class="card mb-2 collapse show" id="case-card">
         <div class="card-body p-0" onDblClick="toggleCaseEdit()">
             <div class="card-header border rounded">
+                <div class="float-right">
+                    <span class='btn btn-light border rounded' title='Access is not restricted' id='isrestricted_cover'><img src='images/unlock.svg' id='isrestricted_image' /></span>
+                    <!--<button class='btn btn-danger' title='Access is restricted'><img src='images/lock.svg' /></button>-->
+                </div>            
                 <div class="row">
                     <!-- COLUMN 1 -->
                     <div class="col-xs-12 col-sm-6">

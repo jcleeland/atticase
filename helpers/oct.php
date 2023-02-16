@@ -12,6 +12,8 @@ class oct {
     var $dbprefix="casetracker_";
     var $db;
     var $externalDb=true;
+    var $config;
+    var $userid;
     
     var $caseitems=array(
         "date_due"=>array(
@@ -87,6 +89,9 @@ class oct {
         }
     }
     
+    function getSetting($section, $name) {
+        return $this->config[$section][$name]['value'];
+    }
     
     function execute($query, $parameters=array()) {
           $stmt=$this->db->prepare($query) or die("The prepared statement ($query) does not work");
@@ -151,7 +156,21 @@ class oct {
         return($output);                            
     }
     
+    /**
+    * Returns case information
+    * 
+    * @param mixed $caseid
+    */
     function getCase($caseid) {
+        /*
+            Do some checks to make sure that this person is entitled to see this case
+        */
+        $cookies=$this->getCookies("OpenCaseTrackerSystem");
+        $userId=$cookies->user_id;
+        $userAccount=$this->getUserAccount($userId);
+        $permissions=$this->getUserPermissions($userId);
+        //$this->showArray($permissions);
+        
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uc.real_name as closedby_real_name, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
         if($this->externalDb===true) {
             $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
@@ -180,43 +199,67 @@ class oct {
         
         $parameters[':task_id']=$caseid;
         
+        //PERMISSIONS
+        if($permissions['restrict_versions']==1) {
+            $query .= "\r\nAND product_version IN ";
+            $query .= "('".implode("','", explode(",", $permissions['versions']))."')";
+        }
+        //RESTRICTED
+        if($permissions['is_admin'] != 1) {
+            //don't show any restricted cases not assigned to this person
+            $query .= "\r\nAND NOT (is_restricted=1 AND assigned_to != $userId)";
+        }
+        
+        //SYSTEM SETTING RESTRICTS ACCES TO ONLY THIS USERS CASES
+        //$this->showArray($this->config['general']);
+        if($this->config['general']['restrict_view']['value'] == 1 && $permissions['is_admin'] !=1) {
+            //the system is set to restrict access to all cases except ones assigned to user
+            $query .= "\r\nAND assigned_to = $userId";
+        }        
+        //echo $query;
         $results=$this->fetchMany($query, $parameters);
         
-        //$this->showArray($results['output'][0], "Case Output");
-        
-        if($this->externalDb === true && ($results['output'][0]['clientname']=="" || $results['output'][0]['clientname']==" ")) {
+        if($results['records'] > 0) {
+            if($this->externalDb === true && ($results['output'][0]['clientname']=="" || $results['output'][0]['clientname']==" ")) {
 
-            $results['output'][0]['clientname']=$results['output'][0]['member'];
-            if($results['output'][0]['member']=="0") {
-                $results['output'][0]['clientname']="None";
-            }            
-        }
-        
-        //Get Custom Field Information
-        
-        $query2 = "SELECT * FROM ".$this->dbprefix."custom_fields WHERE task_id = :task_id";
-        $parameters[':task_id']=$caseid;
-        $results2=$this->fetchMany($query2, $parameters);
-        
-        if($results2['records'] > 0) {
-            foreach($results2['output'] as $key=>$val) {
-                $thisname="custom_field_".$val['custom_field_definition_id'];
-                $thisval=$val['custom_field_value'];
-                //print_r($val);
-                if($val != "") {
-                    $customlist[]=$thisname;
-                    $results['output'][0][$thisname]=$thisval;
+                $results['output'][0]['clientname']=$results['output'][0]['member'];
+                if($results['output'][0]['member']=="0") {
+                    $results['output'][0]['clientname']="None";
+                }            
+            }
+            
+            //Get Custom Field Information
+            
+            $query2 = "SELECT * FROM ".$this->dbprefix."custom_fields WHERE task_id = :task_id";
+            $parameters[':task_id']=$caseid;
+            $results2=$this->fetchMany($query2, $parameters);
+            
+            if($results2['records'] > 0) {
+                foreach($results2['output'] as $key=>$val) {
+                    $thisname="custom_field_".$val['custom_field_definition_id'];
+                    $thisval=$val['custom_field_value'];
+                    //print_r($val);
+                    if($val != "") {
+                        $customlist[]=$thisname;
+                        $results['output'][0][$thisname]=$thisval;
+                    }
+                }
+                if(is_array($customlist)) {
+                    $results['output'][0]['customlist']=$customlist;
                 }
             }
-            if(is_array($customlist)) {
-                $results['output'][0]['customlist']=$customlist;
-            }
+            //print_r($results2);
+            
+            
+            $output=array("results"=>$results['output'][0], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records'], "message"=>"Retrieved");
+            //print_r($output); 
+            //$this->showArray($this->config);
+            //$this->config['general']['restrict_view']==true then only see own cases             
+        } else {
+            $output=array("results"=>null, "query"=>$query, "parameters"=>$parameters, "count"=>0, "total"=>0, "message"=>"Refused");
         }
-        //print_r($results2);
         
-        
-        $output=array("results"=>$results['output'][0], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
-        //print_r($output);  
+
         return($output);                
     }
     
@@ -241,7 +284,85 @@ class oct {
         return($output); 
     }
     
+    function getCookies($cookiename) {
+        $output=$_COOKIE[$cookiename];
+        return json_decode($output);
+    }
     
+    function getUserAccount($userid) {
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."users";
+        //$query .= "\r\n INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."users.group_in = ".$this->dbprefix."groups.group_id";
+        $query .= "\r\n WHERE user_id=$userid";
+        
+        $results=$this->fetchMany($query, array(), 0, 1);
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>null, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);    
+    }
+    
+    function getUserPermissions($userid) {
+        /**
+        * Permissions include
+        * - checking whether or not there are version (case_type) permissions, and if so, which case_types are allowed
+        * - checking whether or not the user has the right to view cases at all
+        * 
+        */
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."users";
+        $query .= "\r\n INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."users.group_in = ".$this->dbprefix."groups.group_id";
+
+        $query .= "\r\n WHERE ".$this->dbprefix."users.user_id = ".$userid;
+        
+        $results=$this->fetchMany($query, array(), 0, 1);
+        $data=$results['output'][0];
+        
+        $permissions=array(
+            "account_enabled"=>$data['account_enabled'],
+            "email_moderator"=>$data['email_moderator'],
+            "is_admin"=>$data['is_admin'],
+            "can_open_jobs"=>$data['can_open_jobs'],
+            "can_modify_jobs"=>$data['can_modify_jobs'],
+            "can_add_comments"=>$data['can_add_comments'],
+            "can_attach_files"=>$data['can_attach_files'],
+            "can_vote"=>$data['can_vote'],
+            "restrict_versions"=>$data['restrict_versions']
+        );
+        if(isset($data['restrict_versions']) && $data['restrict_versions'] > 0) {
+            $versions=array();
+            $query2="SELECT *";
+            $query2.="\r\nFROM ".$this->dbprefix."version_permissions";
+            $query2.="\r\nWHERE group_id=".$data['group_id'];
+            $query2.="\r\nAND enabled=1";
+            
+            $results2=$this->fetchMany($query2, array(), 0, 1000);
+            foreach($results2['output'] as $row) {
+                $versions[]=$row['version_id'];    
+            }
+            $permissions["versions"]=implode(",", $versions);
+        }
+        $output=$permissions;
+        return($output);    
+
+        
+    }
+    
+    /**
+    * returns a list of issue types (id & name) - deprecated database name "list_version"
+    * 
+    */
+    function getIssueTypes() {
+        $query = "SELECT version_id, version_name";
+        $query .= "\r\nFROM ".$this->dbprefix."list_version";
+        $query .= "\r\nWHERE show_in_list = 1";
+        $query .= "\r\nORDER BY list_position";
+        
+        $results=$this->fetchMany($query, array(), 0, 99999);
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>null, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        return($output);
+    }
     ##### LISTS ######
     ##### These are usually queries that return a list #####
     
@@ -319,6 +440,10 @@ class oct {
     }
     
     function caseList($parameters=array(), $conditions="is_closed != 1", $order="date_due ASC", $first=0, $last=1000000000) {
+        $cookies=$this->getCookies("OpenCaseTrackerSystem");
+        $userId=$cookies->user_id;
+        $userAccount=$this->getUserAccount($userId);
+        $permissions=$this->getUserPermissions($userId);       
         
         if($conditions === null) {$conditions="is_closed != 1";}
         if($order===null) {$order="date_due ASC";}
@@ -363,10 +488,28 @@ class oct {
         //CONDITIONS         
         $querybody .= "WHERE ".$conditions;
         
+        //PERMISSIONS
+        if($permissions['restrict_versions']==1) {
+            $querybody .= "\r\nAND product_version IN ";
+            $querybody .= "('".implode("','", explode(",", $permissions['versions']))."')";
+        }        
+        
+        //RESTRICTED CASES
+        if($permissions['is_admin'] != 1) {
+            //don't show any restricted cases not assigned to this person
+            $querybody .= "\r\nAND NOT (is_restricted=1 AND assigned_to != $userId)";
+        }
+        
+        //SYSTEM SETTING RESTRICTS ACCES TO ONLY THIS USERS CASES
+        if($this->config['general']['restrict_view']['value'] == 1 && $permissions['is_admin'] !=1) {
+            //the system is set to restrict access to all cases except ones assigned to user
+            $querybody .= "\r\nAND assigned_to = $userId";
+        }
+        
         //ORDER
         $querybody .= " \r\nORDER BY ".$order;       
         
-        //echo $county.$querybody;
+        //echo $querybody;
         
         $countresults=$this->fetchMany($county.$querybody, $parameters, 0, 1000000000, false);
         //$this->showArray($countresults); 
@@ -374,12 +517,13 @@ class oct {
 
         
         if($totalresponses > ($last-$first)) {
-            $qty=$last-$first+1;
+            $qty=$last-$first+2;
             $last=$first+500; 
             $querybody .= " \r\nLIMIT $qty OFFSET $first";
         }
         //echo "First: $first, Last: $last"; die();
-        $results=$this->fetchMany($query.$querybody, $parameters, $first-1, $last-1, false);
+        //$results=$this->fetchMany($query.$querybody, $parameters, $first-1, $last-1, false);
+        $results=$this->fetchMany($query.$querybody, $parameters, 0, 10000, false);
         $output=array("results"=>$results['output'], "query"=>str_replace("\r\n", " ", $query.$querybody), "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$totalresponses, "offset"=>$first);
         //$this->showArray($output);
         //die();
@@ -576,6 +720,25 @@ class oct {
     function emailAttachmentsList() {
         
     }
+    
+    function groupDelete($parameters=array(), $conditions=null) {
+        //First check that there are no users assigned to this group, and if there are, don't delete it
+        $query = "SELECT * FROM ".$this->dbprefix."users WHERE group_in = :group_id";
+        $results = $this->execute($query, $parameters);
+        if($results == 0) {
+            $query = "DELETE FROM ".$this->dbprefix."groups";
+            $query .= "\r\n WHERE group_id = :group_id";
+
+            $results=$this->execute($query, $parameters);
+            
+            $output=array("results"=>$results." rows deleted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+        } else {
+            $output=array("results"=>"No rows deleted - this group has users assigned to it", "query"=>$query, "parameters"=>$parameters, "count"=>0, "total"=>0);
+        }
+        
+    
+        return($output);              
+    }    
     
     /**
     * Outputs history table information for a task.
@@ -919,6 +1082,19 @@ class oct {
         return($output);             
     }
     
+    function restrictVersionList($groupId) {
+        $query2="SELECT *";
+        $query2.="\r\nFROM ".$this->dbprefix."version_permissions";
+        $query2.="\r\nWHERE group_id=$groupId";
+        $query2.="\r\nAND enabled=1";
+        $results2=$this->fetchMany($query2, array(), 0, 1000);
+        $output=array();
+        foreach($results2['output'] as $row) {
+            $output[]=$row['version_id'];    
+        }
+        return($output);      
+    }
+    
     function strategyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="comment_date DESC";}
@@ -1013,7 +1189,7 @@ class oct {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="group_name, real_name";}
         
-        $query = "SELECT user_id, user_name, real_name, group_in, email_address, notify_type, account_enabled, default_version, self_notify, default_task_view, last_notice, group_id, group_name, group_desc, is_admin, can_open_jobs, can_attach_files, can_vote, group_open, restrict_versions";
+        $query = "SELECT user_id, user_name, real_name, group_in, email_address, notify_type, notify_rate, account_enabled, default_version, self_notify, default_task_view, last_notice, group_id, group_name, group_desc, is_admin, can_open_jobs, can_attach_files, can_vote, group_open, restrict_versions";
         $query .= "\r\nFROM ".$this->dbprefix."users";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."groups ON ".$this->dbprefix."groups.group_id=".$this->dbprefix."users.group_in";
         $query .= "\r\nWHERE $conditions";
@@ -1109,15 +1285,14 @@ class oct {
         }
         
         $query .= "(`";
-        $query .= implode($fields, "`, `");
+        $query .= implode("`, `", $fields);
         $query .= "`)\r\n";
         $query .= "VALUES (:";
-        $query .= implode($fields, ", :");
+        $query .= implode( ", :", $fields);
         $query .= ")";
         
         //print_r($inserts);
         //print_r($parameters); 
-        
         $this->execute($query, $parameters);
         
         $newId=$this->db->lastInsertId();
@@ -1202,6 +1377,15 @@ class oct {
         return $output;
     }
     
+    /**
+    * Updates a table
+    * 
+    * @param mixed $tablename
+    * @param mixed $updates - a keyed array containing key=field_name, val=value
+    * @param mixed $wheres - the "where" part of the select
+    * @param mixed $userid - option userid
+    * @param mixed $debug - 0 for no debug info, 1 for debug info
+    */
     function updateTable($tablename, $updates, $wheres, $userid, $debug=0) {
         
         $parameters=array();
@@ -1253,9 +1437,9 @@ class oct {
     * @param boolean $pleasechoose - whether or not to include "Please choose..." as the first option with no value (true or false)
     * @param mixed $optgroup - optional key for the $data containing the optgroup
     */
-    function buildSelectList($data, $attributes=array(), $value, $text, $selectedvalue=null, $nulloption="Please choose...", $optgroup=null) {
+    function buildSelectList($data, $attributes, $value, $text, $selectedvalue=null, $nulloption="Please choose...", $optgroup=null) {
         //Currently we assume that the data is already sorted by optgroup if provided
-        
+        if(!$attributes) {$attributes=array();}
         $select="<select";
         
         foreach($attributes as $key=>$val) {

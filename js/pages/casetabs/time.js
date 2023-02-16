@@ -1,5 +1,7 @@
 $(function() {
-    loadTimes();
+    if($('#nocase').val() != 0) {
+        loadTimes();
+    }
     
     $('#filterTimes').keyup(function() {
         //console.log($(this).val());

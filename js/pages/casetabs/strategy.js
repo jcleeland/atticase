@@ -1,5 +1,7 @@
 $(function() {
-    loadStrategys();
+    if($('#nocase').val() != 0) {
+        loadStrategys();
+    }
     
     $('#filterStrategys').keyup(function() {
         //console.log($(this).val());

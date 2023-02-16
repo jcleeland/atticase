@@ -1,16 +1,14 @@
 $(function() {
-    loadHistory();
+    if($('#nocase').val() != 0) {
+        loadHistory();
+    }
     
-    $('#filterTimes').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.historyitem').each(function() {
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
+    $('#history-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('historylist', text);    
+        }, 1500);
     })
 }) 
 

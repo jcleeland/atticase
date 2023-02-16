@@ -1,12 +1,13 @@
 <?php
+    //echo PHP_VERSION;
+    require 'vendor/autoload.php';
     session_start();
     /* REMOVE THE FOLLOWING LINES IN PRODUCTION ENVIRONMENT */
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
     /*                                                      */
 
-    require_once("helpers/startup.php");
-    
+    require_once "helpers/startup.php";
     
     //##########################################################################
     // COOKIE MANAGEMENT
@@ -14,13 +15,20 @@
     // Second cookie is current status, history, filter settings etc.
     $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
     //$setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
+    //$cookiepath=dirname($_SERVER['PHP_SELF']);
+    $cookiepath="/";
+    //echo $cookiepath;
     $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? $_SERVER['HTTP_HOST'] : false;
+    $regex = "/^.*?\.([^:]*)/";
+    preg_match($regex, $setDomain, $matches); //Remove the subdomain and any port information for the cookie storage to avoid "invalid domain" errors.
+    $setDomain=$matches[count($matches)-1];
+    //echo $setDomain."<br />";
     //print_r($prefs);
     $cookieOptions=array(
         "expires"=>time()+3600*24*(2),
-        "path"=>'/',
+        "path"=>$cookiepath,
         "domain"=>$setDomain,
-        "secure"=>false,
+        "secure"=>true,
         "httponly"=>false,
         "samesite"=>"Strict"
     );
@@ -46,15 +54,14 @@
 
     
     // Make any changes/alterations to status cookie
-        
     if(PHP_VERSION_ID < 70300) {
         setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
         setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
     } else {
         setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions);
         setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions);
-    }
-    
+        //echo "<pre>"; print_r($_COOKIE); echo "</pre>"; die();
+    }   
     
     
     
@@ -150,3 +157,6 @@
 
     </body>
 </html>
+<?php 
+    //echo "<pre>"; print_r($_COOKIE); echo "</pre>"; 
+?>

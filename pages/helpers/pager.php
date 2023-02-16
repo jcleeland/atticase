@@ -33,7 +33,6 @@ $(document).ready(function(){
     <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='10' /></div>
     
     <div class="float-left ml-1 pl-1 pr-0 text-muted smaller pagerlight">
-    
         <div class="dropdown">
             <button class="btn dropdown-toggle smaller p-1 m-0" type="button" id="<?php echo $pagername ?>sortOptions" data-toggle="dropdown" aria-haspoup="true" aria-expanded="false">
                 Sort
@@ -56,14 +55,19 @@ $(document).ready(function(){
                     <span class="pointer clearAllOrders" id="<?php echo $pagername ?>-clearAllOrders" >Clear all</span>
                 </li>
             </ul>
-        </div>        
-    
+        </div>       
     </div>
+    
     <div class="float-left smaller" id="<?php echo $pagername ?>_order"></div>
     
     <div class="float-left ml-1 pl-1 pr-0 text-muted smaller pagerlight" id="<?php echo $pagername ?>sortitems">
     
     </div>
-    
+
+    <div class="float-left ml-1 pl-1 pr-0 text-muted smaller pagerlight">
+        <div>
+            <input type='text' class='roundedcorners ml-4 form-control-sm form-transparent-sm text-muted' style='margin-top: 2px' id='<?php echo $pagername ?>-inpage_filter' title='Search currently showing results...' />
+        </div>
+    </div>    
     <input type="hidden" id="<?php echo $pagername ?>count" value="" />        
 </div>

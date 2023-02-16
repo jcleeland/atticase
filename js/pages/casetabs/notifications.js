@@ -1,5 +1,7 @@
 $(function() {
-    loadNotifications();
+    if($('#nocase').val() != 0) {
+        loadNotifications();
+    }
     
     $('#filterNotifications').keyup(function() {
         //console.log($(this).val());

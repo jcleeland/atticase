@@ -23,7 +23,7 @@
             <div class='floatright w-25'>DB Username:</div><div style='clear: both'></div>       
         </div>
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='password' class='form-control' name='dbpass' id='dbuser' placeholder='Database Password' /></div>
+            <div class='w-75 floatright'><input type='password' class='form-control' name='dbpass' id='dbpass' placeholder='Database Password' /></div>
             <div class='floatright w-25'>DB Password:</div><div style='clear: both'></div>       
         </div>
         <div class='form-group'>
@@ -55,6 +55,6 @@
 
         <div class='form-group'>
             <button class='btn btn-primary'>Initialise</button>
-        </div>
+        </div><div style='clear: both'></div>
     </form> 
 </div>

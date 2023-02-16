@@ -1,21 +1,17 @@
 $(function() {
     loadTodo();
     
-    $('#filterTodo').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.todoitem').each(function() {
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
-    })
-    
     $('#todoqty').change(function() {
         loadTodo();
-    })    
+    })
+    
+    $('#todo-inpage_filter').keyup(function(e) {
+        var text=$(this).val();
+        delay(function() {
+            console.log('Searching '+text+' and using delay');
+            searchDivsByText('todolist', text, 1);    
+        }, 1500);
+    })        
 }) 
 
 function loadTodo(reset) {
@@ -24,7 +20,7 @@ function loadTodo(reset) {
     var parameters={};
     parameters[':assignedto']=globals.user_id;
     parameters[':isclosed']=1;
-    parameters[':datedue']=today.getTime() / 1000 | 0;
+    parameters[':datedue']=today.getTime() / 1000 + (86400*2) | 0;
     
     var conditions='assigned_to = :assignedto AND is_closed != :isclosed AND date_due <= :datedue';
     
