@@ -1,11 +1,21 @@
 <?php
 
-$users=$oct->userList(array(), null, null, 0, 1000000000);
+$users=$oct->userList(array(), "account_enabled=1", null, 0, 1000000000);
 
 //Get a list of departments
 //echo "<pre class='overflow-auto' style='max-height: 270px'>"; print_r($userselect); echo "</pre>";
 $departments=$oct->departmentList(array(), null, null, 0, 10000000);
 //echo "<pre class='overflow-auto' style='max-height: 270px'>"; print_r($departments); echo "</pre>";
+
+$userparameters=array(
+    "name"=>"group_in[]", 
+    "id"=>"createUserNotificationTemplate",
+    "class"=>"form-control smaller w-100 hidden",
+    "placeholder"=>"Department Owner"
+);
+
+$userlist=$oct->buildSelectList($users['results'], $userparameters, "user_id", "real_name", null, "Select user", "group_name");
+echo $userlist;
 ?>
 <script src="js/pages/admin/departments.js"></script>
 <div class="col-sm-12 mb-1 ">
@@ -45,7 +55,7 @@ $departments=$oct->departmentList(array(), null, null, 0, 10000000);
                         $selectattributes=array(
                             "name"=>"group_in[]", 
                             "id"=>"groupin$id",
-                            "class"=>"form-control smaller w-75",
+                            "class"=>"form-control smaller w-100",
                             "placeholder"=>"Department Owner"
                         );
                         $userselect=$oct->buildSelectList($users['results'], $selectattributes, "user_id", "real_name", $dept['category_owner'], "Select owner", "group_name");

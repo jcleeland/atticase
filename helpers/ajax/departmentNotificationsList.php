@@ -10,7 +10,7 @@
     
     $parameters[':category_id']=$departmentId;
     
-    $results=$oct->fetchMany($query, $parameters);
+    $results=$oct->fetchMany($query, $parameters, 0, 100000, 0);
     
     $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
     //$oct->showArray($return);

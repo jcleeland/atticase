@@ -294,6 +294,33 @@ function attachmentUpdate(attachmentId, newValue) {
     })    
 }
 
+function caseGroupCreate(versionName, listPosition, showInList, isEnquiry) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseGroupCreate', versionName: versionName, listPosition: listPosition, showInList: showInList, isEnquiry: isEnquiry},
+        dataType: 'json'
+    })    
+}
+
+function caseGroupDelete(versionId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseGroupDelete', versionId: versionId},
+        dataType: 'json'
+    })      
+}
+
+function caseGroupUpdate(groupId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseGroupUpdate', groupId: groupId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
 function relatedList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -404,6 +431,33 @@ function departmentNotificationsList(departmentId) {
     })
 }
 
+function departmentNotificationsCreate(departmentId, userId, notifyNew, notifyChange, notifyDel) {
+     return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentNotificationsCreate', departmentId: departmentId, userId: userId, notifyNew: notifyNew, notifyChange: notifyChange, notifyDel: notifyDel},
+        dataType: 'json'
+    })    
+}
+
+function departmentNotificationsDelete(departmentId, userId) {
+     return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentNotificationsDelete', departmentId: departmentId, userId: userId},
+        dataType: 'json'
+    })    
+}
+
+function departmentNotificationsUpdate(departmentId, userId, name, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentNotificationsUpdate', departmentId: departmentId, userId: userId, name: name, value: value},
+        dataType: 'json'
+    })    
+}
+
 function getLastComment(caseid) {
     return $.ajax({
         url: 'ajax.php',
@@ -503,14 +557,6 @@ function notificationsList(parameters, conditions, order, first, last) {
         data: {method: 'notificationsList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });    
-}
-
-function notificationsCreate() {
-    
-}
-
-function notificationsDelete() {
-    
 }
 
 function poiList(parameters, conditions, order, first, last) {

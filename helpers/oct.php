@@ -566,14 +566,16 @@ class oct {
         return($output);
     }    
     
-    function caseGroupList($parameters=array(), $conditions="1=1", $order="list_position asc", $first=0, $last=1000000000) {
+    function caseGroupList($parameters=array(), $conditions="show_in_list=1", $order="list_position asc", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="list_position asc";}
         
         $query = "SELECT *";
         $query .= "\r\n FROM ".$this->dbprefix."list_version";
         $query .= "\r\nWHERE $conditions";
-        $query .= "\r\n AND show_in_list=1";
+        if($conditions) {
+            $query .= "\r\n AND ".$conditions;
+        }
         $query .= "\r\nORDER BY $order";
         
         $results=$this->fetchMany($query, $parameters, $first, $last);

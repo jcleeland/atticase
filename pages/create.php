@@ -5,7 +5,7 @@
 
     $createType=isset($_GET['type']) ? $_GET['type'] : "case";
     if($createType=="case") {
-        $caseGroupConditions="is_enquiry=0";
+        $caseGroupConditions="is_enquiry=0 AND show_in_list=1";
         $detailed_descTitle="Case Outline";
         $resolution_soughtTitle="Resolution Sought";
         $assigned_toTitle="Assigned to";
@@ -13,7 +13,7 @@
         $reviewDate=date("d/m/Y", strtotime("7 days"));
         $isclosed=0;
     } else {
-        $caseGroupConditions="is_enquiry=1";
+        $caseGroupConditions="is_enquiry=1 AND show_in_list=1";
         $detailed_descTitle="Enquiry Outline";
         $resolution_soughtTitle="Advice Provided";
         $assigned_toTitle="Handled by";
