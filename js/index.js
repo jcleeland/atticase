@@ -321,6 +321,33 @@ function caseGroupUpdate(groupId, fieldName, value) {
     })    
 }
 
+function departmentCreate(departmentName, departmentDescrip, groupIn, listpos, showin) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentCreate', departmentName: departmentName, departmentDescrip: departmentDescrip, groupIn: groupIn, listpos: listpos, showin: showin},
+        dataType: 'json'
+    }) 
+}
+
+function departmentDelete(departmentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentDelete', departmentId: departmentId},
+        dataType: 'json'
+    })      
+}
+
+function departmentUpdate(departmentId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'departmentUpdate', departmentId: departmentId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
 function relatedList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',

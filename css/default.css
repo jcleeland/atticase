@@ -668,3 +668,14 @@ a.fa-userlink::after {
 .searchHighlight {
     background-color: yellow !important;     
 }
+
+.fieldUpdated {
+    animation-name: highlight;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes highlight {
+    from { background-color: #bae8a3; }
+    to { background-color: white; }    
+}

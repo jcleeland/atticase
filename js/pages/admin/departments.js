@@ -46,6 +46,39 @@ $(function() {
  
     })
 
+    $('.updatedepartmentfield').change(function() {
+        if($(this).is(':checkbox')) {
+            var value=$(this).is(':checked') ? 1 : 0;
+        } else {
+            var value=$(this).val();
+        }
+        var field=$(this).attr('action');
+        var departmentid=$(this).attr('departmentid');
+        var currentId=$(this).attr('id');
+        $('#'+currentId).removeClass('fieldUpdated');
+        console.log(departmentid, field, value);
+        $.when(departmentUpdate(departmentid, field, value)).done(function(output) {
+            console.log(currentId);
+            $('#'+currentId).addClass('fieldUpdated');
+        })
+    })
+        
+    $('.createDepartmentField').click(function() {
+        var departmentName=$('#create_category_name').val();
+        var departmentDescrip=$('#create_category_descrip').val();
+        var groupIn=$('#create_group_in').val();
+        var listpos=$('#create_list_position').val();
+        var showin=$('#create_show_in_list').is(':checked') ? 1 : 0;
+        
+        console.log(departmentName, departmentDescrip, groupIn, listpos, showin);
+        
+        $.when(departmentCreate(departmentName, departmentDescrip, groupIn, listpos, showin)).done(function(output) {
+            if(output.results != "Error - No department name provided") {
+                window.location.href="?page=options&option=departments";
+            }
+        })        
+    })
+
 });
 
 function createNotification(departmentid) {
@@ -101,4 +134,13 @@ function toggleCloseNotification(userid, departmentid) {
     $.when(departmentNotificationsUpdate(departmentid, userid, name, value)).done(function() {
         console.log('Saved');
     });
+}
+
+function deleteDepartment(departmentId) {
+    if(confirm('Are you sure you want to delete this Department?'))  {
+        $.when(departmentDelete(departmentId)).done(function(output) {
+            console.log('Deleted');
+            $('#departmentRow'+departmentId).hide('slow');
+        })
+    }    
 }
