@@ -532,14 +532,16 @@ class oct {
         return($output);        
     }
 
-    function caseTypeList($parameters=array(), $conditions="1=1", $order="list_position asc", $first=0, $last=1000000000) {
+    function caseTypeList($parameters=array(), $conditions="show_in_list=1", $order="list_position asc", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="list_position asc";}
         
         $query = "SELECT *";
         $query .= "\r\n FROM ".$this->dbprefix."list_tasktype";
         $query .= "\r\nWHERE $conditions";
-        $query .= "\r\n AND show_in_list=1";
+        if(!$conditions) {
+            $query .= "1=1";
+        }        
         $query .= "\r\nORDER BY $order";
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
@@ -573,8 +575,8 @@ class oct {
         $query = "SELECT *";
         $query .= "\r\n FROM ".$this->dbprefix."list_version";
         $query .= "\r\nWHERE $conditions";
-        if($conditions) {
-            $query .= "\r\n AND ".$conditions;
+        if(empty($conditions)) {
+            $query .= "1=1";
         }
         $query .= "\r\nORDER BY $order";
         
@@ -1068,13 +1070,16 @@ class oct {
         return($output);    
     }
     
-    function resolutionList($parameters=array(), $conditions="", $order="list_position ASC, resolution_name ASC", $first=0, $last=1000000000) {
+    function resolutionList($parameters=array(), $conditions="show_in_list = 1", $order="list_position ASC, resolution_name ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="list_position ASC, resolution_name ASC";}
         
         $query = "SELECT *";
         $query .= "\r\nFROM ".$this->dbprefix."list_resolution";
         $query .= "\r\nWHERE $conditions";
+        if(!$conditions) {
+            $query .= "1=1";
+        }        
         $query .= "\r\n ORDER BY $order";
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
@@ -1436,6 +1441,7 @@ class oct {
     * @param mixed $value - the key for the $data containing the value for the select options
     * @param mixed $text - the key for the $data containing the text for the select options
     * @param mixed $selectedvalue - the value currently selected
+    * @param mixed $nulloption - the entry for no value, optionally an array containing keyed ['value'] and ['text']
     * @param boolean $pleasechoose - whether or not to include "Please choose..." as the first option with no value (true or false)
     * @param mixed $optgroup - optional key for the $data containing the optgroup
     */
@@ -1449,7 +1455,11 @@ class oct {
         }
         $select.=">\r\n";
         if($nulloption) {
-            $select .= "    <option value=''>$nulloption</option>\r\n";
+            if(is_array($nulloption)) {
+                $select .= "    <option value='".$nulloption['value']."'>".$nulloption['text']."</option>";
+            } else {
+                $select .= "    <option value=''>$nulloption</option>\r\n";
+            }
         }
         $currentog="";
         

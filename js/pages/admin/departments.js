@@ -56,9 +56,9 @@ $(function() {
         var departmentid=$(this).attr('departmentid');
         var currentId=$(this).attr('id');
         $('#'+currentId).removeClass('fieldUpdated');
-        console.log(departmentid, field, value);
+        //console.log(departmentid, field, value);
         $.when(departmentUpdate(departmentid, field, value)).done(function(output) {
-            console.log(currentId);
+            //console.log(currentId);
             $('#'+currentId).addClass('fieldUpdated');
         })
     })

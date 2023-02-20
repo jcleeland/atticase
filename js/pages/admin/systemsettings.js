@@ -40,13 +40,15 @@ $(function() {
                         //console.log('Done');
                         //console.log(output);
                         $('#undoSystemSettingsBtn').hide();
-                        $('#saveSystemSettingsBtn').removeClass("pale-green-link");    
+                        $('#saveSystemSettingsBtn').removeClass("pale-green-link");  
+                        window.location.href="?page=options&option=systemsettings";   
                     })
                 } else {
                     $.when(systemSettingsUpdate(values, wheres)).done(function(output) {
                         //console.log(output);
                         $('#undoSystemSettingsBtn').hide();
-                        $('#saveSystemSettingsBtn').removeClass("pale-green-link");    
+                        $('#saveSystemSettingsBtn').removeClass("pale-green-link"); 
+                        window.location.href="?page=options&option=systemsettings";   
                     })
                 }
                 $(this).removeClass('changed');

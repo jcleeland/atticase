@@ -321,6 +321,33 @@ function caseGroupUpdate(groupId, fieldName, value) {
     })    
 }
 
+function caseTypeUpdate(taskId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseTypeUpdate', taskId: taskId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function caseTypeCreate(casetypeName, casetypeDescrip, listPosition, showInList) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseTypeCreate', casetypeName: casetypeName, casetypeDescrip: casetypeDescrip, listPosition: listPosition, showInList: showInList},
+        dataType: 'json'
+    })    
+}
+
+function caseTypeDelete(casetypeId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'caseTypeDelete', casetypeId: casetypeId},
+        dataType: 'json'
+    })      
+}
+
 function departmentCreate(departmentName, departmentDescrip, groupIn, listpos, showin) {
     return $.ajax({
         url: 'ajax.php',
@@ -620,6 +647,35 @@ function recentList(parameters, conditions, order, first, last) {
         dataType: 'json'
     });
 }
+
+
+function resolutionUpdate(resolutionId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'resolutionUpdate', resolutionId: resolutionId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function resolutionCreate(resolutionName, resolutionDescrip, listPosition, showInList) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'resolutionCreate', resolutionName: resolutionName, resolutionDescrip: resolutionDescrip, listPosition: listPosition, showInList: showInList},
+        dataType: 'json'
+    })    
+}
+
+function resolutionDelete(resolutionId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'resolutionDelete', resolutionId: resolutionId},
+        dataType: 'json'
+    })      
+}
+
 
 function restrictVersionList(groupId) {
     return $.ajax({

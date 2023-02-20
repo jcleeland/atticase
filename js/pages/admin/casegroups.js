@@ -7,9 +7,12 @@ $(function() {
         }
         var field=$(this).attr('action');
         var groupid=$(this).attr('groupid');
+        var currentId=$(this).attr('id');
+        $('#'+currentId).removeClass('fieldUpdated');        
         console.log(groupid, field, value);
         $.when(caseGroupUpdate(groupid, field, value)).done(function(output) {
             console.log(output);
+            $('#'+currentId).addClass('fieldUpdated'); 
         })
     })
     

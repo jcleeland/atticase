@@ -23,7 +23,6 @@
     preg_match($regex, $setDomain, $matches); //Remove the subdomain and any port information for the cookie storage to avoid "invalid domain" errors.
     $setDomain=$matches[count($matches)-1];
     //echo $setDomain."<br />";
-    //print_r($prefs);
     $cookieOptions=array(
         "expires"=>time()+3600*24*(2),
         "path"=>$cookiepath,

@@ -10,16 +10,21 @@ $options=array(
     //"displaysettings"=>"Display Settings",
     "casetypes"=>"Case Types",
     "casegroups"=>"Case Groups",
+    "customfields"=>"Custom Fields",
+    "customtexts"=>"Custom Texts",
     "emailtemplates"=>"Email Templates",
     "departments"=>"Departments",
+    "poi"=>"People of Interest",
+    "resolutions"=>"Resolutions",
     "systemsettings"=>"System Settings",
     "users"=>"Users and Groups"
 );
 
-if(isset($prefs['unit_list_use']['value']) && $prefs['unit_list_use']['value'] > 0) {
+if(isset($configsettings['general']['unit_list_use']['value']) && $configsettings['general']['unit_list_use']['value'] > 0) {
     $options['units']="Units";
+    
 } 
-//$oct->showArray($prefs); 
+
 ?>
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">

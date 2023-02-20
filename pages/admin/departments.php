@@ -56,11 +56,11 @@ $newuserselect=$oct->buildSelectList($users['results'], $selectattributes, "user
                             Notifications
                         </div>
                         <div class="col-sm text-center">
-                            Use
+                            Cases
                         </div>
                     </div>
                 </div>
-                <div class="overflow-auto p-2 w-100" style="height: 700px" >
+                <div class="overflow-auto p-2 w-100" style="max-height: 600px" >
                 <?php
                     foreach($departments['results'] as $dept) {
                         $id=$dept['category_id'];
@@ -95,15 +95,15 @@ $newuserselect=$oct->buildSelectList($users['results'], $selectattributes, "user
                         <div class="col-sm">
                             <span class='btn btn-info btn-sm smaller notification-btn pointer' departmentId='<?php echo $dept['category_id'] ?>'>Notifications</span>
                         </div>
-                        <div class="col-sm text-center">
+                        <div class="col-sm text-center smaller">
                             <?php 
                             if(isset($departmentcounts[$dept['category_id']])) {
-                                echo "<span class='smaller'>".$departmentcounts[$dept['category_id']]."</span>";     
+                                echo "<span class=''>".$departmentcounts[$dept['category_id']]."</span>";     
                             } else {
                                 if($dept['show_in_list']==1) {
-                                    echo "<span class='smaller'>0</span>";
+                                    echo "<span class=''>0</span>";
                                 } else {
-                                    echo "<span class='btn btn-sm smaller btn-warning' title='This Department can be deleted because it is not visible to users and there are no cases assigned against it' onClick='deleteDepartment(\"".$dept['category_id']."\")'>Del</span>";
+                                    echo "<span class='btn btn-sm btn-warning' title='This Department can be deleted because it is not visible to users and there are no cases assigned against it' onClick='deleteDepartment(\"".$dept['category_id']."\")'>Del</span>";
                                 }
                             }
                             ?>

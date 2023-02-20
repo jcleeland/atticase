@@ -15,8 +15,6 @@ foreach($results['output'] as $cgcount) {
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
         <div class="col-sm-12">
-            <img src="images/save.svg" class="floatright pointer img-fluid rounded ml-2" title="Save changes" id="saveCaseTypesBtn"/>
-            <img src="images/undo.svg" class="floatright pointer img-fluid rounded hidden ml-2" width='24px' title="Undo changes" id="undoCaseTypesBtn"/>
             <h4 class="header">Case Groups</h4>
             <div class="row border rounded centered">
                 <form class="w-100">
@@ -34,12 +32,12 @@ foreach($results['output'] as $cgcount) {
                         <div class="col-sm">
                             Enquiry?
                         </div>
-                        <div class="col-sm">
+                        <div class="col-sm text-center">
                             Cases
                         </div>
                     </div>
                 </div>
-                <div class="form-group overflow-auto m-2 p-2" style="max-height: 700px">
+                <div class="form-group overflow-auto m-2 p-2" style="max-height: 600px">
                 
 <?php
 foreach($casegroups['results'] as $casegroup) {
@@ -60,12 +58,12 @@ foreach($casegroups['results'] as $casegroup) {
                         <div class="col-sm">
                             <input action='is_enquiry' groupid="<?php echo $id ?>" class="form-control smaller updategroupfield" placeholder="Enquiry type?" id="isenquiry<?php echo $id ?>" type="checkbox" name="is_enquiry[]" <?php if ($casegroup['is_enquiry']==1) echo "checked" ?> />
                         </div>
-                        <div class="col-sm text-center">
+                        <div class="col-sm text-center smaller">
                             <?php 
                             if(isset($casegroupcounts[$id])) {
                                 echo $casegroupcounts[$id];
                             } else {
-                                echo "<span class='btn btn-info btn-sm' title='This case group can be deleted because there are no cases assigned against it' onClick='deleteCaseGroup(\"".$id."\")'>Delete</span>";
+                                echo "<span class='btn btn-warning btn-sm' title='This case group can be deleted because there are no cases assigned against it' onClick='deleteCaseGroup(\"".$id."\")'>Del</span>";
                             }
                             ?>
                         </div>
