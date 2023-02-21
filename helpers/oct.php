@@ -670,6 +670,27 @@ class oct {
         return($output);
     }
     
+    function customTextList($parameters=array(), $conditions="1=1", $order="modify_action", $first=0, $last=1000000000) {
+        $tablename="custom_texts";
+        
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="modify_action";}
+        
+        $query = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix.$tablename;
+        $query .= "\r\n WHERE (custom_text_lang='EN' OR custom_text_lang='') AND $conditions";
+        if(empty($conditions)) {
+            $query .= $conditions;
+        }
+        $query .= "\r\n ORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+    
+        return($output);
+    }    
+    
     function departmentList($parameters=array(), $conditions="1=1", $order="list_position", $first=0, $last=1000000000) {
         //All future versions to correct the table name
         $tablename="list_category";
@@ -939,6 +960,36 @@ class oct {
         $output=array("results"=>$results." rows affected", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
     
         return($output);
+    }
+    
+    function poiConnectionsList($parameters=array(), $conditions="1=1", $order="poi.modified", $first=0, $last=1000000000) {
+        $query  = "SELECT t.task_id, item_summary, is_closed, poi.comment, poi.modified";
+        $query .= "\r\n FROM ".$this->dbprefix."tasks t";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."people_of_interest poi ON poi.task_id=t.task_id";
+        $query .= "\r\n WHERE $conditions";
+        if(!empty($order)) {
+            $query .= "\r\n ORDER BY $order";
+        }
+        
+        //echo $query;
+        $results=$this->fetchMany($query, $parameters);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);   
+    }
+    
+    function poiPeopleList($parameters=array(), $conditions="", $order="lastname, firstname", $first=0, $last=1000000000) {
+        $query  = "SELECT *";
+        $query .= "\r\n FROM ".$this->dbprefix."people";
+        $query .= "\r\n WHERE $conditions";
+        $query .= "\r\n ORDER BY $order";    
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);           
     }
     
     function recentList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {

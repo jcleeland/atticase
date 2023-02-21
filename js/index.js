@@ -348,6 +348,60 @@ function caseTypeDelete(casetypeId) {
     })      
 }
 
+function customFieldUpdate(customFieldDefinitionId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldUpdate', customFieldDefinitionId: customFieldDefinitionId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function customFieldCreate(customFieldName, customFieldType, customFieldVisible) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldCreate', customFieldName: customFieldName, customFieldType: customFieldType, customFieldVisible: customFieldVisible},
+        dataType: 'json'
+    })    
+}
+
+function customFieldDelete(customFieldDefinitionId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldDelete', customFieldDefinitionId: customFieldDefinitionId},
+        dataType: 'json'
+    })      
+}
+
+function customTextUpdate(customTextId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customTextUpdate', customTextId: customTextId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function customTextCreate(modifyAction, customText) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customTextCreate', modifyAction: modifyAction, customText: customText},
+        dataType: 'json'
+    })    
+}
+
+function customTextDelete(customTextId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customTextDelete', customTextId: customTextId},
+        dataType: 'json'
+    })      
+}
+
 function departmentCreate(departmentName, departmentDescrip, groupIn, listpos, showin) {
     return $.ajax({
         url: 'ajax.php',
@@ -613,6 +667,24 @@ function notificationsList(parameters, conditions, order, first, last) {
     });    
 }
 
+function poiConnectionsList(personId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiConnectionsList', personId: personId},
+        dataType: 'json'
+    });    
+}
+
+function poiLinkDelete(taskId, personId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiLinkDelete', taskId: taskId, personId: personId},
+        dataType: 'json'
+    });     
+}
+
 function poiList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
@@ -620,6 +692,33 @@ function poiList(parameters, conditions, order, first, last) {
         data: {method: 'poiList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
         dataType: 'json'
     });
+}
+
+function poiPersonUpdate(personId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiPersonUpdate', personId: personId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function poiPersonCreate(firstname, lastname, position, organisation, phone, email) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiPersonCreate', firstname: firstname, lastname: lastname, position: position, organisation: organisation, phone: phone, email: email},
+        dataType: 'json'
+    })    
+}
+
+function poiPersonDelete(personId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiPersonDelete', personId: personId},
+        dataType: 'json'
+    })      
 }
 
 function poiCreate() {
@@ -694,6 +793,7 @@ function restrictVersionUpdate(groupId, versionId, newValue) {
         dataType: 'json'
     })    
 }
+
 function statsCases(parameters, conditions, order, first, last, select) {
     return $.ajax({
         url: 'ajax.php',
