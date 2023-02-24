@@ -658,6 +658,80 @@ a.fa-userlink::after {
   margin-top: -1px;
 }
 
+/* START OF HIDDEN DROPDOWN RESULTS SECTION */
+.poidropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.poidropdown-input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.poidropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 30px;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  display: none;
+}
+
+.poidropdown-menu li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.poidropdown-menu li:hover {
+  background-color: #eee;
+}
+
+/* END OF HIDDEN DROPDOWN RESULTS SECTION */
+
+/* LOOKAHEAD CSS **/
+.lookahead-input-wrapper {
+    position: relative;
+}
+
+.lookahead-input-field {
+    
+}
+
+.lookahead-input-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: none;
+}
+
+.lookahead-input-dropdown li {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.lookahead-input-dropdown li:hover {
+    background-color: #eee;
+}
+
+/* END Lookahead CSS */
+
 .bg-data {
   background-color: #dfeed7;
 }

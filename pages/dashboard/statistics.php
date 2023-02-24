@@ -3,10 +3,10 @@
 <div class="pager rounded-bottom">&nbsp;
     <select id='statsChooser' name='statsChooser' class='form-control-xs float-right p-0 w-25x mr-1' style='font-size: 8pt !important; height: 20px'>
         <optgroup label='My stats'>
-            <option value='CaseStats'>Case Load</option>
-            <option value='CaseDepartments'>Case departments</option>
-            <option value='CaseTypes'>Case types</option>
-            <option value='CaseDates'>Case statuses</option>
+            <option value='CaseStats'>My Case Load</option>
+            <option value='CaseDepartments'>My Case departments</option>
+            <option value='CaseTypes'>My Case types</option>
+            <option value='CaseDates'>My Case statuses</option>
         </optgroup>
         <optgroup label='Site stats'>
             <option value='AllCaseStats'>Case Load</option>

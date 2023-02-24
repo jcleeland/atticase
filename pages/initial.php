@@ -1,5 +1,9 @@
 <?php
-  
+//TODO: Check to see if there is already a config.php file
+// =dirname(__FILE__)."/../config/config.php";
+// If there is, then alert the user
+// If there isn't, check the permissions on the directory to see if the config.php file is allowed to be created
+//  - if there is no permission, alert the user  
 ?>
 <div class="row h-50 justify-content-center align-items-center">
     <form class="col-5" method="post">

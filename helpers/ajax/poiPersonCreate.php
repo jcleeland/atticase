@@ -24,7 +24,7 @@
         //$oct->showArray($inserts, "Inserts");    
         
         $results=$oct->insertTable($tablename, $inserts);
-        $output=array("results"=>"New row inserted with id ".$results, "query"=>null, "parameters"=>$inserts, "count"=>$results, "total"=>$results);
+        $output=array("results"=>"New row inserted with id ".$results, "query"=>null, "parameters"=>$inserts, "count"=>1, "total"=>1, "insertid"=>$results);
     } else {
         $output=array("results"=>"Error - You must provide both a first and a last name");
     }

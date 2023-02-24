@@ -1,11 +1,11 @@
 $(function() {
     if($('#nocase').val != 0) {
         loadAttachments();
-        console.log('Loading attachments');
+        //console.log('Loading attachments');
     } else {
-        console.log('No Case!');
-        console.log($('#nocase').length);
-        console.log($('#nocase').val());
+        //console.log('No Case!');
+        //console.log($('#nocase').length);
+        //console.log($('#nocase').val());
     }
 
     $('#newAttachmentBtn').click(function() {
@@ -31,9 +31,9 @@ $(function() {
             },
             success: function(data)
             {
-                console.log('Success');
+                //console.log('Success');
                 var updated=JSON.parse(data);
-                console.log(JSON.parse(data));
+                //console.log(JSON.parse(data));
                 
                 $('#attachmentFile').val('');
                 $('#attachmentFileDesc').val('');
@@ -46,7 +46,7 @@ $(function() {
             },
             error: function(e) 
             {
-                console.log(e);
+                //console.log(e);
                 //$("#err").html(e).fadeIn();
             }          
         });
@@ -55,7 +55,7 @@ $(function() {
     $('#attachments-inpage_filter').keyup(function(e) {
         var text=$(this).val();
         delay(function() {
-            console.log('Searching '+text+' and using delay');
+            //console.log('Searching '+text+' and using delay');
             searchDivsByText('attachmentlist', text);    
         }, 1500);
     }) 

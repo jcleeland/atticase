@@ -18,7 +18,7 @@ $(function() {
     $('#caselist-inpage_filter').keyup(function(e) {
         var text=$(this).val();
         delay(function() {
-            console.log('Searching '+text+' and using delay');
+            //console.log('Searching '+text+' and using delay');
             searchDivsByText('caselist', text, 1);    
         }, 1500);
     })
@@ -101,7 +101,7 @@ function loadCaselist(reset) {
     //console.log(pagerSettings);
     if(reset && reset == 1) {
         //IN A NEW SEARCH, RESET THE PAGER VALUES (reset value has been set to 1)
-        console.log('Resetting pager values');
+        //console.log('Resetting pager values');
         var qty=10;
         var start=1;
         var end=10;
@@ -119,12 +119,12 @@ function loadCaselist(reset) {
                 start=0;
             }
             var end=pagerSettings.start+qty-1;
-            console.log('Old pager quantity setting was zero or absent - resetting to default (10)');
+            //console.log('Old pager quantity setting was zero or absent - resetting to default (10)');
         } else {
             var qty=parseInt($('#caselistqty').val());
             var start=parseInt($('#caseliststart').attr("value"));
             var end=qty+start-1;
-            console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
+            //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
         }
         
     }
@@ -133,9 +133,9 @@ function loadCaselist(reset) {
     $('#caselist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
-        console.log('Cases');
-        console.log(cases);
-        console.log(cases.query);
+        //console.log('Cases');
+        //console.log(cases);
+        //console.log(cases.query);
         if(cases.count===0) {
             //console.log('Nothing');
             $('#caselist').html("<center><br />No cases in list<br />&nbsp;</center>");

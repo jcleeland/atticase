@@ -1,25 +1,19 @@
-<script src="js/pages/dashboard/recent.js"></script>
-<div class="float-right mt-1 text-muted">
-    <select class="form-control-sm form-transparent-sm text-muted" id="recentFocus">
-        <option>Mine</option>
-        <option>All</option>
-    </select>
-    <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />-->
+<script src="js/pages/dashboard/mycases.js"></script>
+<div class="float-right m-1 text-muted">
+    <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />-->
 </div>
-
-<h4 class="header" class="float-left">Recent</h4>
-
-
+<h4 class="p-0 header" id='casesheader'>My Cases</h4>
 <?php 
-    $pagername="recent"; 
+    $pagername="mycases";
     include('pages/helpers/pager.php'); 
 ?>
-<div class="overflow-auto" style="max-height: 270px" id="recentlist">
-    <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
+<div class="w-100 overflow-auto" style="max-height: 270px" id="mycaseslist">
+<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
+$status=array("current", "arrears-small", "arrears-big", "notcurrent");
 /* for($x=1; $x<=7; $x++) {
-
-    $parent="recent";
+    $y=rand(0,3);
+    $parent="todo";
     $case_details=array(
         "task_id"=>$x,
         "item_summary"=>"Feeling really let down by my employer and manager",
@@ -36,11 +30,11 @@
         "detailed_desc"=>"It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
         "resolution_sought"=>"It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
         "opened_by"=>"Johnny Admin",
-        "date_opened"=>"01/12/2019"
-    );    
-    
+        "date_opened"=>"01/12/2019",
+        "member_status"=>$status[$y]
+    ); 
     
     include("pages/dashboard/listitem.php");
-} */  
+} */ 
 ?>
 </div>

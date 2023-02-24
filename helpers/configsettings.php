@@ -388,6 +388,19 @@ $configsettings=array(
                 'default'       => '1.000',
                 
         ),
+        'unit_list_use' => array(
+                'title'         => 'Use list for units',
+                'description'   => 'Restrict entries for units to only those in the list',    //There are three levels for this - none=0, optional=1 and only=2
+                'type'          => 'boolean',
+                'default'       => '0',
+                'selectoptions' => array("0"=>"Free text", "1"=>"Suggested from list", "2"=>"Force from list"),
+        ),
+        'pager_default_qty' => array(
+                'title'         => 'Default case quantity',
+                'description'   => 'The default number of cases that display in a list',
+                'type'          => 'integer',
+                'default'       => '20',
+        ),
         'allow_restricted'      => array(
                 'title'         => 'Allow restricted cases',
                 'description'   => 'Allow cases to be optionally restricted to assigned user only',
@@ -399,13 +412,7 @@ $configsettings=array(
                 'description'   => 'Only allow users to see their own cases (restrict all others)',
                 'type'          => 'boolean',
                 'default'       => 'false',
-                ),
-        'unit_list_use' => array(
-                'title'         => 'Use list for units',
-                'description'   => 'Restrict entries for units to only those in the list',    //I think there are three levels for this - none, optional and only
-                'type'          => 'boolean',
-                'default'       => '0',
-        )
+                )
     )
 );  
 
@@ -422,9 +429,11 @@ foreach($configsettings as $group=>$groupprefs) {
     foreach($groupprefs as $preftitle=>$prefvalues) {
         if(isset($prefs[$preftitle])) {
             $configsettings[$group][$preftitle]['value']=$prefs[$preftitle]['value'];
+            $configsettings[$group][$preftitle]['set']=true;
             unset($prefs[$preftitle]);
         } else {
             $configsettings[$group][$preftitle]['value']=$configsettings[$group][$preftitle]['default'];
+            $configsettings[$group][$preftitle]['set']=false;
         }
     } 
 }

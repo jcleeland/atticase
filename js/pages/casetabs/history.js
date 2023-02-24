@@ -6,7 +6,7 @@ $(function() {
     $('#history-inpage_filter').keyup(function(e) {
         var text=$(this).val();
         delay(function() {
-            console.log('Searching '+text+' and using delay');
+            //console.log('Searching '+text+' and using delay');
             searchDivsByText('historylist', text);    
         }, 1500);
     })
@@ -50,52 +50,68 @@ function loadHistory() {
                 }
                 
                 
-                var header='<b>'+historydata.event_description+'</b>';
+                var header='<b title="Event Type: '+historydata.event_type+'">'+historydata.event_description+'</b>';
                 var content='';
                 switch(historydata.event_type) {
-                    case "0":
+                    case 0:
                         //Base field change
                         content+='['+historydata.field_changed+'] "'+historydata.old_value+'" to "'+historydata.new_value+'"';
                         break;
-                    case "1":
+                    case 1:
                         //Case opened
                         content+=historydata.new_value;
-                    case "2":
+                        break;
+                    case 19:
+                        content+='Case <a href="index.php?page=case&case='+historydata.new_value+'">#'+historydata.new_value+'</a> was made a child of this case<br />';
+                        break;
+                    case 2:
                         //Case closed
                         content+='<b>Case closed by '+userNames[historydata.closed_by]+', '+timestamp2date(historydata.date_closed, "dd/mm/yy")+"</b><br />";
                         content+=historydata.old_value;
                         break;
-                    case "4":
+                    case 20:
+                        content+='Case <a href="index.php?page=case&case='+historydata.new_value+'">#'+historydata.new_value+'</a> was removed from linked cases';
+                        break;
+                    case 4:
                         //Note added
                         content+=$('#cardbody_comment'+historydata.new_value).html();
                         break;
-                    case "5":
+                    case 5:
                         //Note deleted
                         content+=historydata.old_value;
                         break;
-                    case "6":
+                    case 6:
                         break;
-                    case "13":
+                    case 13:
                         //Reopened case
                         content+='<b>Case reopened by user '+historydata.real_name+', '+timestamp2date(historydata.event_date, "dd/mm/yy g:i a")+"</b>";
                         break;
-                    case "71":
+                    case 71:
                         //Note changed
                         content+='<b>To:</b> '+historydata.new_value+'<br /><b>From: </b><span class="text-footnote">'+historydata.old_value+'</span>';
                         break;
-                    case "8":
+                    case 8:
                         //Attachment deleted
                         if($('#cardbody_attachment'+historydata.old_value).length) {
                             content+='Deleted file: '+$('#cardbody_attachment'+historydata.old_value).text();
                         } else {
                             content+='Deleted';
                         }
-                        break; 
-                    case "81":
+                        break;
+                    case 9:
+                        content+='<b>To user: </b>'+historydata.new_value;
+                        break;
+                    case 10:
+                        content+='<b>Removed user: </b>'+historydata.new_value;
+                        break;                        
+                    case 40:
+                        content+='<b>From:</b> '+historydata.old_value+' to '+historydata.new_value;
+                        break;
+                    case 81:
                         //Attachment modified
                         content+='<b>To:</b> '+$('#cardbody_attachment'+historydata.new_value).text()+'<br /><b>From: </b><span class="text-footnote">'+$('#cardbody_attachment'+historydata.old_value).text()+'</span>';
                         break;
-                    case "7":
+                    case 7:
                         //Attachment added
                         if($('#cardbody_attachment'+historydata.new_value).length > 0) {
                             content+=$('#cardbody_attachment'+historydata.new_value).text()+'<br />('+$('#cardheader_attachment'+historydata.new_value).html()+')';
@@ -103,7 +119,7 @@ function loadHistory() {
                             content+=historydata.new_value+' [since deleted]';
                         }
                         break;
-                    case "14":
+                    case 14:
                         //Case assigned
                         //console.log(userNames);
                         content+='From '+userNames[historydata.old_value]+' to '+userNames[historydata.new_value];
@@ -112,10 +128,6 @@ function loadHistory() {
                         content+='<b>Field:</b> '+historydata.field_changed+'<br /><b>Old Value:</b> '+historydata.old_value+'<br /><b>New Value:</b> '+historydata.new_value;
                         break;
                 }
-                if(historydata.event_type=="0") {
-                    
-                }
-                
                 
                 
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);

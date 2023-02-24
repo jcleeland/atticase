@@ -12,11 +12,17 @@ $(document).ready(function(){
   });
   
   $('.clearAllOrders').click(function() {
-      clearPagerOrder('<?php echo $pagername ?>');
-      loadPagerOrder('<?php echo $pagername ?>');
-      var functionname='load<?php echo ucfirst($pagername) ?>';
-      console.log(functionname);
-      window[functionname]();
+      //console.log('ID: '+$(this).attr('id'));
+      var currentItem=$(this).attr('id').substring(0, $(this).attr('id').indexOf("-"));
+      //console.log('Pagername: <?php echo $pagername ?>');
+      //console.log('Current item: '+currentItem);
+      if(currentItem=='<?php echo $pagername ?>') {
+          clearPagerOrder('<?php echo $pagername ?>');
+          loadPagerOrder('<?php echo $pagername ?>');
+          var functionname='load<?php echo ucfirst($pagername) ?>';
+          console.log(functionname);
+          window[functionname]();
+      }
   })
   
   loadPagerOrder('<?php echo $pagername ?>');
@@ -30,7 +36,7 @@ $(document).ready(function(){
     <div class="float-right ml-0 mr-0 pl-1 pr-1 small pointer pagerbutton" id="<?php echo $pagername ?>start" title='previous page' value='0'><img src='images/chevron-left.svg' /></div>
     <div class="float-right ml-1 mr-0 pl-1 pr-1 small pointer pagerbutton" id="<?php echo $pagername ?>first" title='first page' value=''><img src='images/start.svg' /></div>
     <div class="float-right mr-1 pl-1 pr-1 text-muted small rounded pagerlight" id="<?php echo $pagername ?>total"></div>
-    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='10' /></div>
+    <div class="float-right m1-1 pl-1 pr-0 text-muted small rounded pagerlight"><input class="text-muted small pagerlight ml-1 pl-1 pr-0 pt-1" style="width: 18px; border: 0" id="<?php echo $pagername ?>qty" title="Quantity shown" value='<?php echo $configsettings['general']['pager_default_qty']['value'] ?>' /></div>
     
     <div class="float-left ml-1 pl-1 pr-0 text-muted smaller pagerlight">
         <div class="dropdown">

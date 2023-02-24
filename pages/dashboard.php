@@ -8,7 +8,7 @@
             </div>
 
             <div class="col-lg border rounded filter m-1">
-                <?php include("pages/dashboard/filters.php"); ?>
+                <?php include("pages/dashboard/mycases.php"); ?>
 
             </div>
 
@@ -17,11 +17,11 @@
         <div class="row justify-content-sm-center">
 
             <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/todo.php"); ?>
+                <?php include("pages/dashboard/mytodo.php"); ?>
             </div>
 
             <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/recent.php"); ?>
+                <?php include("pages/dashboard/myrecent.php"); ?>
             </div>
 
         </div>

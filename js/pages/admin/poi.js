@@ -32,7 +32,7 @@ $(function() {
                 $('#connections'+viewid).append("<div class='row font-weight-bold'><div class='col-sm-1'>Case</div><div class='col-sm-3'>Summary</div><div class='col-sm-6'>Connection comment</div><div class='col-sm'>Connected</div><div class='col-sm'></div></div>");
                 $.each(output.results, function(i, connection) {
                     console.log(connection);
-                    $('#connections'+viewid).append("<div class='row' id='personconnection"+connection.task_id+viewid+"'><div class='col-sm-1'><a href='index.php?page=case&case="+connection.task_id+"'>#"+connection.task_id+"</a></div><div class='col-sm-3'>"+connection.item_summary+"</div><div class='col-sm-6'>"+connection.comment+"</div><div class='col-sm'>"+connection.modified+"</div><div class='col-sm'><span class='btn btn-sm btn-info pb-0 pt-0 smaller disconnect' title='Disconnect this person from this case' onClick='deleteConnection(\""+connection.task_id+"\", \""+viewid+"\")'>Del</span></div></div>");
+                    $('#connections'+viewid).append("<div class='row' id='personconnection"+connection.id+"'><div class='col-sm-1'><a href='index.php?page=case&case="+connection.task_id+"'>#"+connection.task_id+"</a></div><div class='col-sm-3'>"+connection.item_summary+"</div><div class='col-sm-6'>"+connection.comment+"</div><div class='col-sm'>"+connection.modified+"</div><div class='col-sm'><span class='btn btn-sm btn-info pb-0 pt-0 smaller disconnect' title='Disconnect this person from this case' onClick='deleteConnection(\""+connection.id+"\", \""+viewid+"\")'>Del</span></div></div>");
                 })
             })            
         }
@@ -69,11 +69,11 @@ function deletePoiPerson(id) {
     }
 }
 
-function deleteConnection(taskid, personid) {
+function deleteConnection(poiId, personid) {
     if(confirm("Are you sure you want to disconnect this person from this case?")) {
-        $.when(poiLinkDelete(taskid, personid)).done(function() {
+        $.when(poiLinkDelete(poiId)).done(function() {
             console.log('Link removed');
-            $('#personconnection'+taskid+personid).hide();
+            $('#personconnection'+poiId).hide();
             var connectioncount=parseInt($('#connectioncount'+personid).text());
             var connectioncount=connectioncount-1;
             if(connectioncount==0) {

@@ -1,3 +1,4 @@
+        <script src="js/pages/navbar.js"></script>
         <!-- Message Centre -->
         <div class="modal fade" id="messageCentre" tabindex="-1" role="dialog" aria-labelledby="messageCentreTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
@@ -37,7 +38,7 @@
                             <button class="btn dropdown-toggle" style='background-color: #6ab446; color: white; margin-top: 1px' type="button" id="caseNavigatorButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Cases
                             </button>                        
-                            <div class="dropdown-menu pl-0" aria-labelledby="caseMenuButton">
+                            <div class="dropdown-menu pl-0" aria-labelledby="caseMenuButton" id="casemenuitems">
                                 <a class="dropdown-item pl-1 ml-0" href="#" id="navToCases"><img id="case-card-toggle-image" src='images/clipboard.svg' class='p-1' width='28px' title="Hide case details" /> Browse cases</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item pl-1 ml-0" href="#" id="navToNewCase"><img id="case-edit-image" src="images/compose.svg" class='p-1' width='28px' title='Create new case' /> Create case</a>

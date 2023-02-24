@@ -1,6 +1,26 @@
 $(function() {
     loadCase();
 
+    const inputField = $('.lookahead-input-field');
+    const inputDropdown = $('.lookahead-input-dropdown');
+    const options = $('#options li').map(function() { return $(this).text(); }).get();
+    
+    function updateOptions(query) {
+      const filteredOptions = options.filter(option => option.toLowerCase().includes(query.toLowerCase()));
+      inputDropdown.html(filteredOptions.map(option => `<li>${option}</li>`).join(''));
+      inputDropdown.css('display', filteredOptions.length > 0 ? 'block' : 'none');
+    }
+    
+    inputField.on('input', function() {
+      updateOptions($(this).val());
+    });
+    
+    inputDropdown.on('click', 'li', function() {
+      inputField.val($(this).text());
+      inputDropdown.css('display', 'none');
+    });    
+    
+    
     $('#hideCaseDetails').click(function() {
         toggleCaseDetails();
     })
@@ -99,7 +119,7 @@ $(function() {
                 }
             }
         });
-        console.log(newValues);
+        //console.log(newValues);
         $.when(caseUpdate(caseId, newValues)).done(function(changes) {
             //console.log(changes);
             //console.log('Create History');
@@ -114,22 +134,6 @@ $(function() {
             loadHistory();
         });
         //loadCase();
-    }) 
-    
-    $('#date_due').change(function() {
-        
-        var newDate=date2timestamp($(this).val());
-        var caseId=$('#caseid').val();
-        //console.log(globals);
-        //console.log('Change date due for '+caseId+' to '+newDate);
-        var newValues={};
-        newValues['date_due']=newDate
-        $.when(caseUpdate(caseId, newValues)).done(function(changes) {
-            var oldDate=timestamp2date(changes.date_due['old']);
-            var newDate=timestamp2date(changes.date_due['new']);
-            historyCreate(caseId, globals.user_id, '0', 'date_due', oldDate, newDate);
-            loadHistory();    
-        });
     }) 
     
     $('#close_case_btn').click(function() {
@@ -155,7 +159,7 @@ $(function() {
     $('.nav-link-tab').click(function() {
         //Find the tab which has just been displayed and store it in the cookie against the case number
         var status=getStatus();
-        console.log($(this).attr("href"));
+        //console.log($(this).attr("href"));
         var caseId=$('#caseid').val();
         var lasttab=$(this).attr("href");
         var timestamp=parseInt(Date.now()/1000);
@@ -164,7 +168,7 @@ $(function() {
     })   
     
     $('#is_restricted').click(function() {
-        console.log($('#edit_is_restricted').val())
+        //console.log($('#edit_is_restricted').val())
         if($('#edit_is_restricted').val()==1) {
             $('#edit_is_restricted').val('0');
             $('#is_restricted').removeClass('bg-danger');
@@ -196,7 +200,7 @@ function loadCase() {
         //console.log(caseDetails);
         if(caseDetails.count > 0) {
             if(caseDetails.results.is_closed==1) {
-                console.log('Showing closed stamp');
+                //console.log('Showing closed stamp');
                 $('#closeCase').hide();
                 $('#reopenCase').show();
                 $('#closedStamp').show();
@@ -343,6 +347,12 @@ function loadCase() {
             $('#edit_detailed_desc').val(casedata.detailed_desc);
             $('#edit_resolution_sought').val(casedata.resolution_sought);    
             $('#edit_is_restricted').val(casedata.is_restricted); 
+            if($('#edit_unit').is('input:text')) {
+                $('#edit_unit').val(casedata.unit);
+            } else {
+                $('#edit_unit option:contains('+casedata.unit+')').attr('selected', 'selected');   
+            }
+            
             $('#case-cover-sheet').append('<input type="hidden" id="nocase" value="0" />')       
         } else {
             $('#case-cover-sheet').html('<div class="p-5 bg-light rounded m-5 text-center" style="height: 20%;">Case not available</div><input type="hidden" id="nocase" value="1" />');
@@ -365,7 +375,7 @@ function loadCase() {
 
         }
     }).fail(function() {
-        console.log('Nothing found');
+        //console.log('Nothing found');
         $('#todolist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
         pagerNumbers('todo', 0, 0, 0);        
     });    

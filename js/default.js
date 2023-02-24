@@ -47,9 +47,9 @@ $(document).ready(function(){
 
                             
     $('.pagerbutton').click(function() {
-        //console.log(this.id);
+        console.log(this.id+'_pager');
         var functionname=this.id+'_pager';
-        //console.log(functionname);
+        console.log('Running '+functionname);
         window[functionname]();
     })
     
@@ -68,8 +68,9 @@ $(document).ready(function(){
         })
         
         var funcName='load'+pagerName.charAt(0).toUpperCase() + pagerName.slice(1);
+        console.log('The function is called '+funcName);
         window[funcName]();        
         
     }) 
-
+    
 })

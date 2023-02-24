@@ -15,30 +15,6 @@ class CaseTracker extends oct {
     var $httpheader=array('Content-type: application/json');
     var $baseurl="https://oms.economicoutlook.net/cpsuvic/apis/rest/admin";
 
-    /**
-    * Open connection to the database, in this case a standard ODBC connection.
-    * On linux servers this requires openodbc or similar, and a dsn connection
-    * 
-    * @param mixed $mustodbcdsn The name DSN connection (from casetracker.conf.php)
-    * @param mixed $mustdbuser The database username
-    * @param mixed $mustdbpass The database password
-    */
-    function odbcOpen($mustodbcdsn = '', $mustdbuser='', $mustdbpass='') {
-        $this->username=$mustdbuser;
-        $this->password=$mustdbpass;
-        $this->baseurl=$mustodbcdsn;
-        return true;
-    }
-
-    /**
-    * Close the odbc database link
-    * 
-    */
-    function odbcClose() {
-      return true;
-    }
-    
-    
     
     //OMS SPECIFIC FUNCTIONALITY
     function curl_put($username=null, $password=null, $url=null, $httpheader=array('Content-type: application/json'), $useragent='', $jsondata=null, $debug=false) {
@@ -329,6 +305,7 @@ class CaseTracker extends oct {
     function sortByFullname($a, $b) {
         return strcmp($a["fullname"], $b["fullname"]);
     }
+    
     function sortByName($a, $b) {
         return strcmp($a["name"], $b["name"]);
     }
@@ -336,44 +313,12 @@ class CaseTracker extends oct {
     function sortByFirstnames($a, $b) {
         return strcmp($a['firstNames'], $b['firstNames']);
     }
+    
     function sortByLastThenFirstnames($a, $b) {
         return strcmp($a['surname'].$a['given_names'], $b['surname'].$b['given_names']);
     }
     
     
-    //TRADITIONAL CASETRACKER SHIM/FUNCTIONALITY
-    
-    /**
-    * Perform a SQL command on the odbc connection
-    * 
-    * @param mixed $sql The SQL command to perform
-    * @param mixed $inputarr Any input values in an array format
-    * @param mixed $numrows The number of rows to return (-1 = unlimited)
-    * @param mixed $offset Which record to start at
-    */
-    function odbcExec($sql, $inputarr=false, $numrows=-1, $offset=-1) {
-
-      return true;
-      
-    }
-
-    /**
-    * Perform a query on the odbc connection (this is the function to use)
-    * 
-    * @param mixed $sql
-    * @param mixed $inputarr
-    * @param mixed $numrows
-    * @param mixed $offset
-    */
-    function odbcQuery($sql, $inputarr=false, $numrows=-1, $offset=-1) {
-      return true;
-    }
-
-    function odbcFetchArray(&$result) {
-      $row = $this->dbFetchRow($result);
-      return $row;
-    }
-
     /**
     * ReturnSmiley returns a smiley face based on the financiality of the member
     * 
@@ -1335,6 +1280,7 @@ class CaseTracker extends oct {
         }
         return $results;        
     }
+    
     function actual_emp_search($text) {
         $searchterm="%".strtoupper($text)."%";
         $result = $this->odbcQuery("SELECT code=employer, value=emp_descrip FROM employers
@@ -1348,6 +1294,7 @@ class CaseTracker extends oct {
         }
         return $results;        
     }
+    
     function workplace_search($text) {
         $searchterm="%".strtoupper($text)."%";
         $result = $this->odbcQuery("SELECT code=workplace, value=work_addr_1+'<br />'+work_addr_2+'<br />'+work_addr_3+'<br />'+work_addr_4
@@ -1361,6 +1308,7 @@ class CaseTracker extends oct {
         }
         return $results;
     }
+    
     function classification_search($text) {
         $searchterm="%".strtoupper($text)."%";
         $result = $this->odbcQuery("SELECT code=class, value=class_descrip

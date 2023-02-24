@@ -175,6 +175,12 @@
                             </div>
                         </div>
                         <div class="row mb-1">
+                            <div class="subSection-label col-xs-4">&nbsp;
+                            </div>
+                            <div class="subSection-field col-xs-8">&nbsp;
+                            </div>
+                        </div>
+                        <div class="row mb-1">
                             <div class="subSection-label col-xs-4">
                                 Line Manager
                             </div>
@@ -215,7 +221,7 @@
                                                     break;
                                                 default:
                                                     ?>
-                                                    <input type="text" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
+                                                    <input type="text" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase w-100' />
                                                     <?php
                                                     break;                                                
                                             }
@@ -269,6 +275,43 @@
                             </div>
                         </div>
                         <div class="row mb-1">
+                            <div class="subSection-label col-xs-4">
+                                Unit
+                            </div>
+                            <div class="subSection-field col-xs-8 unit">
+                                <?php
+                                if($configsettings['general']['unit_list_use']['value'] > 0) {
+                                        $unitlist=$oct->unitList();
+                                }
+                                switch($configsettings['general']['unit_list_use']['value']) {
+                                    case "1":
+                                        echo "<div class='lookahead-input-wrapper'>";
+                                        echo "<input type='text' id='edit_unit' class='updateCase lookahead-input-field w-100' />";
+                                        echo "<ul class='lookahead-input-dropdown w-100'></ul>";
+                                        echo "</div><ul id='options' style='display: none;'>";
+                                        foreach($unitlist['results'] as $unititem) {
+                                            echo "<li>".$unititem['unit_descrip']."</li>";
+                                        }
+                                        echo "</ul>";  
+                                        break;
+                                    case "2":
+                                        echo "<select id='edit_unit' class='updateCase'>";
+                                        echo "<option value=''>Select a unit location...</option>";
+                                        foreach($unitlist['results'] as $unititem) {
+                                            echo "<option>".$unititem['unit_descrip']."</option>";
+                                        }
+                                        echo "</select>";                                        
+                                        break;
+                                    default:
+                                        ?>
+                                            <input type="text" id="edit_unit" class="updateCase w-100" />
+                                        <?php
+                                        break;
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
                             <div class="subsection-label col-xs-4">
                                 Line Manager Ph
                             </div>
@@ -309,7 +352,7 @@
                                                     break;
                                                 default:
                                                     ?>
-                                                    <input type="text" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
+                                                    <input type="text" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase w-100' />
                                                     <?php
                                                     break;                                                
                                             }
@@ -574,7 +617,7 @@
             </div>        
 
 
-            <div class="card-footer text-footnote row">
+            <div class="card-footer text-footnote row m-0">
                 <div class="col-lg">
                     Case created on <span id="dateopened_cover"></span> by <span id="openedby_cover"></span>
                 </div>

@@ -1,13 +1,13 @@
-<script src="js/pages/dashboard/todo.js"></script>
+<script src="js/pages/dashboard/mytodo.js"></script>
 <div class="float-right m-1 text-muted">
     <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />-->
 </div>
-<h4 class="p-0 header" id='todoheader'>To do</h4>
+<h4 class="p-0 header" id='todoheader'>My To-do</h4>
 <?php 
-    $pagername="todo";
+    $pagername="mytodo";
     include('pages/helpers/pager.php'); 
 ?>
-<div class="w-100 overflow-auto" style="max-height: 270px" id="todolist">
+<div class="w-100 overflow-auto" style="max-height: 270px" id="mytodolist">
 <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
 $status=array("current", "arrears-small", "arrears-big", "notcurrent");

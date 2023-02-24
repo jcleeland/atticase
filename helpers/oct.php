@@ -173,7 +173,7 @@ class oct {
         
         $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uc.real_name as closedby_real_name, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
         if($this->externalDb===true) {
-            $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+            $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname, mem.modified as externaldbmodified";
         }
         $query.="\r\n                 FROM ".$this->dbprefix."tasks t
 
@@ -822,6 +822,7 @@ class oct {
             28=>"Case made companion of other case",
             29=>"Case removed as companion of other case",
             30=>"Acknowledged checklist item",
+            40=>"Date due changed",
             60=>"Added person of interest",
             61=>"Deleted person of interest",
             62=>"Changed description for person of interest",
@@ -932,14 +933,13 @@ class oct {
 
     function poiList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="date_added DESC";}
+        if($order===null) {$order="created DESC";}
         
         $query = "SELECT poi.id as poi_id, task_id, comment, poi.created, poi.modified, p.id as person_id, firstname, lastname, position, organisation, phone, email";
         $query .="\r\n  FROM ".$this->dbprefix."people_of_interest  poi";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."people p ON poi.person_id = p.id";
         $query .="\r\nWHERE $conditions";
         $query .="\r\nORDER BY $order";
-        
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
         
@@ -963,7 +963,7 @@ class oct {
     }
     
     function poiConnectionsList($parameters=array(), $conditions="1=1", $order="poi.modified", $first=0, $last=1000000000) {
-        $query  = "SELECT t.task_id, item_summary, is_closed, poi.comment, poi.modified";
+        $query  = "SELECT t.task_id, item_summary, is_closed, poi.comment, poi.modified, poi.id";
         $query .= "\r\n FROM ".$this->dbprefix."tasks t";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."people_of_interest poi ON poi.task_id=t.task_id";
         $query .= "\r\n WHERE $conditions";
@@ -980,6 +980,8 @@ class oct {
     }
     
     function poiPeopleList($parameters=array(), $conditions="", $order="lastname, firstname", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="lastname, firstname";}
         $query  = "SELECT *";
         $query .= "\r\n FROM ".$this->dbprefix."people";
         $query .= "\r\n WHERE $conditions";
@@ -999,7 +1001,7 @@ class oct {
         /* select h.*, t.* 
         from flyspray_tasks t 
         inner join (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id=61 GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id */
-        $query = "SELECT h.*, t.*, lt.*, lc.*, u.real_name as assigned_real_name ";
+        $query = "SELECT distinct t.task_id as caseno, h.changedby_real_name as event_modified_real_name, h.*, t.*, lt.*, lc.*, u.real_name as assigned_real_name ";
         if($this->externalDb===true) {
             //$query .= ", mem.*";
             $query .= ", mem.data, mem.pref_name, mem.surname,        
@@ -1018,7 +1020,7 @@ class oct {
                 
         $query .="\r\n  FROM ".$this->dbprefix."tasks t";
         $query .="\r\n  INNER JOIN ".$this->dbprefix."users u ON t.assigned_to=u.user_id";
-        $query .= "\r\n  INNER JOIN (select task_id, history_id, user_id, event_type, field_changed, old_value, new_value, max(event_date) as event_date from flyspray_history WHERE user_id LIKE '".$parameters[':user_id']."' GROUP BY task_id ORDER BY event_date desc) AS h ON t.task_id=h.task_id";
+        $query .= "\r\n  INNER JOIN (SELECT h.task_id, h.event_date, h.user_id, h.event_type, h.field_changed, h.old_value, h.new_value, real_name as changedby_real_name FROM ".$this->dbprefix."history h JOIN ".$this->dbprefix."users ON ".$this->dbprefix."users.user_id=h.user_id JOIN ( SELECT task_id, MAX(event_date) as max_event_date FROM ".$this->dbprefix."history GROUP BY task_id ) t ON h.task_id = t.task_id AND h.event_date = t.max_event_date WHERE h.user_id LIKE :user_id ORDER BY `h`.`task_id` ASC) AS h ON t.task_id=h.task_id";
         $query .= "\r\n  LEFT JOIN ".$this->dbprefix."list_tasktype lt ON t.task_type = lt.tasktype_id";
         $query .= "\r\n LEFT JOIN ".$this->dbprefix."list_category lc ON t.product_category = lc.category_id";
  
@@ -1030,12 +1032,9 @@ class oct {
         
         $query .="\r\n";
         $query .="\r\nORDER BY $order";
-        //$query .="\r\nLIMIT 500";
+
         
-        //echo $query;
-        //die();
-        
-        $results=$this->fetchMany($query, $parameters, $first, $last, false);
+        $results=$this->fetchMany($query, $parameters, $first, $last, 0);
 
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
@@ -1215,7 +1214,7 @@ class oct {
                 
     }
 
-    function tableList($tablename, $joins, $select, $parameters=array(), $conditions="", $order="", $first=1, $last=1000000000) {
+    function tableList($tablename, $joins, $select, $parameters=array(), $conditions="", $order="", $first=0, $last=1000000000) {
         $query="SELECT ".$select."\r\n";
         $query.="FROM ".$this->dbprefix.$tablename."\r\n";
         if($joins) {
@@ -1241,6 +1240,22 @@ class oct {
         $results=$this->fetchMany($query, $parameters, $first, $last);
         $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
         return($output);
+    }
+    
+    function unitList($parameters=array(), $conditions="1=1", $order="show_in_list DESC, list_position", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="show_in_list DESC, list_position";}
+        
+        $query  = "SELECT *";
+        $query .= "\r\nFROM ".$this->dbprefix."list_unit";
+        $query .= "\r\n WHERE $conditions";
+        $query .= "\r\n ORDER BY $order";
+
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        //$this->showArray($output);  
+        return($output);        
     }
     
     function userList($parameters=array(), $conditions="1=1", $order="group_name, real_name", $first=1, $last=1000000000) {

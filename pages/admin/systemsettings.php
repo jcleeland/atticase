@@ -34,9 +34,8 @@
                                     <span title="Field name: <?php echo $vkey ?>"><?php echo $vval['title'] ?></span>
                                     <?php 
                                     $extraclass="";
-                                    //$oct->showArray($vkey);
-                                    if(empty($vval['value'])) {
-                                        echo "<span style='cursor: pointer' title='Using default value'>*</span>";
+                                    if(!$vval['set']) {
+                                        //echo "<span style='cursor: pointer' title='Using default value'>*</span>";
                                         $extraclass="new";    
                                     } 
                                     ?>
@@ -65,11 +64,25 @@
                                             }
                                             break;
                                         case "boolean":
+                                            if(isset($vval['selectoptions']) && !empty($vval['selectoptions']) && is_array($vval['selectoptions'])) {
+                                                ?>
+                                                <select class='updatesettings <?php echo $extraclass ?>' id='config_<?php echo $vkey ?>' name='<?php echo $vkey ?>' title='<?php echo $vval['description'] ?>'>
+                                                <?php
+                                                foreach($vval['selectoptions'] as $skey=>$sval) {
+                                                    echo "<option value='".$skey."'";
+                                                    if($thisvalue==$skey) echo " selected";
+                                                    echo ">".$sval."</option>\n";
+                                                }
+                                                ?>
+                                                </select>
+                                                <?php
+                                            } else {
                                             ?>
                                             <input type='checkbox' class='updatesettings <?php echo $extraclass ?>' style='margin-top: 6px' id='config_<?php echo $vkey ?>' name='<?php echo $vkey ?>' title='<?php echo $vval['description'] ?>' <?php
                                                 if($thisvalue === "true" || $thisvalue==1) echo "checked";
                                             ?> />
                                             <?php
+                                            }
                                             break;
                                         case "password":
                                             ?>

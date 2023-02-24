@@ -2,21 +2,91 @@ $(function() {
     if($('#nocase').val() != 0) {
         loadPois();
     }
+    $('#newpoi_step2').hide();
+    $('#newpoi_step3').hide();
     
     $('#newPoiBtn').click(function() {
         $('#newPoiForm').toggle();    
     });
     
+    $('#newpoi_step1button').click(function() {
+        $('#newpoi_step1').hide();
+        $('#newpoi_step2').show();
+        $('#newpoi_step3').hide();
+    })
+   
+    $('.cancelpoiperson').click(function() {
+        $('#newpoi_step2').hide();
+        $('#newpoi_step3').hide();
+        $('#newpoi_step1').show();
+    })
+    
+    
+    $('#newPoiPerson').keyup(function() {
+        value=$(this).val();
+        //console.log('waiting');
+        delay(function() {
+            const menu = $('#poi-dropdown-menu');
+            menu.html('');
+            //console.log(value);
+            $.when(poiPersonLookup(value)).done(function(output) {
+                //console.log(output);
+                const menu = $('#poi-dropdown-menu');
+                //console.log(menu);
+                if(parseInt(output.count) > 0) {
+                    $.each(output.results, function(i, person) {
+                        menu.append('<li value="'+person.id+'" onClick="selectPoiPerson(\''+person.id+'\',\''+person.firstname+' '+person.lastname+'\')">'+person.firstname+' '+person.lastname+' ('+person.position+': '+person.organisation+')</li>\n');
+                        menu.show();
+                        //$('#newpoi_step1button').hide();   
+                    })
+                } else {
+                    $('#newpoi_step1button').show();
+                }
+            })
+        }, 1000);        
+
+        
+    }) 
+    
+    $('.createpoiperson').click(function() {
+        var firstname=$('#firstname').val();
+        var lastname=$('#lastname').val();
+        var position=$('#position').val();
+        var organisation=$('#organisation').val();
+        var phone=$('#phone').val();
+        var email=$('#email').val();
+        //console.log(firstname, lastname, position, organisation, phone, email);
+        if(firstname != "" && lastname != "") {
+            $.when(poiPersonCreate(firstname, lastname, position, organisation, phone, email)).done(function(output) {
+                if(output.results != "Error - No poi action provided") {
+                    $('#newpoiconnectionname').text(firstname+' '+lastname);
+                    $('#newpoi_step2').hide();
+                    $('#newpoi_step3').show();
+                    $('#newPoiPersonId').val(output.insertid);
+                    //console.log(output);
+                }
+            })
+        } else {
+            alert("There must be at least a first and last name");
+        }
+        
+    });    
+    
     $('#submitPoiBtn').click(function() {
         var userId=globals.user_id;
         var caseId=$('#caseid').val();
-        var poiComment=$('#poiComment').val();
-        console.log('POI: '+poiComment);
+        var poiComment=$('#newPoiComment').val();
+        var poiPersonId=$('#newPoiPersonId').val();
+        //console.log('POI: '+poiComment);
         var time=Math.floor(Date.now() / 1000);
-        $.when(attachmentCreate(caseId, userId, poiComment, time)).done(function(insert) {
+        $.when(poiLinkCreate(caseId, poiPersonId, poiComment)).done(function(insert) {
             if(insert.count=="1") {
                 $('#fileDesc').val('');
                 $('#newAttachmentForm').toggle();
+                $('#newpoi_step3').hide();
+                $('#newpoi_step1').show();
+                $('#newPoiForm').hide();
+                
                 historyCreate(caseId, userId, '60', null, null, poiComment);
                 loadPois();
                 loadHistory();
@@ -27,6 +97,7 @@ $(function() {
     
     $('#filterPois').keyup(function() {
         //console.log($(this).val());
+               
         var search=$(this).val();
         $('.poiitem').each(function() {
             if($(this).html().toUpperCase().includes(search.toUpperCase())) {
@@ -37,6 +108,15 @@ $(function() {
         })
     })
 }) 
+
+function selectPoiPerson(poiId, poiName) {
+    //console.log('Selected person '+poiId);  
+    $('#poi-dropdown-menu').hide();
+    $('#newpoiconnectionname').text(poiName);
+    $('#newPoiPersonId').val(poiId);
+    $('#newpoi_step1').hide();
+    $('#newpoi_step3').show();
+}
 
 function loadPois() {
     var today=new Date();
@@ -52,7 +132,7 @@ function loadPois() {
     
     var conditions='task_id = :taskid'
     
-    var order='p.created DESC';
+    var order='poi.created DESC';
     
     var start=parseInt($('#poistart').val()) || 0;
     var end=parseInt($('#poiend').val()) || 90000000;
@@ -99,19 +179,7 @@ function loadPois() {
                 var content=deWordify(poidata.comment);
     
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);                
-                /* Put formatting into a standalone script */
-                
-                /* $('#poilist').append("<div class='card poiitem col-lg-3 m-2 p-0' id='poicard_"+poidata.poi_id+"'><div class='card-header' id='poiheader_"+poidata.poi_id+"'></div><div class='card-body poi-card small'><div class='overflow-auto' style='max-height: 130px' id='poibody_"+poidata.poi_id+"'></div></div></div>");
-                var deleteclass='disabledimage';
-                if($('#user_id').val()==poidata.user_id) {
-                    var deleteclass='enabledimage';
-                }
-                $('#poiheader_'+poidata.poi_id).append("<div class='float-right pl-2 "+deleteclass+"' title='Delete person of interest'><img src='images/trash.svg' alt='Delete person of interest' width='20px'></div>");
-                $('#poiheader_'+poidata.poi_id).append("<div class='float-right pl-2 "+deleteclass+"' title='Edit person of interest'><img src='images/edit.svg' alt='Edit person of interest' width='20px'></div>");
-                $('#poiheader_'+poidata.poi_id).append("<div class='float-left card-heading-border card-heading-inverse border rounded pl-1 pr-1 mr-2'>"+poidata.firstname+" "+poidata.lastname+"</div><div style='clear: both'></div><div class='smaller font-italic'>Person of interest added "+dateAdded+"</div>")
-                $('#poibody_'+poidata.poi_id).append("<a href='download.php?poiid="+poidata.poi_id+"'>"+poidata.organisation+"</a><br />");
-                $('#poibody_'+poidata.poi_id).append(deWordify(poidata.comment));
-                $('#poiheader_'+poidata.poi_id).append("<div style='clear: both'></div>"); */
+
             })
             
         }

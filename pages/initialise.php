@@ -53,6 +53,13 @@ $filename=dirname(__FILE__)."/../config/config.php";
 $file=@fopen($filename, "w") or die("Unable to open config.php for writing</body></html>");
 fwrite($file, $filecontents);
 fclose($file);
+
+//TODO: Now check to see if there is actually a database that matches this configuration.
+// - if there is, check if it contains any tables.
+//    - if there are, then check the version number of the database
+//    - if there aren't, then offer the opportunity to setup the database
+// - if there isn't, offer the opportunity to create the database (including setup)
+//
 ?>
         <h1>Basic Configuration File has been created.</h1>
         <a href='index.php'>Start</a>

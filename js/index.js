@@ -90,13 +90,20 @@ function deleteTabEdit(method, id) {
         switch(method) {
             case "poi":
                 console.log('Deleting POI');
-
+                var oldDescription=$('#tabPrimeBox_poi'+id).text()+': '+$('#cardbody_poi'+id).text();
+                console.log('ID: '+id);
+                $.when(poiLinkDelete(id)).done(function(results) {
+                    historyCreate($('#caseid').val(), globals.user_id, "61", "poi", oldDescription, "");
+                    //$('#tabCardParent_poi'+id).hide();
+                    loadPois();
+                    loadHistory();                    
+                    
+                })
                 break;
             case "attachment":
                 console.log('Deleting attachment');
                 var oldDescription=$('#cardbody_attachment'+id).text();
                 $.when(attachmentDelete(id)).done(function(results) {
-                    console.log('hi');
                     console.log(results);
                     if(results.count == 0) {
                         alert('Unable to delete attachment. \r\n\r\nError given: '+results.results);
@@ -160,7 +167,7 @@ function saveTabEdit(method, id) {
 }
 
 function caseList(parameters, conditions, order, first, last) {
-    console.log(parameters);
+    //console.log(parameters);
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
@@ -179,6 +186,11 @@ function getCase(caseId) {
     })
 }
 
+/**
+* Returns OpenCaseTracker Cookies
+* 
+* @param name - OpenCaseTrackerStatus or OpenCaseTrackerSystem
+*/
 function getSettings(name) {
     var cookiename = name + "="; //this is looking for an empty cookie name (?)
     //console.log(cookiename);
@@ -205,7 +217,7 @@ function getSettings(name) {
 }
 
 function getStatus() {
-    console.log('Reading status cookie');
+    //console.log('Reading status cookie');
     var cookiename = "OpenCaseTrackerStatus" + "=";
     var thisCookie=document.cookie;
     //var thisCookie=document.cookie;
@@ -227,7 +239,7 @@ function getStatus() {
     var theend=JSON.parse(output);
     var deleteditems=false; 
     for(const key in theend.caseviews) {
-        console.log(key);
+        //console.log(key);
         if(key.substring(0,4) != 'case') {
             deleteditems=true;
             delete theend.caseviews[key];
@@ -255,7 +267,7 @@ function getUsers(parameters, conditions, order, first, last) {
 * @param status    - object containing status values
 */
 function setStatus(status) {
-    console.log('Setting status cookie');
+    //console.log('Setting status cookie');
     //console.log(status);
     //console.log('Stringified');
     //console.log(JSON.stringify(status));
@@ -266,6 +278,10 @@ function setStatus(status) {
     //console.log("After setting, cookie looks like this");
     //console.log(document.cookie);
 }
+
+
+
+
 
 function attachmentList(parameters, conditions, order, first, last) {
     return $.ajax({
@@ -475,7 +491,7 @@ function accountUpdate(userId, newValues) {
 }
 
 function caseCreate(newValues, user_id) {
-    console.log(newValues);
+    //console.log(newValues);
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
@@ -676,11 +692,20 @@ function poiConnectionsList(personId) {
     });    
 }
 
-function poiLinkDelete(taskId, personId) {
+function poiLinkCreate(caseId, poiId, comment) {
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'poiLinkDelete', taskId: taskId, personId: personId},
+        data: {method: 'poiLinkCreate', caseId: caseId, poiId: poiId, comment: comment},
+        dataType: 'json'
+    });   
+}
+
+function poiLinkDelete(poiId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiLinkDelete', poiId: poiId},
         dataType: 'json'
     });     
 }
@@ -721,6 +746,18 @@ function poiPersonDelete(personId) {
     })      
 }
 
+function poiPersonLookup(value) {
+    var parameters={};
+    parameters[':nameValue']='%'+value+'%';
+    var conditions="CONCAT(firstname, ' ', lastname) LIKE :nameValue"; 
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'poiPeopleList', parameters: parameters, conditions: conditions },
+        dataType: 'json'
+    })    
+}
+
 function poiCreate() {
     
 }
@@ -746,7 +783,6 @@ function recentList(parameters, conditions, order, first, last) {
         dataType: 'json'
     });
 }
-
 
 function resolutionUpdate(resolutionId, fieldName, value) {
     return $.ajax({
@@ -774,7 +810,6 @@ function resolutionDelete(resolutionId) {
         dataType: 'json'
     })      
 }
-
 
 function restrictVersionList(groupId) {
     return $.ajax({
@@ -813,9 +848,9 @@ function systemSettingsCreate(values) {
 }
 
 function systemSettingsUpdate(values, wheres) {
-    console.log('Values');
-    console.log(values);
-    console.log('Wheres: '+wheres);
+    //console.log('Values');
+    //console.log(values);
+    //console.log('Wheres: '+wheres);
     return $.ajax({
         url:'ajax.php',
         method: 'POST',
@@ -833,7 +868,41 @@ function tableList(tablename, joins, select, parameters, conditions, order, firs
     })
 }
 
+function unitCreate(unitDescrip, listPosition, showInList) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'unitCreate', unitDescrip: unitDescrip, listPosition: listPosition, showInList: showInList},
+        dataType: 'json'
+    })    
+}
 
+function unitDelete(unitId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'unitDelete', unitId: unitId},
+        dataType: 'json'
+    })      
+}
+
+function unitUpdate(unitId, fieldName, value) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'unitUpdate', unitId: unitId, fieldName: fieldName, value: value},
+        dataType: 'json'
+    })    
+}
+
+function unitList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'unitList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
 
 
 
@@ -856,13 +925,46 @@ function toggleDatepickers() {
     //console.log('toggling');
     $('.datepicker').each(function() {
         //console.log(this.id);
-        if(!$(this).hasClass('hasDatepicker')) {
-            //console.log(this.id);
+        //console.log($(this)[0].classList);
+        var classes=$(this)[0].classList;
+        var classString=Array.from(classes).join(" ");
+        if(!$(this).hasClass('hasDatepicker') || classString.includes("hasDatepicker")) {
             var fontSize=parseInt($(this).css("font-size"));
             $(this).css("width", (($(this).val().length+1)*(fontSize/2))+'px');
             var height=parseInt($(this).css("height"));
             $(this).css("height", (height-2)+'px');
-            $(this).datepicker({dateFormat: "dd/mm/yy"});
+            $(this).datepicker({
+                    dateFormat: "dd/mm/yy", 
+                    changeMonth: true, 
+                    changeYear: true, 
+                    onSelect: function(dateText, inst) {
+                        if(this.id.includes('caselist')) {
+                            var newDate=date2timestamp($(this).val());
+                            var lastIndex=inst.id.lastIndexOf("_");
+                            var caseId=inst.id.substring(lastIndex+1);
+                            var newValues={};
+                            newValues['date_due']=newDate;
+                            $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+                                var oldDate=timestamp2date(changes.date_due['old']);
+                                var newDate=timestamp2date(changes.date_due['new']);
+                                historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
+                            });                            
+                        } else if(this.id='date_due') {
+                            var newDate=date2timestamp($(this).val());
+                            var caseId=$('#caseid').val();
+                            var newValues={};
+                            newValues['date_due']=newDate;
+                            $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+                                var oldDate=timestamp2date(changes.date_due['old']);
+                                var newDate=timestamp2date(changes.date_due['new']);
+                                historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
+                                loadHistory();    
+                            });
+                        }
+
+                        
+                    },
+            });
         } else {
             //console.log('Doesnt have date picker class')
         }
@@ -870,10 +972,11 @@ function toggleDatepickers() {
     })    
 }
 
+
 function loadAttachment(origname, filename, filetype) {
     var attachmentDir=$('#attachments_dir').val();
     $.when(readFile(attachmentDir+filename)).done(function(contents) {
-        console.log(contents);
+        //console.log(contents);
         if(contents.length > 0) {
             var data=encodeURI('data:'+filetype+';charset=utf-8,'+contents);
             
@@ -890,14 +993,14 @@ function loadAttachment(origname, filename, filetype) {
 }
 
 function readFile(filename) {
-    console.log(filename);
+    //console.log(filename);
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
         data: {method: 'readfile', filename: filename},
         dataType: 'binary'
     }).fail(function(xhr, status, error) {
-        console.log('Failed to open '+filename+' ---> '+status+': '+error);
+        //console.log('Failed to open '+filename+' ---> '+status+': '+error);
     })
 }
 
@@ -957,7 +1060,7 @@ function exportDivWithAttributes(divId, excludes) {
 
     link.click();
 
-    console.log(csvExport);        
+    //console.log(csvExport);        
 }
 
 /**
@@ -1124,8 +1227,9 @@ function savePagerOrder(pagerName, orderField, orderMethod) {
 
 function clearPagerOrder(pagerName, orderField) {
     var status=getStatus();
-    console.log(status);
-    console.log('Deleting '+orderField+' from '+pagerName);
+    //console.log('This id: '+$(this).attr('id'));
+    //console.log(status);
+    //console.log('Deleting '+orderField+' from '+pagerName);
     if(status.orders[pagerName]==undefined) {
         //Nothing to do here
     } else {
@@ -1139,13 +1243,13 @@ function clearPagerOrder(pagerName, orderField) {
             delete status.orders[pagerName][orderField];
         }
     }
-    console.log(status);
+    //console.log(status);
     setStatus(status);
 }
 
 function loadPagerOrder(pagerName) {
     var status=getStatus();
-    console.log(status);
+    //console.log(status);
     
     if(status.orders==undefined) {
         status['orders']={};
@@ -1165,7 +1269,7 @@ function loadPagerOrder(pagerName) {
 }
 
 function addPagerOrder(pagerName, orderField, orderMethod) {
-    console.log('Adding order setting to '+pagerName+' for '+orderField+' by '+orderMethod);
+    //console.log('Adding order setting to '+pagerName+' for '+orderField+' by '+orderMethod);
     //$('#'+pagerName+'_order').append('<div class="border rounded float-left smaller mt-1">'+orderField+'</div>');
     //clearPagerOrder(pagerName, 'date_closed');
     //Tick the item selected
@@ -1382,7 +1486,7 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'></p>");
         
         
-        console.log(casedata.is_closed);
+        //console.log(casedata.is_closed);
         if(casedata.is_closed==1) {
             //console.log('Stamping closed');
             $('#leftCaseCol_'+uniqueId).append('<div class="stamp stamp-red-double stamp-tiny">Closed</div>');    
@@ -1483,7 +1587,7 @@ function searchDivsByText(parentDiv, searchTerm, hideCardsOnClear) {
               div.hide();
             } else {
               // If the search text is present, show the div and highlight the searched text
-              console.log('showing');
+              //console.log('showing');
               div.show();
 
               // Use a regular expression to match the searched text only if it is not part of an HTML tag
@@ -1498,15 +1602,15 @@ function searchDivsByText(parentDiv, searchTerm, hideCardsOnClear) {
 }
 
 function toggleDetails(id) {
-    console.log('Toggling id: '+id);
+    //console.log('Toggling id: '+id);
     //console.log($('#toggledetails_'+id).attr('src'));
     if($('#toggledetails_'+id).attr('src')=="images/folder-open.svg") {
-        console.log('Toggling icon to view');
+        //console.log('Toggling icon to view');
         $('#toggledetails_'+id).attr("src", "images/folder.svg");
         $('#case-card-toggle-image').attr("title", "View case details");
         $('#casedetails_'+id).hide(); 
     } else {
-        console.log('Toggling icon to hide');
+        //console.log('Toggling icon to hide');
         $('#toggledetails_'+id).attr("src", "images/folder-open.svg");
         $('#toggledetails_'+id).attr("title", "Hide case details");
         $('#casedetails_'+id).show();
@@ -1514,7 +1618,7 @@ function toggleDetails(id) {
 }
 
 function toggleLastComment(id, taskId) {
-    console.log('COMMENT for Task: '+id+', task_id: '+taskId);
+    //console.log('COMMENT for Task: '+id+', task_id: '+taskId);
     if($('#togglecomments_'+id).attr('src')=="images/caret-top.svg") {
         $('#togglecomments_'+id).attr("src", "images/message.svg");
         $('#comment-card-toggle-image').attr("title", "View comment details");
@@ -1523,7 +1627,7 @@ function toggleLastComment(id, taskId) {
         if($('#casecomment_'+id).text()=="") {
             //Get the latest comment
             $.when(getLastComment(taskId)).done(function(output) {
-                console.log(output);
+                //console.log(output);
                 if(output.count > 0) {
                     var parentDiv='casecomment_'+id;
                     var uniqueId=id;
@@ -1566,8 +1670,8 @@ function drawPieChart(name, values, id, xtitle, ytitle, method, chartheight, leg
     if((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) {
         return false;
     }
-    console.log('Drawing Pie Chart');
-    console.log(values);
+    //console.log('Drawing Pie Chart');
+    //console.log(values);
     var width=$('#'+id).width();
     
     var chartdata=new google.visualization.DataTable();

@@ -11,7 +11,7 @@ $(function() {
         var userId=globals.user_id;
         var caseId=$('#caseid').val();
         var relatedCaseId=$('#relatedCaseId').val();
-        console.log('Related: '+relatedCaseId);
+        //console.log('Related: '+relatedCaseId);
         var time=Math.floor(Date.now() / 1000);
         $.when(relatedCreate(caseId, userId, relatedCaseId, time)).done(function(insert) {
             if(insert.count=="1") {
