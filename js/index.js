@@ -1,4 +1,20 @@
 /*
+ * Copyright [2022] [Jason Alexander Cleeland, Melbourne Australia]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+/*
 This file contains all the common javascript functions for OpenCaseTracker
 
 */
@@ -938,31 +954,31 @@ function toggleDatepickers() {
                     changeMonth: true, 
                     changeYear: true, 
                     onSelect: function(dateText, inst) {
-                        if(this.id.includes('caselist')) {
-                            var newDate=date2timestamp($(this).val());
-                            var lastIndex=inst.id.lastIndexOf("_");
-                            var caseId=inst.id.substring(lastIndex+1);
-                            var newValues={};
-                            newValues['date_due']=newDate;
-                            $.when(caseUpdate(caseId, newValues)).done(function(changes) {
-                                var oldDate=timestamp2date(changes.date_due['old']);
-                                var newDate=timestamp2date(changes.date_due['new']);
-                                historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
-                            });                            
-                        } else if(this.id='date_due') {
-                            var newDate=date2timestamp($(this).val());
-                            var caseId=$('#caseid').val();
-                            var newValues={};
-                            newValues['date_due']=newDate;
-                            $.when(caseUpdate(caseId, newValues)).done(function(changes) {
-                                var oldDate=timestamp2date(changes.date_due['old']);
-                                var newDate=timestamp2date(changes.date_due['new']);
-                                historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
-                                loadHistory();    
-                            });
+                        if(confirm("Update the due date for this case?")) {
+                            if(this.id.includes('caselist')) {
+                                var newDate=date2timestamp($(this).val());
+                                var lastIndex=inst.id.lastIndexOf("_");
+                                var caseId=inst.id.substring(lastIndex+1);
+                                var newValues={};
+                                newValues['date_due']=newDate;
+                                $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+                                    var oldDate=timestamp2date(changes.date_due['old']);
+                                    var newDate=timestamp2date(changes.date_due['new']);
+                                    historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
+                                });                            
+                            } else if(this.id='date_due') {
+                                var newDate=date2timestamp($(this).val());
+                                var caseId=$('#caseid').val();
+                                var newValues={};
+                                newValues['date_due']=newDate;
+                                $.when(caseUpdate(caseId, newValues)).done(function(changes) {
+                                    var oldDate=timestamp2date(changes.date_due['old']);
+                                    var newDate=timestamp2date(changes.date_due['new']);
+                                    historyCreate(caseId, globals.user_id, '40', 'date_due', oldDate, newDate);
+                                    loadHistory();    
+                                });
+                            }                            
                         }
-
-                        
                     },
             });
         } else {

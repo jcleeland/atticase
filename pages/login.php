@@ -1,4 +1,20 @@
 <?php
+/*
+ * Copyright [2022] [Jason Alexander Cleeland, Melbourne Australia]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 ?>
 <div class="row h-50 justify-content-center align-items-center">
     <form class="col-5" method="post">
@@ -19,4 +35,16 @@
             <button class='btn btn-primary'>Login</button>
         </div>
     </form> 
+    <div class="row mb-3" style='position: fixed; bottom: 0'>
+        <div class="col-3"></div>
+        <div class="col-6 text-center smaller border rounded p-3 text-muted">
+            <b>Copyright 2022 Jason Cleeland</b><br /><br />
+
+            This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+            the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br /><br />
+
+            You should have received a copy of the GNU General Public License along with this program.  If not, see <a href='https://www.gnu.org/licenses/' target='_blank'>https://www.gnu.org/licenses/></a>.
+        </div>
+        <div class="col-3"></div>
+    </div>
 </div>

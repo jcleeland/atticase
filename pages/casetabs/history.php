@@ -1,3 +1,21 @@
+<?php
+/*
+ * Copyright [2022] [Jason Alexander Cleeland, Melbourne Australia]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+?>
 <script src="js/pages/casetabs/history.js"></script>
 
 <div class='justify-content-center'>
@@ -9,26 +27,3 @@
     
 <div id='historylist' class='justify-content-center'>
 </div>
-<?php
-  
-//Note - change the "x" in the data toggle to the comment id
-/* for ($x=1; $x<10; $x++) {
-?>
-    <div class="card m-2 w-100">
-        <div class="card-header">
-            <div class="float-right card-heading-border card-heading-inverse border rounded pl-1 pr-1 mr-2">Roger Officer</div>
-            12 Mar 2019, 3:32pm
-        </div>
-        <div class="card-body comment-card">
-            <div class=" overflow-auto" style="max-height: 130px">
-            A comment was made about this case which was very interesting.<Br /> and went on for a while.<p>Hi there</p>
-            <br />
-            <br />
-            .
-            <br />
-            </div>
-        </div>
-    </div>
-<?php
-} */
-?>
