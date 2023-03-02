@@ -13,7 +13,7 @@
     mt_srand(make_seed());
     $randval=mt_rand();
     $file_name=$caseId."_".$randval;
-    $attachmentDir="/var/attachments";
+    $attachmentDir=$oct->config['installation']['attachmentdir']['value'];
     
     $error=null;
     

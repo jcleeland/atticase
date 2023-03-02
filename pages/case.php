@@ -19,13 +19,13 @@
 <script src="js/pages/case.js"></script>
 
 <?php
-
+    //$oct->showArray($oct->config['installation']['attachmentdir']['value']);
     //Gather lists & select html
     $casegroups=$oct->caseGroupList();
     $casetypes=$oct->caseTypeList();
-    $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"edit_task_type", "class"=>"updateCase"), "tasktype_id", "tasktype_name", null, "Select case", null);
-    $departments=$oct->departmentList(array(), "show_in_list=1");
-    $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"edit_product_category", "class"=>"updateCase"), "category_id", "category_name", null, "Select department");
+    $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"edit_task_type", "class"=>"updateCase w-100"), "tasktype_id", "tasktype_name", null, "Select case", null);
+    $departments=$oct->departmentList(array(), $oct->dbprefix."list_category.show_in_list=1");
+    $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"edit_product_category", "class"=>"updateCase"), "category_id", "category_name", null, "Select department", "parent_name");
     $users=$oct->userList(array(), "account_enabled=1 AND group_in NOT IN ('9')", null);
     $userSelect=$oct->buildSelectList($users['results'], array("id"=>"edit_assigned_to", "class"=>"updateCase"), "user_id", "real_name", $user_id, "Select user", "group_name");
     $resolutions=$oct->resolutionList(array(), "show_in_list=1");

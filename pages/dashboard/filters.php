@@ -52,8 +52,8 @@
                 </div> 
                 <div class='form-group m-1'>
                     <?php
-                        $departments=$oct->departmentList(array(), "show_in_list=1");
-                        $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"departmentSelect", "class"=>"form-control smaller filterQuery"), "category_id", "category_name", $QdepartmentSelect, "All departments");
+                        $departments=$oct->departmentList(array(), $oct->dbprefix."list_category.show_in_list=1");
+                        $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"departmentSelect", "class"=>"form-control smaller filterQuery"), "category_id", "category_name", $QdepartmentSelect, "All departments", "parent_name");
                         echo $departmentSelect;
                     ?>
                 </div>                

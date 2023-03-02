@@ -6,7 +6,7 @@
         $output = array("results"=>"Error - Not enough data provided");
     } else {
         $query = "DELETE FROM ".$oct->dbprefix."list_unit";
-        $query .= "\r\n WHERE unit_id = :unitId";
+        $query .= "\r\n WHERE unit_id = :unitId OR parent_id = :unitId";
         $parameters[':unitId']=$unitId;
 
         $results=$oct->execute($query, $parameters);

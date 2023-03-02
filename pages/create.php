@@ -44,12 +44,16 @@
     $caseGroupSelect=$oct->buildSelectList($casegroups['results'], array("id"=>"create_task_type", "class"=>"createCase"), "version_id", "version_name", null, "Select group", null);
     $casetypes=$oct->caseTypeList();
     $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"create_task_type", "class"=>"createCase"), "tasktype_id", "tasktype_name", null, "Select case", null);
-    $departments=$oct->departmentList(array(), "show_in_list=1");
-    $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"create_product_category", "class"=>"createCase"), "category_id", "category_name", null, "Select department");
+    $departments=$oct->departmentList(array(), $oct->dbprefix."list_category.show_in_list=1");
+    $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"create_product_category", "class"=>"createCase"), "category_id", "category_name", null, "Select department", "parent_name");
     $users=$oct->userList(array(), "account_enabled=1 AND group_in NOT IN ('9')", null);
     $userSelect=$oct->buildSelectList($users['results'], array("id"=>"create_assigned_to", "class"=>"createCase"), "user_id", "real_name", $user_select, "Select user", "group_name");
     
     $customfields=$oct->customFieldList(null, "custom_field_visible=1");
+    
+    $units=$oct->unitList();
+    $unitSelect=$oct->buildSelectList($units['results'], array("id"=>"create_unit", "class"=>"createCase"), null, "unit_descrip", null, "Select unit/workplace", "parent_descrip");
+    
     
     
     
@@ -117,6 +121,14 @@
                             </div>
                             <div class="subSection-field col-xs-8 task_type">
                                 <?php echo $caseTypeSelect ?>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="subSection-label col-xs-4">
+                                Restrict access
+                            </div>
+                            <div class="subSection-field col-xs-8 task_type">
+                                <input type="checkbox" id="create_is_restricted" class='createCase' title='Restricting access to this case will mean the only users who can view it are administrators and the person the case is assigned to'/>
                             </div>
                         </div>
                         <?php if($createType=="case") { ?>
@@ -214,6 +226,23 @@
                             <div class="subSection-field col-xs-8 product_category">
                                 <?php echo $departmentSelect ?>
                             </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="subSection-label col-xs-4">
+                                Unit / Workplace
+                            </div>
+                            <div class="subSection-field col-xs-8 unit">
+                            <?php
+                                if($configsettings['general']['unit_list_use']['value'] > 1) {
+                                    echo $unitSelect;
+                                } elseif ($configsettings['general']['unit_list_use']['value'] > 0) {
+                                    //Do the "suggest" method
+                                    echo "<input type='text' id='create_unit' class='createUnit w-100' suggestUnit />";
+                                } else {
+                                    echo "<input type='text' id='create_unit' class='createUnit w-100' />";    
+                                }
+                            ?>                                
+                            </div>    
                         </div>
                         <?php if($createType=="case") { ?>
                             <div class="row mb-1">

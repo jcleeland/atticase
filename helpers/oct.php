@@ -420,7 +420,7 @@ class oct {
         $search=$this->fetch($query, $parameters);
         
         //Delete $results['file_name'] from server;
-        $attachmentDir="/var/attachments"; //TODO - Get this from configuration settings
+        $attachmentDir=$this->config['installation']['attachmentdir']['value'];
         
         $filename=$attachmentDir."/".$search['file_name'];
         
@@ -707,16 +707,18 @@ class oct {
         return($output);
     }    
     
-    function departmentList($parameters=array(), $conditions="1=1", $order="list_position", $first=0, $last=1000000000) {
+    function departmentList($parameters=array(), $conditions="1=1", $order="display_list_position, parent_id, list_position, category_name", $first=0, $last=1000000000) {
         //All future versions to correct the table name
         $tablename="list_category";
         
         if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="list_position, category_name";}
+        if($order===null) {$order="display_list_position, parent_id, list_position, category_name";}
         
-        $query = "SELECT *";
+        $query = "SELECT ".$this->dbprefix.$tablename.".*, parent.category_name as parent_name, parent.list_position as parent_list_position, ";
+        $query .= " IF (parent.list_position IS NOT NULL, parent.list_position, ".$this->dbprefix.$tablename.".list_position) AS display_list_position";
         $query .= "\r\n  FROM ".$this->dbprefix.$tablename;
         $query .= "\r\n LEFT JOIN ".$this->dbprefix."users ON ".$this->dbprefix.$tablename.".category_owner=".$this->dbprefix."users.user_id";
+        $query .= "\r\n LEFT JOIN ".$this->dbprefix."list_category parent ON ".$this->dbprefix."list_category.parent_id=parent.category_id";
         $query .= "\r\n WHERE $conditions";
         $query .= "\r\n ORDER BY $order";
         
@@ -1258,12 +1260,14 @@ class oct {
         return($output);
     }
     
-    function unitList($parameters=array(), $conditions="1=1", $order="show_in_list DESC, list_position", $first=0, $last=1000000000) {
+    function unitList($parameters=array(), $conditions="1=1", $order="show_in_list DESC, display_list_position, parent_id, list_position, unit_descrip", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="show_in_list DESC, list_position";}
+        if($order===null) {$order="show_in_list DESC, display_list_position, parent_id, list_position, unit_descrip";}
         
-        $query  = "SELECT *";
+        $query  = "SELECT ".$this->dbprefix."list_unit.*, parent.unit_descrip as parent_descrip, parent.list_position as parent_list_position, ";
+        $query .= " IF (parent.list_position IS NOT NULL, parent.list_position, ".$this->dbprefix."list_unit.list_position) AS display_list_position";
         $query .= "\r\nFROM ".$this->dbprefix."list_unit";
+        $query .= "\r\n LEFT JOIN ".$this->dbprefix."list_unit parent ON ".$this->dbprefix."list_unit.parent_id=parent.unit_id";
         $query .= "\r\n WHERE $conditions";
         $query .= "\r\n ORDER BY $order";
 
@@ -1543,21 +1547,27 @@ class oct {
                 $select .= "    <option value=''>$nulloption</option>\r\n";
             }
         }
-        $currentog="";
+        $currentog='';
         
         foreach($data as $row) {
             if($optgroup) {
                 if($currentog != $row[$optgroup]) {
-                    if($currentog != "") {
+                    if($currentog != '') {
                         $select .= "  </optgroup>\r\n";
                     }
                     $currentog=$row[$optgroup];
-                    $select .= "  <optgroup label='".$currentog."'>\r\n";
+                    if($currentog != '') {
+                        $select .= "  <optgroup label='".$currentog."'>\r\n";
+                    }
                 }
             }
-            $select.="    <option value='".$row[$value]."'";
-            if($row[$value]==$selectedvalue) {
-                $select .= " selected=selected";
+            if($value) {
+                $select.="    <option value='".$row[$value]."'";
+                if($row[$value]==$selectedvalue) {
+                    $select .= " selected=selected";
+                }                
+            } else {
+                $select.="    <option";
             }
             $select .= ">".$row[$text]."</option>\r\n";    
         }

@@ -353,6 +353,12 @@ a.fa-userlink::after {
     color: rgb(0,0,0,0.6);
     cursor: pointer;
 }
+.w-90 {
+    width: 90% !important;
+}
+.w-80 {
+    width: 80% !important;
+}
 .w-45 {
     width: 45% !important;
 }

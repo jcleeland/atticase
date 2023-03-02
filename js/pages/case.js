@@ -68,6 +68,30 @@ $(function() {
             })
                 
         }
+    })
+    
+    $('#deleteCase').click(function() {
+        var settings=getSettings('OpenCaseTrackerSystem');
+        //Check that this is an administrator
+        //Check that the case is closed
+        //Confirm to delete case, with warnings that it is irreversible
+        //Delete the case
+        if(settings.administrator==1) {
+            if($('#closedStamp').is(':visible')) {
+                if(confirm('Are you sure you want to delete this case? Deleting a case is irreversible and removes all details about the case including comments, attachments and history. The case will no longer be included in reports or be available for historical data.')) {
+                    console.log('Deleting case');
+                    var caseId=$('#caseid').val();
+                    $.when(caseDelete(caseId)).done(function() {
+                        alert('Case, and all its data, has been deleted');
+                        window.location.href="?page=cases";    
+                    })
+                    
+                }
+                
+            }
+            
+        }
+        
     })    
 
     $('.nav-link-tab').click(function () {
@@ -205,8 +229,10 @@ $(function() {
 
 function loadCase() {
     var today=new Date();
-    
     var caseId=$('#caseid').val();
+    var settings=getSettings('OpenCaseTrackerSystem');
+    //console.log('SETTINGS');
+    //console.log(settings);
     //console.log('Reloading');
     $.when(getCase(caseId)).done(function(caseDetails) {
         //console.log('Cases');
@@ -216,6 +242,7 @@ function loadCase() {
         //console.log(caseDetails);
         if(caseDetails.count > 0) {
             if(caseDetails.results.is_closed==1) {
+                //Case is closed, show appropriate options
                 //console.log('Showing closed stamp');
                 $('#closeCase').hide();
                 $('#reopenCase').show();
@@ -226,6 +253,13 @@ function loadCase() {
                 $('#case_closed_name').html(caseDetails.results.closedby_real_name);
                 $('#case_closed_comments').html(caseDetails.results.closure_comment);
                 $('#case_closed_reason').html(caseDetails.results.resolution_name);
+                
+                //If this is an administrator, enable the "Delete case" button
+                if(settings.administrator == 1) {
+                    console.log('Removing disabled class from delete case');
+                    $('#deleteCase').removeClass('disabled');
+                }
+                
             } else {
                 $('#closeCase').show();
                 $('#reopenCase').hide();

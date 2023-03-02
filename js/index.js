@@ -215,6 +215,7 @@ function getSettings(name) {
     var ca = thisCookie.split('; ');
     //sconsole.log(ca);
     //ca=decodeURIComponent(ca);
+    //console.log('Cookie: '+name+' - size: '+ca.length);
     for(var i=0;i < ca.length;i++)
     {
         var c = ca[i];
@@ -236,13 +237,9 @@ function getStatus() {
     //console.log('Reading status cookie');
     var cookiename = "OpenCaseTrackerStatus" + "=";
     var thisCookie=document.cookie;
-    //var thisCookie=document.cookie;
-    //console.log(thisCookie);
+
     var ca = thisCookie.split('; ');
-    //ca=decodeURIComponent(ca);
-    //console.log('CA');
-    //console.log(ca);
-    //console.log(ca[8]);
+
     var output=null;
     for(var i=0;i < ca.length;i++)
     {
@@ -298,6 +295,14 @@ function setStatus(status) {
 
 
 
+function accountUpdate(userId, newValues) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'saveAccount', userId: userId, newValues: newValues},
+        dataType: 'json'
+    })
+}
 
 function attachmentList(parameters, conditions, order, first, last) {
     return $.ajax({
@@ -324,6 +329,38 @@ function attachmentUpdate(attachmentId, newValue) {
         data: {method: 'attachmentUpdate', attachmentId: attachmentId, newValue: newValue},
         dataType: 'json'
     })    
+}
+
+function caseCreate(newValues, user_id) {
+    //console.log(newValues);
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'createCase', newValues: newValues, user_id: user_id},
+        dataType: 'json'
+    })    
+}
+
+function caseDelete(caseId) {
+    var settings=getSettings('OpenCaseTrackerSystem');
+    if(settings.administrator==1) {
+        return $.ajax({
+            url: 'ajax.php',
+            method: 'POST',
+            data: {method: 'caseDelete', caseId: caseId},
+            dataType: 'json'
+        });
+    }
+   
+}
+
+function caseUpdate(caseId, newValues) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'saveCase', caseId: caseId, newValues: newValues},
+        dataType: 'json'
+    })
 }
 
 function caseGroupCreate(versionName, listPosition, showInList, isEnquiry) {
@@ -378,6 +415,43 @@ function caseTypeDelete(casetypeId) {
         data: {method: 'caseTypeDelete', casetypeId: casetypeId},
         dataType: 'json'
     })      
+}
+
+function commentList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
+function commentCreate(caseId, userId, comment, time) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentCreate', caseId: caseId, userId: userId, comment: comment, time: time},
+        dataType: 'json'
+    })    
+    
+}
+
+function commentDelete(commentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentDelete', commentId: commentId},
+        dataType: 'json'
+    })     
+}
+
+function commentUpdate(commentId, newValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'commentUpdate', commentId: commentId, newValue: newValue},
+        dataType: 'json'
+    })    
 }
 
 function customFieldUpdate(customFieldDefinitionId, fieldName, value) {
@@ -457,107 +531,6 @@ function departmentUpdate(departmentId, fieldName, value) {
         url: 'ajax.php',
         method: 'POST',
         data: {method: 'departmentUpdate', departmentId: departmentId, fieldName: fieldName, value: value},
-        dataType: 'json'
-    })    
-}
-
-function relatedList(parameters, conditions, order, first, last) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'relatedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
-        dataType: 'json'
-    });
-}
-
-function relatedCreate(caseId, userId, relatedId, time) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'relatedCreate', caseId: caseId, userId: userId, relatedId: relatedId, time: time},
-        dataType: 'json'
-    })    
-}
-
-function strategyList(parameters, conditions, order, first, last) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'strategyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
-        dataType: 'json'
-    });
-}
-
-function timeList(parameters, conditions, order, first, last) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
-        dataType: 'json'
-    });
-}
-
-function accountUpdate(userId, newValues) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'saveAccount', userId: userId, newValues: newValues},
-        dataType: 'json'
-    })
-}
-
-function caseCreate(newValues, user_id) {
-    //console.log(newValues);
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'createCase', newValues: newValues, user_id: user_id},
-        dataType: 'json'
-    })    
-}
-
-function caseUpdate(caseId, newValues) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'saveCase', caseId: caseId, newValues: newValues},
-        dataType: 'json'
-    })
-}
-
-function commentList(parameters, conditions, order, first, last) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'commentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
-        dataType: 'json'
-    });
-}
-
-function commentCreate(caseId, userId, comment, time) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'commentCreate', caseId: caseId, userId: userId, comment: comment, time: time},
-        dataType: 'json'
-    })    
-    
-}
-
-function commentDelete(commentId) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'commentDelete', commentId: commentId},
-        dataType: 'json'
-    })     
-}
-
-function commentUpdate(commentId, newValue) {
-    return $.ajax({
-        url: 'ajax.php',
-        method: 'POST',
-        data: {method: 'commentUpdate', commentId: commentId, newValue: newValue},
         dataType: 'json'
     })    
 }
@@ -800,6 +773,24 @@ function recentList(parameters, conditions, order, first, last) {
     });
 }
 
+function relatedList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'relatedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
+function relatedCreate(caseId, userId, relatedId, time) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'relatedCreate', caseId: caseId, userId: userId, relatedId: relatedId, time: time},
+        dataType: 'json'
+    })    
+}
+
 function resolutionUpdate(resolutionId, fieldName, value) {
     return $.ajax({
         url: 'ajax.php',
@@ -854,6 +845,15 @@ function statsCases(parameters, conditions, order, first, last, select) {
     });
 }
 
+function strategyList(parameters, conditions, order, first, last) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'strategyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
 function systemSettingsCreate(values) {
     return $.ajax({
         url: 'ajax.php',
@@ -884,11 +884,20 @@ function tableList(tablename, joins, select, parameters, conditions, order, firs
     })
 }
 
-function unitCreate(unitDescrip, listPosition, showInList) {
+function timeList(parameters, conditions, order, first, last) {
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'unitCreate', unitDescrip: unitDescrip, listPosition: listPosition, showInList: showInList},
+        data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        dataType: 'json'
+    });
+}
+
+function unitCreate(unitDescrip, listPosition, showInList, parentId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'unitCreate', unitDescrip: unitDescrip, listPosition: listPosition, showInList: showInList, parentId: parentId},
         dataType: 'json'
     })    
 }
@@ -950,10 +959,11 @@ function toggleDatepickers() {
             var height=parseInt($(this).css("height"));
             $(this).css("height", (height-2)+'px');
             $(this).datepicker({
-                    dateFormat: "dd/mm/yy", 
-                    changeMonth: true, 
-                    changeYear: true, 
-                    onSelect: function(dateText, inst) {
+                dateFormat: "dd/mm/yy", 
+                changeMonth: true, 
+                changeYear: true, 
+                onSelect: function(dateText, inst) {
+                    if (this.id.includes('date_due')) {
                         if(confirm("Update the due date for this case?")) {
                             if(this.id.includes('caselist')) {
                                 var newDate=date2timestamp($(this).val());
@@ -978,8 +988,10 @@ function toggleDatepickers() {
                                     loadHistory();    
                                 });
                             }                            
-                        }
-                    },
+                        }                            
+                    }
+
+                },
             });
         } else {
             //console.log('Doesnt have date picker class')
