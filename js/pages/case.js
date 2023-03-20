@@ -79,7 +79,6 @@ $(function() {
         if(settings.administrator==1) {
             if($('#closedStamp').is(':visible')) {
                 if(confirm('Are you sure you want to delete this case? Deleting a case is irreversible and removes all details about the case including comments, attachments and history. The case will no longer be included in reports or be available for historical data.')) {
-                    console.log('Deleting case');
                     var caseId=$('#caseid').val();
                     $.when(caseDelete(caseId)).done(function() {
                         alert('Case, and all its data, has been deleted');
@@ -256,7 +255,6 @@ function loadCase() {
                 
                 //If this is an administrator, enable the "Delete case" button
                 if(settings.administrator == 1) {
-                    console.log('Removing disabled class from delete case');
                     $('#deleteCase').removeClass('disabled');
                 }
                 
@@ -330,6 +328,17 @@ function loadCase() {
                 $('#is_restricted').attr('title', 'This case has restricted access to only administrators and the user it is assigned to');
                 $('#is_restricted_image').attr('src', 'images/lock.svg');    
 
+            }
+            
+            if(casedata.children != null) {
+                console.log('Has children');
+                $('#isparent_cover').show();
+            } 
+            if(casedata.parent != null) {
+                $('#isdependent_cover').show();
+            }
+            if(casedata.companion != null) {
+                $('#iscompanion_cover').show();
             }
             
             $('#assignedto_cover').html(casedata.assigned_real_name);

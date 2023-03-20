@@ -24,16 +24,22 @@
     </div>
     <div style='clear: both'></div>
     <div class='form-group hidden border rounded p-2 m-2' id='newRelatedForm'>
-        <h4 class="header">New related</h4>
-        <div class="pager rounded-bottom w-100">&nbsp;</div> 
-        <div class='form-group'>
-            <label for="attachmentFileDesc">Related Case</label>
-            <input type="text" class="form-control" name="relatedCaseId" id="relatedCaseId" placeholder="Case number of related case" aria-describedby="relatedCaseIdHelp" />
-            <small id="relatedCaseIdHelp" class="form-text text-muted">Enter the related case's number here</small>
+        <h4 class="header">Relate a case</h4>
+        <div class="pager rounded-bottom w-100">&nbsp;</div>
+        <div class="row mb-2 mt-2">
+            <div class='col-2'></div>
+            <div class="col-4 text-right"> 
+                <label for="attachmentFileDesc">Related Case</label>
+            </div>
+            <div class='col-2'>
+                <input type="text" class="form-control" name="relatedCaseId" id="relatedCaseId" placeholder="Case number of related case" aria-describedby="relatedCaseIdHelp" />
+                <small id="relatedCaseIdHelp" class="form-text text-muted smaller">Enter the related case's number here</small>
+            </div>
+            <div class='col-2'>
+                <button class="form-control pale-green-link" id='submitRelatedBtn'>Submit</button>
+            </div>
+            <div class='col-2'></div>
         </div>
-        
-        <button class="form-control pale-green-link" id='submitRelatedBtn'>Submit</button>
-        
     </div>
 </div>
 <div style='clear: both'></div>

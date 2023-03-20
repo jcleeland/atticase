@@ -20,30 +20,44 @@ $(function() {
         $('#newpoi_step3').hide();
         $('#newpoi_step1').show();
     })
+    $('#cancelPoiConnectionBtn').click(function() {
+        $('#newpoi_step2').hide();
+        $('#newpoi_step3').hide();
+        $('#newpoi_step1').show();
+    })
     
     
     $('#newPoiPerson').keyup(function() {
         value=$(this).val();
         //console.log('waiting');
-        delay(function() {
+        console.log($(this).val().length);
+        if($(this).val().length > 0) {
+            delay(function() {
+                const menu = $('#poi-dropdown-menu');
+                menu.html('');
+                //console.log(value);
+                $.when(poiPersonLookup(value)).done(function(output) {
+                    //console.log(output);
+                    const menu = $('#poi-dropdown-menu');
+                    //console.log(menu);
+                    if(parseInt(output.count) > 0) {
+                        $.each(output.results, function(i, person) {
+                            menu.append('<li value="'+person.id+'" onClick="selectPoiPerson(\''+person.id+'\',\''+person.firstname+' '+person.lastname+'\')">'+person.firstname+' '+person.lastname+' ('+person.position+': '+person.organisation+')</li>\n');
+                            menu.show();
+                            //$('#newpoi_step1button').hide();   
+                        })
+                    } else {
+                        $('#newpoi_step1button').show();
+                    }
+                })
+            }, 1000);        
+            
+        } else {
+            console.log('Not searching');
             const menu = $('#poi-dropdown-menu');
             menu.html('');
-            //console.log(value);
-            $.when(poiPersonLookup(value)).done(function(output) {
-                //console.log(output);
-                const menu = $('#poi-dropdown-menu');
-                //console.log(menu);
-                if(parseInt(output.count) > 0) {
-                    $.each(output.results, function(i, person) {
-                        menu.append('<li value="'+person.id+'" onClick="selectPoiPerson(\''+person.id+'\',\''+person.firstname+' '+person.lastname+'\')">'+person.firstname+' '+person.lastname+' ('+person.position+': '+person.organisation+')</li>\n');
-                        menu.show();
-                        //$('#newpoi_step1button').hide();   
-                    })
-                } else {
-                    $('#newpoi_step1button').show();
-                }
-            })
-        }, 1000);        
+            menu.hide();            
+        }
 
         
     }) 

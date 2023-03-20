@@ -266,7 +266,45 @@ class oct {
             }
             //print_r($results2);
             
-            
+            //Get master/servant (parent/child) information
+            //First, get any children
+            $query3 = "SELECT * FROM ".$this->dbprefix."master JOIN ".$this->dbprefix."tasks ON ".$this->dbprefix."tasks.task_id=".$this->dbprefix."master.servant_task WHERE master_task = :task_id";
+            $results3=$this->fetchMany($query3, $parameters);
+            if($results3['records'] > 0) {
+                foreach($results3['output'] as $val3) {
+                    $results['output'][0]['children'][$val3['servant_task']]=array($val3['servant_task'], $val3['item_summary']);
+                }
+            } else {
+                $results['output'][0]['children']=null;
+            }
+            //Now get any parent
+            $query4 = "SELECT * FROM ".$this->dbprefix."master JOIN ".$this->dbprefix."tasks ON ".$this->dbprefix."tasks.task_id=".$this->dbprefix."master.master_task WHERE servant_task = :task_id";
+            $results4=$this->fetchMany($query4, $parameters);
+            if($results4['records'] > 0) {
+                foreach($results4['output'] as $val4) {
+                    $results['output'][0]['parent'][$val4['master_task']]=array($val4['master_task'], $val4['item_summary']);
+                }
+            } else {
+                $results['output'][0]['parent']=null;
+            } 
+            //Now get any companions
+            $query5 = "SELECT * FROM ".$this->dbprefix."companion JOIN ".$this->dbprefix."tasks ON ".$this->dbprefix."tasks.task_id=".$this->dbprefix."companion.this_task WHERE this_task = :task_id";
+            $results5=$this->fetchMany($query5, $parameters);
+            if($results5['records'] > 0) {
+                foreach($results5['output'] as $val5) {
+                    $results['output'][0]['companion'][$val5['this_task']]=array($val5['this_task'], $val5['item_summary']);
+                }
+            } else {
+                $results['output'][0]['companion']=null;
+            }
+            $query6 = "SELECT * FROM ".$this->dbprefix."companion JOIN ".$this->dbprefix."tasks ON ".$this->dbprefix."tasks.task_id=".$this->dbprefix."companion.related_task WHERE related_task = :task_id";
+            $results6=$this->fetchMany($query6, $parameters);
+            if($results6['records'] > 0) {
+                foreach($results6['output'] as $val6) {
+                    $results['output'][0]['companion'][$val6['this_task']]=array($val6['this_task'], $val6['item_summary']);
+                }
+            } 
+                       
             $output=array("results"=>$results['output'][0], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records'], "message"=>"Retrieved");
             //print_r($output); 
             //$this->showArray($this->config);
@@ -901,11 +939,33 @@ class oct {
         return($output);              
     }
     
+    function linkedCreate($linkType, $parameters=array()) {
+        switch($linkType) {
+            case "parent":
+            case "child":
+                $query = "INSERT INTO ".$this->dbprefix."master";
+                $query .= "\r\n (`master_task`, `servant_task`)";
+                $query .= "\r\n VALUES (:task_id, :linked_id)";
+                break;
+            case "companion":
+                $query = "INSERT INTO ".$this->dbprefix."companion";
+                $query .= "\r\n (`this_task`, `related_task`)";
+                $query .= "\r\n VALUES (:task_id, :linked_id)";
+                break;
+        } 
+        $results=$this->execute($query, $parameters);
+        
+        $output=array("results"=>$results." rows inserted", "query"=>$query, "parameters"=>$parameters, "count"=>$results, "total"=>$results);
+        
+        return($output);   
+    }
+    
     function linkedList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
+        
+        //Get servant cases
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
-        
-        $query = "SELECT t.*, mas.link_id";
+        $query = "SELECT t.*, mas.link_id, 'child' as linktype";
         if($this->externalDb===true) {
             $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
         } else {
@@ -915,16 +975,75 @@ class oct {
         $query .="\r\n  FROM ".$this->dbprefix."master mas";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = mas.servant_task";
         if($this->externalDb===true) {
-            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member
-                 ";
+            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member";
         }         
         
-        $query .="\r\nWHERE $conditions";
+        $query .="\r\nWHERE master_task=:taskid";
         $query .="\r\nORDER BY $order";
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
-
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        
+        //Get master cases
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="date_added DESC";}
+        $query = "SELECT t.*, mas.link_id, 'parent' as linktype";
+        if($this->externalDb===true) {
+            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+        } else {
+            $query .=", t.name as clientname";
+        } 
+                
+        $query .="\r\n  FROM ".$this->dbprefix."master mas";
+        $query .= "\r\n  INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = mas.master_task";
+        if($this->externalDb===true) {
+            $query .= "    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member";
+        }         
+        
+        $query .="\r\nWHERE servant_task=:taskid";
+        $query .="\r\nORDER BY $order";
+        
+        $results2=$this->fetchMany($query, $parameters, $first, $last);        
+        
+        //Get companion cases
+        $query = "SELECT t.*, comp.related_id as link_id, 'companion' as linktype";
+        if($this->externalDb===true) {
+            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+        } else {
+            $query .= ", t.name as clientname";
+        }
+        $query .= "\r\n  FROM ".$this->dbprefix."companion comp";
+        $query .= "\r\n   INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = comp.related_task";
+        if($this->externalDb===true) {
+            $query .= "\r\n    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member";
+        }
+        $query .= "\r\nWHERE this_task=:taskid";
+        $query .= "\r\nORDER BY $order";
+        
+        $results3=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $query = "SELECT t.*, comp.related_id as link_id, 'companion' as linktype";
+        if($this->externalDb===true) {
+            $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
+        } else {
+            $query .= ", t.name as clientname";
+        }
+        $query .= "\r\n  FROM ".$this->dbprefix."companion comp";
+        $query .= "\r\n   INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = comp.this_task";
+        if($this->externalDb===true) {
+            $query .= "\r\n    LEFT JOIN ".$this->dbprefix."member_cache mem ON mem.member=t.member";
+        }
+        $query .= "\r\nWHERE related_task=:taskid";
+        $query .= "\r\nORDER BY $order";
+        
+        //echo $query;
+        
+        $results4=$this->fetchMany($query, $parameters, $first, $last);
+        
+        
+        
+        $finalresults=array_merge($results['output'], $results2['output'], $results3['output'], $results4['output']);
+        
+        $output=array("results"=>$finalresults, "query"=>$query, "parameters"=>$parameters, "count"=>count($finalresults), "total"=>$finalresults);
           
         return($output);         
         

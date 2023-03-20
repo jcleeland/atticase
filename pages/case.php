@@ -19,7 +19,7 @@
 <script src="js/pages/case.js"></script>
 
 <?php
-    //$oct->showArray($oct->config['installation']['attachmentdir']['value']);
+    //$settings=$oct->getCookies('OpenCaseTrackerSystem');
     //Gather lists & select html
     $casegroups=$oct->caseGroupList();
     $casetypes=$oct->caseTypeList();
@@ -445,7 +445,10 @@
         <div class="card-body p-0" onDblClick="toggleCaseEdit()">
             <div class="card-header border rounded">
                 <div class="float-right">
-                    <span class='btn btn-light border rounded' title='Access is not restricted' id='isrestricted_cover'><img src='images/unlock.svg' id='isrestricted_image' /></span>
+                    <div class='btn btn-light border rounded mb-1' title='Access is not restricted' id='isrestricted_cover'><img src='images/unlock.svg' id='isrestricted_image' /></div>
+                    <div class='btn btn-light border rounded mb-1 hidden' title='This case is a master case' id='isparent_cover'><img src='images/linked-parent.svg' id='isparent_image' width='32px' height='32px' /></div>
+                    <div class='btn btn-light border rounded mb-1 hidden' title='This case is a dependent' id='isdependent_cover'><img src='images/linked-child.svg' id='isdependent_image' width='32px' height='32px' /></div>
+                    <div class='btn btn-light border rounded mb-1 hidden' title='This case is a companion' id='iscompanion_cover'><img src='images/linked-companion.svg' id='iscompanion_image' width='32px' height='32px' /></div>
                     <!--<button class='btn btn-danger' title='Access is restricted'><img src='images/lock.svg' /></button>-->
                 </div>            
                 <div class="row">

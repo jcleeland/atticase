@@ -3,17 +3,22 @@ $(function() {
         loadLinkeds();
     }
     
-    $('#filterLinkeds').keyup(function() {
-        //console.log($(this).val());
-        var search=$(this).val();
-        $('.linkeditem').each(function() {
-            if($(this).html().toUpperCase().includes(search.toUpperCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+    $('#newLinkBtn').click(function() {
+        $('#newLinkForm').toggle();    
+    }); 
+    
+    $('#submitLinkBtn').click(function() {
+        var thisCase=$('#caseid').val();
+        var linkType=$('#linkType').val();
+        var linkCase=$('#linkCase').val();
+        console.log(linkType, linkCase);
+        $.when(linkedCreate(linkType, thisCase, linkCase)).done(function(output) {
+            console.log(output);
+            loadLinkeds();
         })
-    })
+    })   
+    
+
 }) 
 
 function loadLinkeds() {
@@ -28,7 +33,7 @@ function loadLinkeds() {
     
     //var conditions='assigned_to = :assignedto AND is_closed != :isclosed AND date_due <= :datedue';
     
-    var conditions='mas.master_task = :taskid'
+    var conditions='';
     
     var order='t.date_opened DESC';
     
@@ -50,8 +55,8 @@ function loadLinkeds() {
     
     
     $.when(linkedList(parameters, conditions, order, start, end)).done(function(linkeds) {
-        //console.log('Comments');
-        //console.log(comments);
+        //console.log('Linked Cases');
+        //console.log(linkeds);
         if(linkeds.count<1) {
             //console.log('Nothing');
             $('#linkedlist').html("<center><br />No linked items for this case yet<br />&nbsp;</center>");
@@ -62,23 +67,66 @@ function loadLinkeds() {
             $('#linkedcount').html(linkeds.count);
             var counter=0;
             var divid=1;
+            var isParent=0;
+            var isChild=0;
             $.each(linkeds.results, function(i, linkeddata) {
                 var parentDiv='linkedlist';
-                var uniqueId=linkeddata.link_id;
-                var primeBox='<a href="index.php?page=case&case='+linkeddata.task_id+'">#'+linkeddata.task_id+'</a>';
+                var uniqueId='master'+linkeddata.link_id;
+                var icon='';
+                switch(linkeddata.linktype) {
+                    case 'parent':
+                        isChild=1;
+                        icon='<img src="images/linked-parent.svg" class="mr-2" width="25px" title="This case is the master case to the one you are viewing. You should add all comments and make other changes to this case rather the one you are currently viewing." />';
+                        var uniqueId='master'+linkeddata.link_id;
+                        break;
+                    case 'child':
+                        isParent=1;
+                        icon='<img src="images/linked-child.svg" class="mr-2" width="25px" title="This case is a dependent case of the one you are viewing. Changes you make to the current case will be copied to this one as well." />';
+                        var uniqueId='master'+linkeddata.link_id;
+                        break;
+                    case 'companion':
+                        icon='<img src="images/linked-companion.svg" class="float mr-2" width="25px" title="This case is a companion to the one you are viewing. Users will see updates from this case when they visit it." />';
+                        var uniqueId='companion'+linkeddata.link_id;
+                        break;
+                        
+                }
+                var primeBox=icon+'<a href="index.php?page=case&case='+linkeddata.task_id+'">#'+linkeddata.task_id+'</a>';
                 var briefPrimeBox='#';
                 var dateBox=timestamp2date(linkeddata.date_opened, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(linkeddata.date_opened, 'dd MM YY');
                 var actionPermissions=null;
+                if(globals.is_admin=='1') { //Owner of either the current case or the linked case should be able to detach
+                    actionPermissions=['delete'];    
+                }                
                 var contenttext=deWordify(linkeddata.detailed_desc);
                 if(linkeddata.is_closed==1) {
                     contenttext+='<div class="border rounded float-right text-muted small p-1 closed-case">Date closed: '+timestamp2date(linkeddata.date_closed, 'dd/mm/yy g:i a')+'</div>';
                 }
+
                 var header='<div class="float-right card-heading-border border rounded pl-1 pr-1 pale-green-link">'+linkeddata.clientname+'</div><span class="d-xs-block dsm-block d-md-none d-lg-none d-xl-none font-weight-bold">#'+linkeddata.task_id+': </span>'+linkeddata.item_summary;
                 var content=contenttext;
     
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);
             })
+            
+            if(isParent > 0) {
+                //Remote the option to make this case a child of another case
+                console.log('Parent: '+isParent);
+                $('#linkType option:contains("Dependent Of Another Case")').attr("disabled", "disabled");
+            } else {
+                console.log('Not parent: '+isParent);
+                $('#linkType option:contains("Dependent Of Another Case")').attr("disabled", "");
+            }
+            if(isChild > 0) {
+                console.log('Child: '+isChild);
+                //Remote the option to make this case a child of another case
+                $('#linkType option:contains("Dependent Of Another Case")').attr("disabled", "disabled");
+                $('#linkType option:contains("Master To Another Case")').attr("disabled", "disabled");
+            } else {
+                console.log('Not child: '+isChild);
+                $('#linkType option:contains("Dependent Of Another Case")').attr("disabled", "");
+                $('#linkType option:contains("Master To Another Case")').attr("disabled", "");
+            }
             
         }
     }).then(function() {

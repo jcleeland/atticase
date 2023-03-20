@@ -71,7 +71,8 @@ $(function() {
         
         var details=this.id.split("_");
         var edits=details[1].split(/([0-9]+)/);
-        
+        console.log(details);
+        console.log(edits);
         $.when(deleteTabEdit(edits[0], edits[1])).done(function(output) {
             console.log('Database delete of tab');    
         })
@@ -142,6 +143,23 @@ function deleteTabEdit(method, id) {
                 $.when(historyDelete(id)).done(function(output) {
                     loadHistory();
                 })
+                break;
+            case "master":
+                console.log('Deleting MASTER!!');
+                $.when(linkedDelete('master', id)).done(function(output) {
+                    console.log('Done link delete');
+                    console.log(output);
+                    loadLinkeds();
+                }).fail(function(output) {
+                    console.log('Failed to delete link');
+                    console.log(output);
+                })
+                break;
+            case "companion":
+                $.when(linkedDelete('companion', id)).done(function(output) {
+                    loadLinkeds();
+                })
+                break;
         }
     }    
 }
@@ -652,6 +670,25 @@ function historyDelete(historyId) {
         data: {method: 'historyDelete', historyId: historyId},
         dataType: 'json'
     }) 
+}
+
+function linkedCreate(linkType, taskId, linkedId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'linkedCreate', linkType: linkType, taskId: taskId, linkedId: linkedId},
+        dataType: 'json'
+    });    
+}
+
+function linkedDelete(linkType, id) {
+    console.log(linkType, id);
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'linkedDelete', linkType: linkType, id: id},
+        dataType: 'json'
+    })    
 }
 
 function linkedList(parameters, conditions, order, first, last) {

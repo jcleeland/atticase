@@ -1,7 +1,7 @@
 <?php
     $caseId=isset($_POST['caseId']) ? $_POST['caseId'] : null;
-    
-    if($caseId) {
+    $settings=$oct->getCookies('OpenCaseTrackerSystem');
+    if($caseId && $settings->administrator==1) {
         $deletelist=array();
         $parameters=array(":caseId"=>$caseId);
 
