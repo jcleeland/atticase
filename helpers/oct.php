@@ -789,7 +789,7 @@ class oct {
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
         
-        $output=array("restuls"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
         
         return($output);    
     }
@@ -1048,6 +1048,22 @@ class oct {
         return($output);         
         
                 
+    }
+    
+    function memberList($parameters=array(), $conditions="", $order="surname, pref_name", $first=0, $last=1000000000) {
+        if($conditions===null) {$conditions="1=1";}
+        if($order===null) {$order="surname, pref_name";}
+        
+        $query = "SELECT member, surname, pref_name, subs_paid_to, joined, primary_key, data";
+        $query .="\r\n  FROM ".$this->dbprefix."member_cache";
+        $query .="\r\nWHERE $conditions";
+        $query .="\r\nORDER BY $order";
+        
+        $results=$this->fetchMany($query, $parameters, $first, $last);
+        
+        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+          
+        return($output);        
     }
     
     function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {

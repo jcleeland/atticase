@@ -16,16 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 ?>
-<script src="js/pages/dashboard/mytodo.js"></script>
+<script src="js/pages/dashboard/unallocatedcases.js"></script>
 <div class="float-right m-1 text-muted">
     <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px' id="filterTodo" />-->
 </div>
-<h4 class="p-0 header" id='todoheader'>My To-do</h4>
+<h4 class="p-0 header" id='unallocatedcasesheader'>Unallocated Cases</h4>
 <?php 
-    $pagername="mytodo";
+    $pagername="unallocatedcases";
     include('pages/helpers/pager.php'); 
 ?>
-<div class="w-100 overflow-auto" style="max-height: 300px" id="mytodolist">
+<div class="w-100 overflow-auto" style="max-height: 300px" id="unallocatedcaseslist">
 <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
 $status=array("current", "arrears-small", "arrears-big", "notcurrent");

@@ -64,9 +64,12 @@ $(document).ready(function(){
                             
     $('.pagerbutton').click(function() {
         console.log(this.id+'_pager');
-        var functionname=this.id+'_pager';
-        console.log('Running '+functionname);
-        window[functionname]();
+        console.log($('#'+this.id).attr("disabled"));
+        if(!$('#'+this.id).attr("disabled")) {
+            var functionname=this.id+'_pager';
+            console.log('Running '+functionname);
+            window[functionname]();
+        }
     })
     
     $('.filterOrder').click(function() {

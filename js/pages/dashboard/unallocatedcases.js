@@ -1,24 +1,24 @@
 $(function() {
-    loadMycases();
+    loadUnallocatedcases();
     
-    $('#mycasesqty').change(function() {
-        loadMycases();
+    $('#unallocatedcasesqty').change(function() {
+        loadUnallocatedcases();
     })
     
-    $('#mycases-inpage_filter').keyup(function(e) {
+    $('#unallocatedcases-inpage_filter').keyup(function(e) {
         var text=$(this).val();
         delay(function() {
             //console.log('Searching '+text+' and using delay');
-            searchDivsByText('mycaseslist', text, 1);    
+            searchDivsByText('unallocatedcaseslist', text, 1);    
         }, 1500);
     })        
 }) 
 
-function loadMycases(reset) {
+function loadUnallocatedcases(reset) {
     var today=new Date();
     
     var parameters={};
-    parameters[':assignedto']=globals.user_id;
+    parameters[':assignedto']=null;
     parameters[':isclosed']=1;
     //parameters[':datedue']=today.getTime() / 1000 + (86400*2) | 0;
     
@@ -27,8 +27,8 @@ function loadMycases(reset) {
     var order='date_due ASC';
     var status=getStatus();
     if(status.orders != undefined) {
-        if(status.orders.mycases !== undefined) {
-            const orders=status.orders['mycases'];
+        if(status.orders.unallocatedcases !== undefined) {
+            const orders=status.orders['unallocatedcases'];
             var counter=0;
             for (const key in orders) {
                 if(counter==0) {
@@ -47,21 +47,21 @@ function loadMycases(reset) {
         }    
     }
     
-    var start=parseInt($('#mycasesstart').val()) || 0;
-    var end=parseInt($('#mycasesend').val()) || 9;
-    //console.log('Cases start = '+start);
-    if(start<0) {
+    var start=parseInt($('#unallocatedcasesstart').val()) || 0;   //Get the text values for start & finish from the page
+    var end=parseInt($('#unallocatedcasesend').val()) || 9;       //Get the text values for start & finish from the page
+    console.log('Cases start = '+start);
+    if(start<0) { //If start is less than zero, bring it up to zero
         start=0;
-        $('#mycasesstart').val(0);
+        $('#unallocatedcasesstart').val(0);
     }
-    if(end<9) {
+    if(end<9) {  //If the end is less than 9, bring it up to 9
         end=9;
-        $('#mycasesend').val(9);
+        $('#unallocatedcasesend').val(9);
     }
     
     //console.log('Doing cases, '+start+' to '+end);
     //MANAGE THE PAGER
-    var pagerSettings=pagerNumberSettings('mycases');
+    var pagerSettings=pagerNumberSettings('unallocatedcases');  //get the cookie values for this pager if they exist
     //console.log('Pager Settings');
     //console.log(pagerSettings);
     if(reset && reset == 1) {
@@ -74,7 +74,7 @@ function loadMycases(reset) {
         //IN AN OLD SEARCH, KEEP THE PAGER VALUES
         //console.log('Reusing old pager values');
         //console.log($('#casesqty').val());
-        if(parseInt($('#mycasesqty').val())==0 || $('#mycasesqty').val()=="") {
+        if(parseInt($('#unallocatedcasesqty').val())==0 || $('#unallocatedcasesqty').val()=="") {
             var qty=parseInt(pagerSettings.qty);
             if(isNaN(qty)) {
                 qty=50;
@@ -86,8 +86,8 @@ function loadMycases(reset) {
             var end=pagerSettings.start+qty-1;
             //console.log('Reusing old pager settings: Qty-'+qty+', Start-'+start+', End-'+end);
         } else {
-            var qty=parseInt($('#mycasesqty').val());
-            var start=parseInt($('#mycasesstart').attr("value"));
+            var qty=parseInt($('#unallocatedcasesqty').val());
+            var start=parseInt($('#unallocatedcasesstart').attr("value"));
             var end=qty+start-1;
             //console.log('Reusing web page settings: Qty-'+qty+', Start-'+start+', End-'+end);
         }
@@ -96,7 +96,7 @@ function loadMycases(reset) {
     
     
     
-    $('#mycaseslist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
+    $('#unallocatedcaseslist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
     
     $.when(caseList(parameters, conditions, order, start, end)).done(function(cases) {
@@ -104,18 +104,18 @@ function loadMycases(reset) {
         //console.log(cases);
         if(cases.count===0) {
             //console.log('Nothing');
-            $('#mycaseslist').html("<center><br />No cases in your case list<br />&nbsp;</center>");
-            $('#mycasestotal').html('of 0 cases');
+            $('#unallocatedcaseslist').html("<center><br />No cases in the unallocated case list<br />&nbsp;</center>");
+            $('#unallocatedcasestotal').html('of 0 cases');
         } else {
             if(end > cases.total) {
                 end=cases.total-1;
             }
-            pagerNumbers('mycases', start, end, cases.total);
-            $('#mycaseslist').html('');
+            pagerNumbers('unallocatedcases', start, end, cases.total);
+            $('#unallocatedcaseslist').html('');
             $.each(cases.results, function(i, casedata) {
                 /* Put formatting into a standalone script */
                 
-                insertCaseCard('mycaseslist', 'mycaseslist'+casedata.task_id, casedata);
+                insertCaseCard('unallocatedcaseslist', 'unallocatedcaseslist'+casedata.task_id, casedata);
 
             })
             
@@ -125,35 +125,35 @@ function loadMycases(reset) {
         toggleDatepickers();        
     }).fail(function() {
         //console.log('Nothing found');
-        $('#mycaseslist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
-        pagerNumbers('mycases', 0, 0, 0);
+        $('#unallocatedcaseslist').html("<center><img src='images/logo.png' width='50px' /><br />No cases found</center>");
+        pagerNumbers('unallocatedcases', 0, 0, 0);
     });    
 }
 
-function mycasesend_pager() {
-    var pagerSettings=pagerNumberSettings('mycases');
+function unallocatedcasesend_pager() {
+    var pagerSettings=pagerNumberSettings('unallocatedcases');
     //var start=parseInt($('#caseliststart').val()) || 0;
     var start=parseInt(pagerSettings.start);
     //var qty=parseInt($('#caselistqty').val()) || 10;
     var qty=parseInt(pagerSettings.qty);
     start=start+qty;
-    if(start > parseInt($('#mycasescount').val())) {
+    if(start > parseInt($('#unallocatedcasescount').val())) {
         start=start-qty;
     }
 
     var end=start+qty-1;
     //console.log('CASESEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
-    $('#mycasesstart').attr("value",(start));
-    $('#mycasesend').attr("value", (end));
+    $('#unallocatedcasesstart').attr("value",(start));
+    $('#unallocatedcasesend').attr("value", (end));
     
     
-    savePagerSettings('mycases', start, end, qty);
-    loadMycases();    
+    savePagerSettings('unallocatedcases', start, end, qty);
+    loadUnallocatedcases();    
 
 }
 
-function mycasesstart_pager() {
-    var pagerSettings=pagerNumberSettings('mycases');
+function unallocatedcasesstart_pager() {
+    var pagerSettings=pagerNumberSettings('unallocatedcases');
     //var start=parseInt($('#caseliststart').val()) || 0;
     var start=parseInt(pagerSettings.start);
     //var qty=parseInt($('#caselistqty').val()) || 10;
@@ -166,35 +166,35 @@ function mycasesstart_pager() {
     
     
     //console.log('CASELISTEND FUNCTION: Qty-'+qty+', Start-'+start+', End-'+end);
-    $('#mycasesstart').attr("value",(start));
-    $('#mycasesend').attr("value", (end));
+    $('#unallocatedcasesstart').attr("value",(start));
+    $('#unallocatedcasesend').attr("value", (end));
     
     
-    savePagerSettings('mycases', start, end, qty);
-    loadMycases();
+    savePagerSettings('unallocatedcases', start, end, qty);
+    loadUnallocatedcases();
 }
 
-function mycasesfirst_pager() {
-    var pagerSettings=pagerNumberSettings('mycases');
+function unallocatedcasesfirst_pager() {
+    var pagerSettings=pagerNumberSettings('unallocatedcases');
     var start=0;
     var qty=parseInt(pagerSettings.qty);
     var end=start+qty-1;
-    $('#mycasesstart').attr("value",(start));
-    $('#mycasesend').attr("value", (end));
+    $('#unallocatedcasesstart').attr("value",(start));
+    $('#unallocatedcasesend').attr("value", (end));
     
     
-    savePagerSettings('mycases', start, end, qty);
-    loadMycases();    
+    savePagerSettings('unallocatedcases', start, end, qty);
+    loadUnallocatedcases();    
 }
 
-function mycaseslast_pager() {
-    var pagerSettings=pagerNumberSettings('mycases');
-    var total=parseInt($('#mycasestotal').text().replace(/\D+/g, ''));
+function unallocatedcaseslast_pager() {
+    var pagerSettings=pagerNumberSettings('unallocatedcases');
+    var total=parseInt($('#unallocatedcasestotal').text().replace(/\D+/g, ''));
     var qty=parseInt(pagerSettings.qty);
     var end=total;
     var start=total-qty;
-    $('#mycasesstart').attr("value",(start));
-    $('#mycasesend').attr("value", (end));
-    savePagerSettings('myrecent', start, end, qty);  
-    loadMycases();    
+    $('#unallocatedcasesstart').attr("value",(start));
+    $('#unallocatedcasesend').attr("value", (end));
+    savePagerSettings('myrecent', start, end, qty);
+    loadUnallocatedcases();    
 }

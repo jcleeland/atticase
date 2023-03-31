@@ -15,6 +15,10 @@
                 $tablename="companion";
                 $keyname="related_id";
                 break;
+            case "notification":
+                $tablename="notifications";
+                $keyname="notify_id";
+                break;
         }
         $parameters[":id"]=$id;
         $query = "DELETE FROM ".$oct->dbprefix.$tablename;

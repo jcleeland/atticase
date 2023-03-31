@@ -19,7 +19,7 @@
 <html>
     <head>
         <title>
-            OpenCaseTracker 3
+            AttiCase 3
         </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">        
@@ -49,7 +49,7 @@
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
 <?php
 $filecontents='<?php
-  /** File created by OpenCaseTracker initialisation system **/
+  /** File created by AttiCase initialisation system **/
   
   $settings["dbtype"]="mysql";
   $settings["dbname"]="'.$_POST['dbname'].'";

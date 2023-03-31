@@ -25,6 +25,7 @@ $options=array(
     //"displaysettings"=>"Display Settings",
     "casetypes"=>"Case Types",
     "casegroups"=>"Case Groups",
+    "people"=>"Clients",
     "customfields"=>"Custom Fields",
     "customtexts"=>"Custom Texts",
     "emailtemplates"=>"Email Templates",

@@ -25,7 +25,7 @@
     $pagername="mycases";
     include('pages/helpers/pager.php'); 
 ?>
-<div class="w-100 overflow-auto" style="max-height: 270px" id="mycaseslist">
+<div class="w-100 overflow-auto" style="max-height: 300px" id="mycaseslist">
 <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
 $status=array("current", "arrears-small", "arrears-big", "notcurrent");

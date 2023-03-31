@@ -2,6 +2,26 @@ $(function() {
     if($('#nocase').val() != 0) {
         loadNotifications();
     }
+
+    $('#newNotificationBtn').click(function() {
+        $('#newNotificationForm').toggle();    
+    }); 
+
+    $('#submitNotificationBtn').click(function() {
+        var userId=$('#newUserId').val();
+        var caseId=$('#caseid').val();
+        
+        $.when(notificationCreate(caseId, userId)).done(function(insert) {
+            if(insert.count=="1") {
+                $('#newUserId').val('');
+                $('#newNotificationForm').toggle();
+                historyCreate(caseId, userId, '9', null, null, userId);
+                loadNotifications();
+                loadHistory();
+            }
+        })
+        //Successfully added
+    })       
     
     $('#filterNotifications').keyup(function() {
         //console.log($(this).val());
@@ -41,16 +61,18 @@ function loadNotifications() {
         } else {
             $('#notificationlist').html('');
             $('#notificationscount').html(notifications.total);
+            if(globals.user_id==notifications.user_id || globals.is_admin=='1') {
+                actionPermissions=['delete'];    
+            }            
             $.each(notifications.results, function(i, notificationsdata) {
                 //console.log(notificationsdata);
                 var parentDiv='notificationlist';
-                var uniqueId=notificationsdata.notify_id;
+                var uniqueId='notification'+notificationsdata.notify_id;
                 
                 var primeBox='Notification';
                 var briefPrimeBox='N';
                 var dateBox='';
                 var briefDateBox='';
-                var actionPermissions=null;
                 var header=notificationsdata.real_name;
                 var content=notificationsdata.email_address+' '+notificationsdata.jabber_id;
     

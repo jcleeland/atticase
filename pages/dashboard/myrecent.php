@@ -25,14 +25,14 @@
     <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />-->
 </div>
 
-<h4 class="header" class="float-left">My Recent Changes</h4>
+<h4 class="header" class="float-left">Recently changed</h4>
 
 
 <?php 
     $pagername="myrecent"; 
     include('pages/helpers/pager.php'); 
 ?>
-<div class="overflow-auto" style="max-height: 270px" id="myrecentlist">
+<div class="overflow-auto" style="max-height: 300px" id="myrecentlist">
     <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
 <?php
 

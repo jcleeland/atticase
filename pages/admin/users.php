@@ -187,18 +187,18 @@ foreach($usergroups['results'] as $usergroup) {
     foreach($users['results'] as $user) {
         if($user['group_in']==$usergroup['group_id']) {
 ?>
-                        <div class="row m-0 ml-2 p-0 small">    
+                        <div class="row m-0 ml-2 p-0">    
                             <div class="col-sm-2">
-                                <input class="form-control-sm changeUser" userid="<?php echo $user['user_id'] ?>" action="real_name" id="real_name" type="text" value="<?php echo $user['real_name'] ?>" />
+                                <input class="form-control-sm changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="real_name" id="real_name" type="text" value="<?php echo $user['real_name'] ?>" />
                             </div>            
-                            <div class="col-sm-1" title="This field cannot be modified">
+                            <div class="col-sm-1 smaller" title="This field cannot be modified">
                                 <span title="User ID <?php echo $user['user_id'] ?>"><?php echo $user['user_name'] ?></span>
                             </div>
                             <div class="col-sm-2">
-                                <input class="form-control-sm changeUser" userid="<?php echo $user['user_id'] ?>" action="email_address" id='email_address' type='text' value='<?php echo $user['email_address'] ?>' />
+                                <input class="form-control-sm changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="email_address" id='email_address' type='text' value='<?php echo $user['email_address'] ?>' />
                             </div>
                             <div class="col-sm-1">
-                                <select class="form-control-sm w-100 changeUser" userid="<?php echo $user['user_id'] ?>" action="group_in" id='group_in'>
+                                <select class="form-control-sm w-100 changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="group_in" id='group_in'>
                                 <?php
                                     foreach($usergroupselectoptions as $key=>$val) {
                                         echo "<option value='$key'";
@@ -209,16 +209,16 @@ foreach($usergroups['results'] as $usergroup) {
                                 </select>
                             </div>
                             <div class="col-sm">
-                                <select class="form-control-sm w-100 changeUser" userid="<?php echo $user['user_id'] ?>" action="default_task_view" id="default_task_view" title="Default view when entering OpenCaseTracker">
+                                <select class="form-control-sm w-100 changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="default_task_view" id="default_task_view" title="Default view when entering AttiCase">
                                     <option value='' <?php if($user['default_task_view'] == "") echo "selected" ?>>All Cases</option>
                                     <option value='assigned' <?php if($user['default_task_view'] == "assigned") echo "selected" ?>>My Cases</option>
                                 </select>
                             </div>
                             <div class="col-sm">
-                                <input class="form-control-sm smaller text-center changeUser" userid="<?php echo $user['user_id'] ?>" action="self_notify" title="Notify user when they have made a change" placeholder="Notify self?" id="selfnotify<?php echo $user['user_id'] ?>" type="checkbox" name="self_notify[]" <?php if ($user['self_notify']==1) echo "checked" ?> />
+                                <input class="form-control-sm smaller text-center changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="self_notify" title="Notify user when they have made a change" placeholder="Notify self?" id="selfnotify<?php echo $user['user_id'] ?>" type="checkbox" name="self_notify[]" <?php if ($user['self_notify']==1) echo "checked" ?> />
                             </div>
                             <div class="col-sm">
-                                <select class="form-control-sm w-100 changeUser" userid="<?php echo $user['user_id'] ?>" action="default_version" id="defaultversion[]" title="Default case group">
+                                <select class="form-control-sm w-100 changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="default_version" id="defaultversion[]" title="Default case group">
                                 <?php
                                     foreach($issuetypes['results'] as $issuetype) {
                                         echo "<option value='".$issuetype['version_id']."'";
@@ -231,7 +231,7 @@ foreach($usergroups['results'] as $usergroup) {
                                 </select>
                             </div>                                                        
                             <div class="col-sm">
-                                <select class="form-control-sm w-100 changeUser" userid="<?php echo $user['user_id'] ?>" action="notify_rate" id="notifyrate[]" title="Rate of summary notifications">
+                                <select class="form-control-sm w-100 changeUser smaller" userid="<?php echo $user['user_id'] ?>" action="notify_rate" id="notifyrate[]" title="Rate of summary notifications">
                                     <option value="D" <?php if($user['notify_rate'] == "D") echo "selected" ?>>Daily</option>
                                     <option value="W" <?php if($user['notify_rate'] == "W") echo "selected" ?>>Weekly</option>
                                     <option value="N" <?php if($user['notify_rate'] == "N") echo "selected" ?>>Never</option>
@@ -240,7 +240,7 @@ foreach($usergroups['results'] as $usergroup) {
                             <div class="col-sm smaller text-center">
                                 <?php echo date("d/m/Y h:ia", $user['last_notice']) ?>
                             </div>
-                            <div class="col-sm smaller text-center">
+                            <div class="col-sm smaller text-center smaller">
                                 <input class="form-control-sm smaller changeUser" userid="<?php echo $user['user_id'] ?>" action="account_enabled" title="Account is active" placeholder="account_enabled" id="accountenabled<?php echo $user['user_id'] ?>" type="checkbox" name="account_enabled[]" <?php if ($user['account_enabled']==1) echo "checked" ?> />
                             </div>                                                        
 
@@ -260,7 +260,140 @@ foreach($usergroups['results'] as $usergroup) {
             </div>
         </div>
     </div>
+    
+    <div class="row justify-content-sm-center">
+        <div class="col-sm-12">
+            <br />
+            <h4 class="header">Add User</h4>
+            <div class="row border rounded centered">
+                <div class="p-2 w-100 dataheader smaller">
+                    <div class="row mb-1">
+                        <div class="col-sm-2" title="Full name of user">
+                            Name
+                        </div>
+                        <div class="col-sm-1" title="System username of user">
+                            Username
+                        </div>
+                        <div class="col-sm-2" title="Email address of user">
+                            Email
+                        </div>
+                        <div class="col-sm-1" title="Phone number of user">
+                            Phone
+                        </div>
+                        <div class="col-sm-1" title="Group user is assigned to">
+                            User Group
+                        </div>
+                        <div class="col-sm-1" title="The default case view for user">
+                            Default case view
+                        </div>
+                        <div class="col-sm-1" title="Send email notifications even when action is performed by user">
+                            Notify self
+                        </div>
+                        <div class="col-sm-1" title="Default case group that new cases are assigned to">
+                            Default case group
+                        </div>
+                        <div class="col-sm-1" title="Regularity of summary notification emails">
+                            Notify rate
+                        </div>
+                        <div class="col-sm-1">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group overflow-auto m-2 p-0 pb-1 w-100">
+                    <div class="row mb-1">
+                        <div class="col-sm-2" title="Full name of user">
+                            <input class="form-control smaller" placeholder="Full name" id="userreal_name" type="text" name="new_user_real_name" />
+                        </div>
+                        <div class="col-sm-1" title="System username of user">
+                            <input class="form-control smaller" placeholder="User name" id="useruser_name" type="text" name="new_user_user_name" />
+                        </div>
+                        <div class="col-sm-2" title="Email address of user">
+                            <input class="form-control smaller" placeholder="Email address" id="useremail_address" type="text" name="new_user_email" />
+                        </div>
+                        <div class="col-sm-1" title="Phone number of user">
+                            <input class="form-control smaller" placeholder="Phone number" id="userjabber_id" type="text" name="new_user_jabber_id" />
+                        </div>
+                        <div class="col-sm-1" title="Group user is assigned to">
+                                <select class="form-control-sm w-100 smaller" id='usergroup_in' name="new_user_group_in">
+                                <option value="">Please choose..</option>
+                                <?php
+                                    foreach($usergroupselectoptions as $key=>$val) {
+                                        echo "<option value='$key'>$val</option>";
+                                    }
+                                ?>
+                                </select>
+                        </div>
+                        <div class="col-sm-1" title="The default case view for user">
+                                 <select class="form-control-sm w-100 smaller" id="userdefault_version" name="new_user_default_version" title="Default case group">
+                                <?php
+                                    foreach($issuetypes['results'] as $issuetype) {
+                                        echo "<option value='".$issuetype['version_id']."'";
+                                        if($user['default_version']==$issuetype['version_id']) {
+                                            echo " selected";
+                                        }
+                                        echo ">".$issuetype['version_name']."</option>";
+                                    }
+                                ?>
+                                </select>
+                        </div>
+                        <div class="col-sm-1" title="Send email notifications even when action is performed by user">
+
+                        </div>
+                        <div class="col-sm-1" title="Default case group that new cases are assigned to">
+
+                        </div>
+                        <div class="col-sm-1" title="Regularity of summary notification emails">
+
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    
+    <div class="row justify-content-sm-center">
+        <div class="col-sm-12">
+            <br />
+            <h4 class="header">Add Group</h4>
+            <div class="row border rounded centered">
+                <div class="p-2 w-100 dataheader smaller">
+                    <div class="row mb-1">
+                         <div class="col-sm-2" title="Name of group">
+                            Group name
+                         </div>
+                         <div class="col-sm-3" title="Description of group">
+                            Group description
+                         </div>
+                         <div class="col-sm-1" title="Group members have administrator permissions">
+                            Admin
+                         </div>
+                         <div class="col-sm-1" title="Group members can open cases">
+                            Open
+                         </div>
+                         <div class="col-sm-1" title="Group members can modify cases">
+                            Modify
+                         </div>
+                         <div class="col-sm-1" title="Group members can comment on cases">
+                            Comment
+                         </div>
+                         <div class="col-sm-1" title="Group members can upload files (attachments)">
+                            Files
+                         </div>
+                         <div class="col-sm-1" title="Group members can restrict access to cases">
+                            Restrict
+                         </div>
+                         <div class="col-sm-1" title="Group is active">
+                            Active
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
 </div>
+
+
 
 <?php
     //$oct->showArray($usergroups);

@@ -100,11 +100,11 @@ function loadMyrecent(reset) {
     
     if(start<0) {
         start=0;
-        $('#myrecentstart').val(0);
+        $('#myrecentstart').val(1);
     }
     if(end<9) {
         end=9;
-        $('#myrecentend').val(9);
+        $('#myrecentend').val(10);
     }
     //console.log(joins);
     //console.log('Doing cases, '+start+' to '+end);
@@ -117,9 +117,9 @@ function loadMyrecent(reset) {
     if(reset && reset == 1) {
         //IN A NEW SEARCH, RESET THE PAGER VALUES
         //console.log('Resetting pager values');
-        var qty=10;
-        var start=1;
-        var end=10;
+        var qty=50;
+        var start=0;
+        var end=49;
     } else {
         //IN AN OLD SEARCH, KEEP THE PAGER VALUES
         //console.log('Reusing old pager values');
@@ -127,7 +127,7 @@ function loadMyrecent(reset) {
         if(parseInt($('#myrecentqty').val())==0 || $('#myrecentqty').val()=="") {
             var qty=parseInt(pagerSettings.qty);
             if(isNaN(qty)) {
-                qty=10;
+                qty=50;
             }       
             var start=pagerSettings.start;
             if(isNaN(start)) {
@@ -148,21 +148,25 @@ function loadMyrecent(reset) {
     
     $('#myrecentlist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
-    
+    console.log('Searching for recents with a start of '+start+' and an end of '+end);
     $.when(recentList(parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('RECENTS');
         //console.log(cases);
         if(cases.results.length<0) {
             //console.log('Nothing');
             $('#myrecentlist').html("No cases in recent list");
+            $('#myrecenttotal').html('of 0 cases');
         } else {
+            if(end > cases.total) {
+                end=cases.total-1;
+            }
             pagerNumbers('myrecent', start, end, cases.total);
             $('#myrecentlist').html('');
             $.each(cases.results, function(i, casedata) {
                 /* Put formatting into a standalone script */
                 if(!$('#caseCardParent_myrecentlist'+casedata.task_id).length) {
                     insertCaseCard('myrecentlist', 'myrecentlist'+casedata.task_id, casedata);
-                    $('#caseheader_myrecentlist'+casedata.task_id).prepend('<div class="text-muted green-curtain p-0 pl-1 pr-1 m-0 mb-1 smaller" >This case was modified by '+casedata.changedby_real_name+' on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
+                    $('#caseheadermessage_myrecentlist'+casedata.task_id).show().prepend('<div class="col mt-2 m-0">This case was modified by '+casedata.changedby_real_name+' on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
                 }
 
             })
@@ -207,8 +211,8 @@ function myrecentstart_pager() {
     //var qty=parseInt($('#caselistqty').val()) || 10;
     var qty=parseInt(pagerSettings.qty);
     start=start-qty;
-    if(start < 1) {
-        start=1;
+    if(start < 0) {
+        start=0;
     }
     var end=start+qty-1;
     
@@ -224,7 +228,7 @@ function myrecentstart_pager() {
 
 function myrecentfirst_pager() {
     var pagerSettings=pagerNumberSettings('myrecent');
-    var start=1;
+    var start=0;
     var qty=parseInt(pagerSettings.qty);
     var end=start+qty-1;
     $('#myrecentstart').attr("value",(start));
@@ -237,15 +241,12 @@ function myrecentfirst_pager() {
 
 function myrecentlast_pager() {
     var pagerSettings=pagerNumberSettings('myrecent');
+    var total=parseInt($('#myrecenttotal').text().replace(/\D+/g, ''));
     var qty=parseInt(pagerSettings.qty);
-    var pages=parseInt($('#myrecentcount').val())/qty;
-    pages=parseInt(pages);
-    var start=pages*qty;
-    var end=start+qty-1;
+    var end=total;
+    var start=total-qty;
     $('#myrecentstart').attr("value",(start));
     $('#myrecentend').attr("value", (end));
-    
-    
     savePagerSettings('myrecent', start, end, qty);
     loadMyrecent();    
 }

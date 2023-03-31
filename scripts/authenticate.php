@@ -68,7 +68,7 @@
                         $_SESSION['group_in']=$out['group_in'];
                         $_SESSION['email_address']=$out['email_address'];                        
                     } else {
-                        echo "<span class='danger'>Your account has been authenticated by your local system, however you do not have permission to access OpenCaseTracker<br />\nContact your system administrator and ask them to enable your access.</span>";
+                        echo "<span class='danger'>Your account has been authenticated by your local system, however you do not have permission to access AttiCase<br />\nContact your system administrator and ask them to enable your access.</span>";
                         if($oct->config['ldap']['ldapnewusergroup']['value'] > 0) {
                             //INSERT USER INTO DATABASE
                             $query="INSERT INTO ".$oct->dbprefix."users ('user_name', 'real_name', group_in', 'account_enabled') VALUES ('$localuser', '$localuser', '".$oct->config['ldap']['ldapnewusergroup']['value']."', '0')";

@@ -24,7 +24,7 @@
         <nav aria-label="breadcrumb">
                     
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.php?page=dashboard">OpenCaseTracker</a></li>
+                <li class="breadcrumb-item"><a href="index.php?page=dashboard">AttiCase</a></li>
                 <?php
                     foreach($pages as $thislink=>$thispage) {
                     ?>

@@ -155,17 +155,16 @@ body {
     cursor: pointer;
 }
 .calendar-div {
-    color: black;
+    color: black;       
 }
-.calendar-div::after {
-    content: '\00a0\00a0\00a0\00a0';
+/* .calendar-div::after {
+    content: '\00a0\00a0\00a0\00a0'; 
     background-image: url(../images/calendar.svg);
     background-repeat: no-repeat;
-    /* background-attachment: fixed; */
     background-position: center; 
     background-size: 13px;
-    opacity: 0.5;      
-}
+    opacity: 0.5;  
+} */
 .pointer {
     cursor: pointer !important;
 }
@@ -373,6 +372,10 @@ a.fa-userlink::after {
 }
 .w-25x {
     width: calc(100% / 4) !important; 
+}
+.small {
+    font-size: 95%;
+    font-weight: 400;
 }
 .smallish {
     font-size: 90%;

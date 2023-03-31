@@ -18,7 +18,7 @@ $(function() {
     var status=getStatus();
     var views=Object.values(status.caseviews);
     var newViews={};
-    console.log(status);
+    //console.log(status);
     var settings=getSettings('OpenCaseTrackerSystem');
     var userId=settings.user_id;
     var caseviewcount=0;

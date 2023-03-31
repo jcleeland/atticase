@@ -40,7 +40,7 @@
 
         <!-- Navigation Bar -->
         <nav class="navbar navbar-expand-md scrolling-navbar">
-            <a class="navbar-brand-xl" href="?page=dashboard"><img src="images/logo.png" alt="Opencasetracker Logo" width="35" height="35" class="d-inline-block align-top" /></a>
+            <a class="navbar-brand-xl" href="?page=dashboard"><img src="images/logo.png" alt="AttiCase Logo" title="AttiCase: Case management for humans" width="35" height="35" class="d-inline-block align-top" /></a>
             <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#main-navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

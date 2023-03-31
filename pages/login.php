@@ -20,7 +20,7 @@
     <form class="col-5" method="post" style='z-index: 9999'>
         <input type='hidden' name='login' value='true' />
         <div class='col mb-3 p-0'>
-            <h3 style="font-weight: bold"><img src='images/logo.png'>OpenCaseTracker</h3>
+            <h3 style="font-weight: bold"><img src='images/logo.png'>AttiCase</h3>
         </div>
         <div class="col header mb-3">
             Login

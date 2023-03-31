@@ -221,15 +221,25 @@ $(function() {
             $('#is_restricted').attr('title', 'This case has restricted access to only administrators and the user it is assigned to');
             $('#is_restricted_image').attr('src', 'images/lock.svg');  
         }
-    })
+    })  
          
-    
+    //Set the tab according to the lasttab setting in the cookie (if it exists)
+    var octStatus=getStatus();
+    var thisCase=octStatus.caseviews['case'+$('#caseid').val()];
+    console.log(thisCase);
+    //$('#case-tabs').tabs();
+    if(thisCase.lasttab) {
+        console.log('Selected by '+thisCase.lasttab.substring(1));
+        selectCaseTabByName(thisCase.lasttab.substring(1));
+        console.log('Completed selection by '+thisCase.lasttab.substring(1));
+    }      
 });
 
 function loadCase() {
     var today=new Date();
     var caseId=$('#caseid').val();
     var settings=getSettings('OpenCaseTrackerSystem');
+    
     //console.log('SETTINGS');
     //console.log(settings);
     //console.log('Reloading');
@@ -284,6 +294,7 @@ function loadCase() {
             //Update Cookie (caseviews)
             var octStatus=getStatus();
             //octStatus.caseviews['#'+casedata.task_id] = {};
+
             if(!octStatus.caseviews) {
                 delete octStatus.caseviews;
                 octStatus.caseviews={};
@@ -295,6 +306,7 @@ function loadCase() {
                     title: casedata.item_summary, 
                     client: casedata.clientname, 
                     viewed: parseInt(Date.now()/1000),
+                    lasttab: '#'+$('#case-tabs .nav-link.active').text().trim(),
             };
 
             //Save case in caseviews cookie

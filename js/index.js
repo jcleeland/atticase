@@ -68,7 +68,7 @@ $(function() {
     })
     $(document).on('click', '.tabActionDelete', function() {
         console.log('Deleting');
-        
+        console.log(this.id);
         var details=this.id.split("_");
         var edits=details[1].split(/([0-9]+)/);
         console.log(details);
@@ -158,8 +158,16 @@ function deleteTabEdit(method, id) {
             case "companion":
                 $.when(linkedDelete('companion', id)).done(function(output) {
                     loadLinkeds();
+                    historyCreate($('#caseid').val(), globals.user_id, "27", id, null, null);
+                    loadHistory();
                 })
                 break;
+            case "notification":
+                $.when(linkedDelete('notification', id)).done(function(output) {
+                    loadNotifications();
+                    historyCreate($('#caseid').val(), globals.user_id, "10", id, null, null);
+                    loadHistory();
+                })
         }
     }    
 }
@@ -709,6 +717,24 @@ function notificationsList(parameters, conditions, order, first, last) {
     });    
 }
 
+function notificationCreate(caseId, userId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'notificationCreate', caseId: caseId, userId: userId},
+        dataType: 'json'
+    });      
+}
+
+function notificationDelete(notifyId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'notificationDelete', notifyId: notifyId},
+        dataType: 'json'
+    });    
+}
+
 function poiConnectionsList(personId) {
     return $.ajax({
         url: 'ajax.php',
@@ -1223,14 +1249,15 @@ function saveCaseView(caseId, timestamp, lasttab) {
     if(status.caseviews[caseId]==undefined) {
         status.caseviews[caseId]={};
     }
-    status.caseviews[caseId]['timestamp']=timestamp;
-    status.caseviews[caseId]['lasttab']=lasttab;
-    status.caseviews[caseId]['caseid']=caseId;
-    //console.log(status);
+    cookiename='case'+caseId;
+    status.caseviews[cookiename]['timestamp']=timestamp;
+    status.caseviews[cookiename]['lasttab']=lasttab;
+    status.caseviews[cookiename]['caseid']=caseId;
+    console.log(status);
     //status.caseviews={};
     //count how many statuses there are and trim if there are more than 25
     var count=countProperties(status.caseviews);
-    if(count > 25) {
+    if(count > 10) {
         //Trim oldest items
         var sortable=[];
         for (var timestamp in status.caseviews) {
@@ -1244,7 +1271,7 @@ function saveCaseView(caseId, timestamp, lasttab) {
         
         //Iterate through sortable and only leave the first 50
         $.each(sortable, function(i, me) {
-            if(i < 25) {
+            if(i < 10) {
                 status.caseviews[me.caseid]=me;
             }
         })       
@@ -1394,7 +1421,9 @@ function pagerNumbers(pagername, start, end, total) {
         
         //var start=start+1;
         if(displayEnd > parseInt(total)) displayEnd=parseInt(total);
-        
+        displayStart++;   //The method we use to search the database assumes that the first record is record zero, however
+        displayEnd++;     // people think of the first record as record one. So we "display" the number one higher than we use to search
+        if(displayEnd > total) displayEnd=total;
         //console.log('Results found - '+displayEnd);
         if(total==0) {
             qty=0;
@@ -1409,6 +1438,24 @@ function pagerNumbers(pagername, start, end, total) {
         $('#'+pagername+'count').val(total);
         //$('#'+pagername+'qty').html('Showing <span" id="'+pagername+'Quantity" value="'+qty+'" />'+qty+'</span>');  
         $('#'+pagername+'qty').val(qty);
+        
+        //Now lets disable the "next" and "end" button if we're already showing the last record in a set
+        // or disable the "prev" and "start" buttons if we are at the beginning.
+        $('#'+pagername+'first').removeAttr("disabled");
+        $('#'+pagername+'last').removeAttr("disabled");
+        $('#'+pagername+'start').removeAttr("disabled");
+        $('#'+pagername+'end').removeAttr("disabled");
+        //console.log('DISPLAYING CHECKS');
+        //console.log('Displaystart: '+displayStart+', Displayend: '+displayEnd+', Total: '+total);
+        if(displayStart==1) {
+            $('#'+pagername+'first').attr("disabled", 1);
+            $('#'+pagername+'start').attr("disabled", 1);
+        }
+        if(displayEnd==total) {
+            $('#'+pagername+'last').attr("disabled", 1);
+            $('#'+pagername+'end').attr("disabled", 1);
+        }
+        
         
         //Save the pager details to the cookie
         savePagerSettings(pagername, start, end, qty);
@@ -1431,6 +1478,14 @@ function savePagerSettings(pagername, start, end, qty) {
     setStatus(status);    
 }
 
+/**
+* Checks the cookie settings for a specific pager and returns the last used values.
+* If no cookie value exists, returns defaults of "start = 0", "end=9", "qty=10"
+* 
+* @param pagername - the name of the pager
+* 
+* @returns {Object} output['start'], output['end'], output['qty']
+*/
 function pagerNumberSettings(pagername) {
     var status=getStatus();
     if(status.pagers!=undefined) {
@@ -1461,6 +1516,13 @@ function showCase(caseId) {
     window.location.href = "index.php?page=case&case=" + caseId;    
 }
 
+/**
+* Creates the html code to display a card for a case in a list and insert that card into a parent div
+* 
+* @param parentDiv - the name of the parent Div into which the case card will be added
+* @param uniqueId - the unique ID to use when referencing this particular case card
+* @param casedata - an object containing all the data used to fill out the case card. This includes clientname, member, date_due, last_edited_real_name, assigned_real_name, task_id, member_status
+*/
 function insertCaseCard(parentDiv, uniqueId, casedata) {
     //console.log('Inserting Case Card');
     //console.log(casedata);
@@ -1504,51 +1566,61 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         //$('#rightCaseCol_'+uniqueId).append('<div id="caseMain_'+uniqueId+'" class="card-body p-0"></div>');
     
         //The "caseheader_" div contains data lists
-        $('#rightCaseCol_'+uniqueId).append('<div class="card-header small p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
+        $('#rightCaseCol_'+uniqueId).append('<div class="flex-nowrap p-0 m-1 mb-0 hidden text-muted green-curtain smaller" style="top: 2px" id="caseheadermessage_'+uniqueId+'"></div>');
+        $('#rightCaseCol_'+uniqueId).append('<div class="row flex-nowrap card-header smallish p-2 ml-1" id="caseheader_'+uniqueId+'"></div>');
+        $('#rightCaseCol_'+uniqueId).append('<div class="row flex-nowrap smallish p-2 ml-1" id="casesummary_'+uniqueId+'"></div>');
+        
         //The "casedetails_" div contains the detailed description of the case & only shows if selected
         $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-1 m-1 border rounded" id="casedetails_'+uniqueId+'"></div>');
-        
         //The empty div for displaying most recent comment:
         $('#rightCaseCol_'+uniqueId).append('<div class="card-body collapse p-0 m-1 pl-1 pr-1 casecomment border rounded " id="casecomment_'+uniqueId+'"></div>');
         //$('#rightCaseCol_case'+casedata.task_id).append('<div class="card-footer small font-italic pt-1 pb-1 text-muted" id="casefooter_'+casedata.task_id+'"></div>');
         
+        
+        
+        
+        
+        //Now insert information into each of the divs, starting with the casePrimeBox
         $('#casePrimeBox_'+uniqueId).append(casedata.task_id);
     
         //Right Col
-        //Date due field
-        $('#caseheader_'+uniqueId).append("<div class='float-right mr-2 border rounded pl-1 pr-1 calendar-div pointer "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
-        //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
-        
-        //Assigned to field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1 w-20x overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+assignedto+"</div>");
-                        
         //Client/Member name field
-        $('#caseheader_'+uniqueId).append("<div class='float-left border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" w-20x overflow-hidden' title='"+client+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
-        
-        //Case type field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-block d-md-none d-sm-none d-none d-xs-none caselist-casetype float-left border rounded pl-1 pr-1 mr-1 w-20x overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='col-2 d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" overflow-hidden' title='"+client+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
+        $('#caseheader_'+uniqueId).append("<div class='col-2 d-xs-block d-lg-none d-md-none d-sm-block d-xs-block border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" overflow-hidden' title='"+client+"'>"+getInitials(client)+"<a class='fa-userlink' href=''></a></div>");
         
         //Department field
-        $('#caseheader_'+uniqueId).append("<div class='d-xl-block d-lg-none d-md-none d-sm-none d-xs-none d-none caselist-department float-left border rounded pl-1 pr-1 mr-0 w-20x overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='col-3 caselist-department border rounded pl-1 pr-1 mr-1 overflow-hidden' title='"+casedata.category_name+"'>"+casedata.category_name+"</div>");
+
+        //Case type field
+        $('#caseheader_'+uniqueId).append("<div class='col-3 caselist-casetype border rounded pl-1 pr-1 mr-1 overflow-hidden' title='"+casedata.tasktype_name+"'>"+casedata.tasktype_name+"</div>");
         
-        $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
+        //Assigned to field
+        $('#caseheader_'+uniqueId).append("<div class='col-2 d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none officer border rounded pl-1 pr-1 mr-1 overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+assignedto+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='col-2 d-xs-block d-lg-none d-md-none d-none d-sm-block d-xs-block officer border rounded pl-1 pr-1 mr-1 overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+getInitials(assignedto)+"</div>");
+                        
+        //Date due field
+        $('#caseheader_'+uniqueId).append("<div class='col text-center mr-2 border rounded pl-1 pr-1 calendar-div pointer flex-nowrap "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
+        //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
+        
+        
+        //$('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
         
 
 
         //Item summary
-        $('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7 '><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/folder.svg' class='img-thumbnail float-left mr-0 mt-1 toggledetails pale-green-link' width='20px' title='Show case details' /></a><a data-toggle='collapse' href='#comment-card' aria-expanded='true' aria-controls='comment-card' id='toggle-comment-card_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\", \""+caseId+"\")' ><img id='togglecomments_"+uniqueId+"' src='images/message.svg' class='img-thumbnail float-left mr-2 mt-1 togglecomments pale-green-link' width='20px' title='Show most recent note' /></a><span class='caselist-itemsummary' id='lastComment_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\")'></span><span class='caselist-itemsummary' onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
+        $('#casesummary_'+uniqueId).append("<div class='col-12 p-0 display-7 smallish'><a data-toggle='collapse' href='#case-card' aria-expanded='true' aria-controls='case-card' id='toggle-case-card_"+uniqueId+"' onClick='toggleDetails(\""+uniqueId+"\")' ><img id='toggledetails_"+uniqueId+"' src='images/folder.svg' class='img-thumbnail float-left mr-0 mt-1 toggledetails pale-green-link' width='20px' title='Show case details' /></a><a data-toggle='collapse' href='#comment-card' aria-expanded='true' aria-controls='comment-card' id='toggle-comment-card_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\", \""+caseId+"\")' ><img id='togglecomments_"+uniqueId+"' src='images/message.svg' class='img-thumbnail float-left mr-2 mt-1 togglecomments pale-green-link' width='20px' title='Show most recent note' /></a><span class='caselist-itemsummary' id='lastComment_"+uniqueId+"' onClick='toggleLastComment(\""+uniqueId+"\")'></span><span class='caselist-itemsummary' onClick='toggleDetails(\""+uniqueId+"\")'>"+casedata.item_summary+"</span></div>");
 
         //Comment toggle
         //$('#caseheader_'+uniqueId).append("<div class='float-left p-0 display-7'></div>");
 
-        $('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
+        //$('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
 
         //Case description
-        $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
-        $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 small' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
+        $('#casedetails_'+uniqueId).append("<p class='card-text smallish overflow-auto' style='max-height: 100px'>"+deWordify(casedata.detailed_desc)+"</p>");
+        $('#casedetails_'+uniqueId).append("<div class='d-xs-block d-sm-block d-md-none d-lg-none d-xl-none officer float-right m-0 mb-1 border rounded pl-1 pr-1 smallish' id='officer_"+casedata.assigned_to+"'>"+assignedto+"</div>");
 
         //Comment space
-        $('#casedetails_'+uniqueId).append("<p class='card-text small overflow-auto' style='max-height: 100px'></p>");
+        $('#casedetails_'+uniqueId).append("<p class='card-text smaller overflow-auto' style='max-height: 100px'></p>");
         
         
         //console.log(casedata.is_closed);
@@ -1579,7 +1651,7 @@ function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, br
     $('#rightTabCol_'+uniqueId).append('<div class="card-body small overflow-auto" style="max-height: 200px;" id="cardbody_'+uniqueId+'"></div>');
     
     //Inserting Data
-    $('#tabPrimeBox_'+uniqueId).append('<span class="d-xs-block dsm-block d-md-none d-lg-none d-xl-none" title="'+$(primeBox).text()+'">'+briefPrimeBox+'</span>');
+    $('#tabPrimeBox_'+uniqueId).append('<span class="d-xs-block d-sm-block d-md-none d-lg-none d-xl-none" title="'+primeBox+'">'+briefPrimeBox+'</span>');
     $('#tabPrimeBox_'+uniqueId).append('<span class="d-none d-md-block d-lg-block d-xl-block">'+primeBox+'</span>');
     
     $('#tabDate_'+uniqueId).append('<span class="d-xs-block d-sm-block d-md-none d-lg-none d-xl-none" title="'+dateBox+'">'+briefDateBox+'</span>');
@@ -1824,6 +1896,17 @@ function googlePieChart(id, title, data) {
     var chart=new google.visualization.PieChart(document.getElementById(id));
     chart.draw(datum, options);        
     
+}
+
+// Function to select a tab by its name, case-insensitive and with spaces trimmed
+function selectCaseTabByName(tabName) {
+        const targetTab = $("#case-tabs a").filter(function() {
+          return $(this).text().trim().toLowerCase() === tabName.trim().toLowerCase();
+        });
+        
+        if (targetTab.length > 0) {
+          targetTab.tab('show');
+        }
 }
 
 (function($,sr){

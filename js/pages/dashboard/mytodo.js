@@ -83,9 +83,9 @@ function loadMytodo(reset) {
     if(reset && reset == 1) {
         //IN A NEW SEARCH, RESET THE PAGER VALUES
         //console.log('Resetting pager values');
-        var qty=10;
-        var start=1;
-        var end=10;
+        var qty=50;
+        var start=0;
+        var end=49;
     } else {
         //IN AN OLD SEARCH, KEEP THE PAGER VALUES
         //console.log('Reusing old pager values');
@@ -93,7 +93,7 @@ function loadMytodo(reset) {
         if(parseInt($('#mytodoqty').val())==0 || $('#mytodoqty').val()=="") {
             var qty=parseInt(pagerSettings.qty);
             if(isNaN(qty)) {
-                qty=10;
+                qty=50;
             }       
             var start=pagerSettings.start;
             if(isNaN(start)) {
@@ -121,7 +121,11 @@ function loadMytodo(reset) {
         if(cases.count===0) {
             //console.log('Nothing');
             $('#mytodolist').html("<center><br />No cases in todo list<br />&nbsp;</center>");
+            $('#mytodolisttotal').html('of 0 cases');
         } else {
+            if(end > cases.total) {
+                end=cases.total-1;
+            }
             pagerNumbers('mytodo', start, end, cases.total);
             $('#mytodolist').html('');
             $.each(cases.results, function(i, casedata) {
@@ -171,8 +175,8 @@ function mytodostart_pager() {
     //var qty=parseInt($('#caselistqty').val()) || 10;
     var qty=parseInt(pagerSettings.qty);
     start=start-qty;
-    if(start < 1) {
-        start=1;
+    if(start < 0) {
+        start=0;
     }
     var end=start+qty-1;
     
@@ -188,7 +192,7 @@ function mytodostart_pager() {
 
 function mytodofirst_pager() {
     var pagerSettings=pagerNumberSettings('mytodo');
-    var start=1;
+    var start=0;
     var qty=parseInt(pagerSettings.qty);
     var end=start+qty-1;
     $('#mytodostart').attr("value",(start));
@@ -201,15 +205,13 @@ function mytodofirst_pager() {
 
 function mytodolast_pager() {
     var pagerSettings=pagerNumberSettings('mytodo');
+    var total=parseInt($('#mytodototal').text().replace(/\D+/g, ''));
     var qty=parseInt(pagerSettings.qty);
-    var pages=parseInt($('#mytodocount').val())/qty;
-    pages=parseInt(pages);
-    var start=pages*qty;
-    var end=start+qty-1;
+    var end=total;
+    var start=total-qty;
     $('#mytodostart').attr("value",(start));
     $('#mytodoend').attr("value", (end));
-    
-    
+    savePagerSettings('mytodo', start, end, qty);    
     savePagerSettings('mytodo', start, end, qty);
     loadMytodo();    
 }

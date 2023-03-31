@@ -32,7 +32,7 @@ foreach($results['output'] as $cgcount) {
 <div class="col-sm-12 mb-1 ">
     <div class="row justify-content-sm-center">
         <div class="col-sm-12">
-            <h4 class="header">Case Types</h4>
+            <h4 class="header">Resolutions</h4>
             <div class="row border rounded centered">
                 <form class="w-100">
                 <div class="p-2 w-100">
