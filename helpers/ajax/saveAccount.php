@@ -13,6 +13,7 @@
     if($oct->updateTable("users", $updates, "user_id=".$userId, $userId, 0)) {
         $output=true;
     } else {
+        $oct->showArray($updates);
         $output=false;
     }
     

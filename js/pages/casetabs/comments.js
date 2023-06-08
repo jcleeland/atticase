@@ -11,12 +11,16 @@ $(function() {
         var userId=globals.user_id;
         var caseId=$('#caseid').val();
         var commentText=$('#newComment').val();
-        //console.log('COmment: '+commentText);
+        var timeSpent=$('#newTimeSpent').val();
+        var cost=$('#newCost').val();
+        //console.log('INITIAL: TimeSpent: '+timeSpent+', Cost: '+cost);
         var time=Math.floor(Date.now() / 1000);
-        $.when(commentCreate(caseId, userId, commentText, time)).done(function(insert) {
+        $.when(commentCreate(caseId, userId, commentText, time, timeSpent, cost)).done(function(insert) {
             if(insert.count=="1") {
                 $('#newComment').val('');
-                $('#newCaseForm').toggle();
+                $('#newTimeSpent').val('');
+                $('#newCost').val('');
+                $('#newCommentForm').toggle();
                 historyCreate(caseId, userId, '4', null, null, commentText);
                 loadComments();
                 loadHistory();
@@ -80,6 +84,8 @@ function loadComments() {
             $('#commentcount').html(comments.results.length);
             var counter=0;
             var divid=1;
+            var totalTimeSpent=0;
+            var totalCost=0;
             $.each(comments.results, function(i, commentdata) { 
                 //console.log('Commentdata');
                 //console.log(commentdata);
@@ -98,8 +104,20 @@ function loadComments() {
                 if(globals.user_id==commentdata.user_id || globals.is_admin=='1') {
                     actionPermissions=['edit', 'delete'];    
                 }
-
-                var header=null
+                console.log(commentdata);
+                var header='<div class="row">';
+                if($('#allowtime').val()=="1" && commentdata.time_spent && commentdata.time_spent > 0) {
+                    header+='<div class="col"><b>Time spent:</b> '+commentdata.time_spent+' minutes</div>';
+                    totalTimeSpent+=commentdata.time_spent;
+                }
+                if($('#allowcost').val()=="1" && commentdata.cost && commentdata.cost > 0) {
+                    header+= '<div class="col"><b>Cost:</b> $'+commentdata.cost+'</div>';
+                    totalCost+=commentdata.cost;
+                }
+                header+='</div>';
+                if(header=='<div class="row"></div>') {
+                    header=null;
+                }
                 var content=deWordify(commentdata.comment_text);
                 
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content)
@@ -124,6 +142,12 @@ function loadComments() {
                 }*/
                 
             })
+            if($('#allowtime').val()=='1' && totalTimeSpent > 0) {
+                $('#totalTimeSpent').html("<b>Total Time:</b> "+totalTimeSpent+" minutes");
+            }
+            if($('#allowcost').val()=='1' && totalCost > 0) {
+                $('#totalCost').html("<b>Total Cost:</b> $"+totalCost);
+            }
             
         }
     }).then(function() {

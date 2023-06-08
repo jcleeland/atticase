@@ -27,6 +27,23 @@ $(function() {
             window.location.href="index.php?logout=true&clearcookies=true";    
         }
     })
+    $('#save_dashboard').click(function() {
+        var userId=$('#userid').val();
+        var dateformat=$('#dateformat').val();
+        var item1=$('#dateformatItem1').val();
+        var item2=$('#dateformatItem2').val();
+        var item3=$('#dateformatItem3').val();
+        var item4=$('#dateformatItem4').val();
+        var dateformat_extended=item1+','+item2+','+item3+','+item4;
+        var newValues={};
+        newValues['dateformat']=dateformat;
+        newValues['dateformat_extended']=dateformat_extended;
+        console.log(newValues);
+        $.when(accountUpdate(userId, newValues)).done(function(output) { 
+            console.log('Updated');
+            console.log(output);
+        })        
+    })
     $('#save_changes').click(function () {
         var userId=$('#userid').val();
         //Gather all the values

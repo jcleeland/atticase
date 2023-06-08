@@ -452,11 +452,11 @@ function commentList(parameters, conditions, order, first, last) {
     });
 }
 
-function commentCreate(caseId, userId, comment, time) {
+function commentCreate(caseId, userId, comment, time, timeSpent, cost) {
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'commentCreate', caseId: caseId, userId: userId, comment: comment, time: time},
+        data: {method: 'commentCreate', caseId: caseId, userId: userId, comment: comment, time: time, timeSpent: timeSpent, cost: cost},
         dataType: 'json'
     })    
     
@@ -1631,6 +1631,27 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         
 }
 
+/**
+* Creates a Tab Card for lists of items in a tab
+* 
+* @param parentDiv
+* @param uniqueId
+* @param primeBox           The contents of the left hand column little box
+* @param briefPrimeBox      The "brief" version of comments of the left hand column little box (for smaller screens)
+* @param dateBox
+* @param briefDateBox
+* @param actionPermissions  Which actions will display to the user (array containing 'edit', or 'delete')
+* @param header
+* @param content
+*
+*  _____________ _______________________________________________________________
+* |             |                                                               |
+* | Prime Box   |  Header                                                       |
+* |             |                                                               |
+* | Date Box    |  Content                                                      |
+* |             |                                                               |
+* |_____________|_______________________________________________________________|
+*/
 function insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content) {
     
     //Parent Tab

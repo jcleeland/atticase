@@ -128,6 +128,8 @@
                     <a class="dropdown-item pl-1 ml-0" href="#" id="emailCase"><img id="case-email-image" src="images/mail.svg" class="p-1" width="28px" title="Send email" /> Send email</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item pl-1 ml-0" href="#" id="transferCase"><img id="case-transfer-image" src="images/user.svg" class="p-1" width="28px" title="Transfer case " /> Transfer case</a>
+                    <a class="dropdown-item pl-1 ml-0" href="#" id="exportCase"><img id="case-export-image" src="images/export.svg" class="p-1" width="28px" title="Export case " />Export case</a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item pl-1 ml-0" href="#" id="closeCase"><img id="case-close-image" src="images/end.svg" class='rounded p-1 red-link ml-0' width='28px' title='Close case' /> Close case</a>
                     <a class="dropdown-item pl-1 ml-0 hidden" href="#" id="reopenCase"><img id="case-reopen-image" src="images/end.svg" class="rounded p-1 pale-green-link ml-0" width="28px" title="Reopen case" /> Reopen case</a>
                     <a class="dropdown-item pl-1 ml-0 disabled" href="#" id="deleteCase"><img id="case-delete-image" src="images/trash.svg" class="p-1" width="28px" title="Delete case" /> Delete case</a>

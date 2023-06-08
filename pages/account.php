@@ -22,6 +22,20 @@ $usergroups=$oct->userGroupList(array(), null, null, 0, 1000000000);
 $usergroups=$usergroups['results'];
 $issuetypes=$oct->getIssueTypes();
 
+$dir_path='pages/dashboard';
+$files=scandir($dir_path);
+$dashboarditems=array();
+foreach($files as $file) {
+    if ($file != '.' && $file != '..' && !is_dir($dir_path . '/' . $file)) {
+        $filename_without_ext = pathinfo($file, PATHINFO_FILENAME);
+        $nicename = ucfirst(strtolower($filename_without_ext)); 
+        $coded=substr($nicename, 0, 6);
+        //Decrypt with xor       
+        $dashboarditems[$coded]=$nicename;
+    }
+}
+$selecteddashboarditems=explode(",", $accountdata['dateformat_extended']);
+
 //echo "<pre>"; print_r($usergroups); echo "</pre>";
 //echo "<pre>"; print_r($accountdata); echo "</pre>";
 ?>
@@ -176,6 +190,48 @@ $issuetypes=$oct->getIssueTypes();
                 </div>
             </div>
 
+            <br />
+            <h4 class="header">Dashboard</h4>
+            <div class="row border rounded mt-2">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="row">
+                        <div  class="subSection-label col-4 col-xs-4 m-1">
+                            Page layout
+                        </div>
+                        <div class="subSection-field col-7 cols-xs-7 m-1">
+                            <select class='form-control updateaccount w-100' name='dateformat' id='dateformat'>
+                                <option value=''>System default</option>
+                                <option value='1c2i' <?php if($accountdata['dateformat'] == '1c2i') echo "selected" ?>>1 Column, 2 Items</option>
+                                <option value='1c4i' <?php if($accountdata['dateformat'] == '1c4i') echo "selected" ?>>1 Column, 4 Items</option>
+                                <option value='2c3i' <?php if($accountdata['dateformat'] == '2c3i') echo "selected" ?>>1 Columns, 3 Items (top row double width)</option>
+                                <option value='2c3ib' <?php if($accountdata['dateformat'] == '2c3ib') echo "selected" ?>>1 Columns, 3 Items (bottom row double width)</option>
+                                <option value='2c4i' <?php if($accountdata['dateformat'] == '2c4i') echo "selected" ?>>2 Columns, 4 Items</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="row">
+                        <div class="subSection-label col-xs-4 m-1">
+                            Container items
+                        </div>
+                        <div class="subSection-field cols-xs-7 m-1">
+                            Item 1 <select id='dateformatItem1'><?php echo dashboardSelect($dashboarditems, $selecteddashboarditems[0]) ?></select><br />
+                            Item 2 <select id='dateformatItem2'><?php echo dashboardSelect($dashboarditems, $selecteddashboarditems[1]) ?>></select><br />
+                            Item 3 <select id='dateformatItem3'><?php echo dashboardSelect($dashboarditems, $selecteddashboarditems[2]) ?>></select><br />
+                            Item 4 <select id='dateformatItem4'><?php echo dashboardSelect($dashboarditems, $selecteddashboarditems[3]) ?>></select><br />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12">
+                    <div class="row">
+                        <div class='subSection-field w-100 m-1'>
+                            <button class='btn btn-primary float-right m-2' id='save_dashboard'>Save Dashboard</button>
+                        </div>
+                    </div>            
+                </div>                
+            </div>
+            
 
             <br />
             <h4 class="header">Change Password</h4>
@@ -246,3 +302,14 @@ $issuetypes=$oct->getIssueTypes();
         </div>
     </div>
 </div>
+<?php
+    function dashboardSelect($dashboarditems, $selecteditem) {
+        $output="<option value=''>System default</option>\n";
+        foreach($dashboarditems as $key=>$val) {
+            $output.="<option value='$key'";
+            if($key==$selecteditem) $output.= " selected=selected";
+            $output.=">$val</option>\n";
+        }
+        return $output;
+    }
+?>

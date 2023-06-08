@@ -660,8 +660,8 @@ class oct {
     
     function commentCreate($parameters=array(), $conditions=null) {
         $query = "INSERT INTO ".$this->dbprefix."comments";
-        $query .= "\r\n (`comment_id`, `task_id`, `date_added`, `user_id`, `comment_text`)";
-        $query .= "\r\n VALUES (NULL, :task_id, :date_added, :user_id, :comment_text)";
+        $query .= "\r\n (`comment_id`, `task_id`, `date_added`, `user_id`, `comment_text`, `cost`, `time_spent`, `date_created`)";
+        $query .= "\r\n VALUES (NULL, :task_id, :date_added, :user_id, :comment_text, :cost, :time_spent, :date_created)";
         
         $results=$this->execute($query, $parameters);
         
@@ -1630,9 +1630,7 @@ class oct {
         
         $query .= "\r\nWHERE ".$wheres;
         
-
         
-
         
         $this->execute($query, $parameters);
         
@@ -1817,6 +1815,7 @@ class oct {
         print_r($array);
         echo "</pre>";    
     }
+
 }
 
 

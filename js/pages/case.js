@@ -228,7 +228,7 @@ $(function() {
     var thisCase=octStatus.caseviews['case'+$('#caseid').val()];
     console.log(thisCase);
     //$('#case-tabs').tabs();
-    if(thisCase.lasttab) {
+    if(thisCase && thisCase.lasttab) {
         console.log('Selected by '+thisCase.lasttab.substring(1));
         selectCaseTabByName(thisCase.lasttab.substring(1));
         console.log('Completed selection by '+thisCase.lasttab.substring(1));

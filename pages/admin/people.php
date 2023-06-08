@@ -46,6 +46,9 @@ $members=$oct->memberList(array(), "1=1", "surname, pref_name", 0, 200);
                         <div class="col-sm">
                             Joined
                         </div>
+                        <div class="col-sm">
+                            Action
+                        </div>
                     </div>
                 </div>
                 <div class="form-group overflow-auto p-2" style="max-height: 600px" >
@@ -67,10 +70,13 @@ foreach($members['results'] as $poi) {
                             <input action='position' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='pref_name<?php echo $id ?>' value='<?php echo $poi['pref_name'] ?>' />
                         </div>
                         <div class="col-sm-3">
-                            <input action='organisation' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='subs_paid_to<?php echo $id ?>' value='<?php echo $poi['subs_paid_to'] ?>' />
+                            <input action='organisation' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='subs_paid_to<?php echo $id ?>' value='<?php echo $poi['subs_paid_to'] ?>a' />
                         </div>
                         <div class="col-sm">
                             <input action='phone' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='joined<?php echo $id ?>' value='<?php echo $poi['joined'] ?>' />
+                        </div>
+                        <div class="col-sm">
+                            <span class="btn btn-sm btn-main">Del</span>
                         </div>
                     </div>
                     <div class="row m-2 hidden connectionlists smaller" id="connectionlist<?php echo $id ?>">

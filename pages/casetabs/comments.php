@@ -29,13 +29,59 @@
     <div class='form-group hidden border rounded p-2 m-2' id='newCommentForm'>
         <h4 class="header">Add a note</h4>
         <div class="pager rounded-bottom w-100">&nbsp;</div> 
-        <textarea class="form-control" id='newComment' rows="4" name='newComment' placeholder="Enter your note here"></textarea><br />
-        <button class="form-control pale-green-link" id='submitCommentBtn'>Submit</button>
-        
+        <div class="row mb-2 mt-2">
+            <div class="col-1"></div>
+            <div class="col-7">
+                <textarea class="form-control" id='newComment' rows="4" name='newComment' placeholder="Enter your note here"></textarea><br />
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <input type='hidden' id='allowtime' value='<?php echo $oct->config['comments']['allowtime']['value'] ?>' />
+                    <input type='hidden' id='allowcost' value='<?php echo $oct->config['comments']['allowcost']['value'] ?>' />
+<?php
+//echo "<pre>"; print_r($oct->config); echo "</pre>";
+if($oct->config['comments']['allowtime']['value']==1) {
+    echo "  <div class='col-4 text-right'>Time spent</div>\n";   
+    echo "  <div class='col-8'><input class='form-control' type='text' id='newTimeSpent' name='newTimeSpent' placeholder='Minutes' /></div>\n";
+    echo "</div>\n<div class='row'>\n";
+}
+if($oct->config['comments']['allowcost']['value']==1) {
+    echo "  <div class='col-4 text-right'>Cost</div>\n";   
+    echo "  <div class='col-8'><input class='form-control' type='text' id='newCost' name='newCost' placeholder='Dollars' /></div>\n";
+    echo "</div>\n<div class='row'>\n";
+}    
+?>
+                    <div class='col'><button class="form-control pale-green-link" id='submitCommentBtn'>Submit</button></div>
+                </div>            
+            </div>
+            <div class='col-1'></div>
+        </div>
     </div>
 </div>
 <div style='clear: both'></div>
-
+<?php
+    if($oct->config['comments']['allowcost']['value']==1 || $oct->config['comments']['allowtime']['value']==1) {
+        //Add heading with summary of cost &/or time spent
+?>
+    <div id='timeandcost' class='justify-content-center row border rounded ml-2 mr-2'>
+        <div class='col-4'></div>
+<?php
+        if($oct->config['comments']['allowtime']['value']==1) {
+        ?>
+            <div id='totalTimeSpent' class='col-2'></div>
+        <?php        
+        }
+        if($oct->config['comments']['allowcost']['value']==1) {
+        ?>
+            <div id='totalCost' class='col-2'></div>
+        <?php        
+        }        
+?>    
+        <div class='col-4'></div>
+    </div>
+<?php
+    }
+?>
 <div id='commentlist' class='justify-content-center'>
 </div>
 <?php

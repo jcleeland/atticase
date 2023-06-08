@@ -24,7 +24,7 @@ $userSelect=$oct->buildSelectList($users['results'], array("id"=>"newUserId", "c
 
 <div class='justify-content-center'>
     <div class='float-right pale-green-link rounded mr-3 mb-1 p-1 small' id='newNotificationBtn'>
-        <img src='images/plus.svg' width='12px' /> Note
+        <img src='images/plus.svg' width='12px' /> Notification
     </div>
     <div class='float-right m-2'>
         <input type='text' class='roundedcorners ml-4 form-control-sm form-transparent-sm text-muted' id='notifications-inpage_filter' title='Search currently showing results...' />
