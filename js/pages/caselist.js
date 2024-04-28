@@ -27,7 +27,9 @@ $(function() {
 
 function loadCaselist(reset) {
     var today=new Date();
-    
+    console.log('STATUS PRIOR TO LOADING CASES');
+    var status=getStatus();
+    console.log(status);
     var parameters={};
     var conditions='';
     
@@ -94,6 +96,10 @@ function loadCaselist(reset) {
         }
     }
  
+    if($('#casetext').val() != '') {
+        parameters[':text']='%'+$('#casetext').val()+'%';
+        conditions += ' AND CONCAT(t.item_summary, t.detailed_desc, t.member, t.name, t.resolution_sought) like :text';
+    }
  
     //MANAGE THE PAGER
     var pagerSettings=pagerNumberSettings('caselist');

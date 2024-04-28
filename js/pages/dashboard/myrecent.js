@@ -52,7 +52,7 @@ function loadMyrecent(reset) {
     //console.log(joins);
     var parameters={};
     if(focus=="Mine") {
-        parameters[':user_id']=globals.user_id;
+        parameters[':user_id']=globals?.user_id ?? null;
     } else {
         parameters[':user_id']="%";
         //parameters['1']=1;
@@ -148,7 +148,7 @@ function loadMyrecent(reset) {
     
     $('#myrecentlist').html("<center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>");
     
-    console.log('Searching for recents with a start of '+start+' and an end of '+end);
+    //console.log('Searching for recents with a start of '+start+' and an end of '+end);
     $.when(recentList(parameters, conditions, order, start, end)).done(function(cases) {
         //console.log('RECENTS');
         //console.log(cases);

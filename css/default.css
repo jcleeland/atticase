@@ -609,7 +609,7 @@ a.fa-userlink::after {
 .stamp {
     transform: rotate(25deg);
     text-align: center;
-    color: #555
+    color: #555;
     font-size: 2rem;
     font-weight: 700;
     border: 0.25rem solid #555;
@@ -712,6 +712,7 @@ a.fa-userlink::after {
 }
 
 .lookahead-input-field {
+    position: relative;
     
 }
 
@@ -761,4 +762,62 @@ a.fa-userlink::after {
 @keyframes highlight {
     from { background-color: #bae8a3; }
     to { background-color: white; }    
+}
+
+.data-heading {
+    cursor: pointer;
+    font-weight: bold;
+    /* Add more styling as needed */
+}
+
+.data-content {
+    margin-left: 20px;
+    /* Indent content based on nesting level */
+}
+
+.small-text {
+    font-size: 0.75rem; /* Adjust the size as needed */
+}
+
+.parent-div {
+    height: 100px; /* Set the desired height for the parent div */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .scrollable-div {
+    overflow-y: auto; /* Add vertical scrolling when content overflows vertically */
+    height: 100%; /* Fill the available vertical space */
+    white-space: normal; /* Allow content to wrap to new lines */
+  }
+  
+  /* Style for the child divs */
+.scrollable-div .data-heading,
+.scrollable-div .data-content {
+  margin: 5px 0; /* Add some spacing between child divs */
+}
+
+.popup-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    background-color: #f9f9f9;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    padding: 10px;
+    z-index: 1000;
+}
+
+.custom-popup-height-30 {
+    max-height: 30vh; /* Sets the height to 30% of the viewport height */
+    overflow-y: auto; /* Adds a scrollbar if content exceeds the div's height */
+}
+
+.custom-popup-width-50 {
+    width: 50vh; 
+    max-width: 50vh; /* Sets the width to 25% of the viewport height */
+}
+
+.popup-button-container {
+    position: relative;
 }

@@ -24,7 +24,8 @@
     /*                                                      */
 
     require_once "helpers/startup.php";
-    
+
+
     //##########################################################################
     // COOKIE MANAGEMENT
     // First cookie is user/system preferences
@@ -32,9 +33,10 @@
     $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
     //$setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
     //$cookiepath=dirname($_SERVER['PHP_SELF']);
-    $cookiepath="/";
+    $cookiepath="/atticase";
     //echo $cookiepath;
     $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? $_SERVER['HTTP_HOST'] : false;
+    
     $regex = "/^.*?\.([^:]*)/";
     preg_match($regex, $setDomain, $matches); //Remove the subdomain and any port information for the cookie storage to avoid "invalid domain" errors.
     $setDomain=$matches[count($matches)-1];
@@ -49,9 +51,9 @@
     );
     
     // Read status cookie
-    $status=isset($_COOKIE['OpenCaseTrackerStatus']) ? $_COOKIE['OpenCaseTrackerStatus'] : array();
+    $status=isset($_COOKIE[$cookieStatusName]) ? $_COOKIE[$cookieStatusName] : array();
 
-    if(!is_array($status)) {
+    if(!is_array($status)) { //This means that there IS a cookie
         $status=stripslashes($status);
         $status=json_decode($status, true);
         if(empty($status)) {
@@ -69,14 +71,20 @@
 
     
     // Make any changes/alterations to status cookie
+    //echo "<pre>PHP COOKIE BEFORE SET:"; print_r($_COOKIE); echo "</pre>";
     if(PHP_VERSION_ID < 70300) {
-        setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
-        setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
+        setCookie($cookieSystemName, json_encode($_SESSION), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
+        setCookie($cookieStatusName, json_encode($status), $cookieOptions['expires'], $cookieOptions['path']."; samesite=".$cookieOptions['samesite'], $cookieOptions['domain'], $cookieOptions['secure'], $cookieOptions['httponly']);
     } else {
-        setCookie("OpenCaseTrackerSystem", json_encode($_SESSION), $cookieOptions);
-        setCookie("OpenCaseTrackerStatus", json_encode($status), $cookieOptions);
-        //echo "<pre>"; print_r($_COOKIE); echo "</pre>"; die();
+        //echo "<pre>PHP SESSION:"; print_r($_SESSION); echo "</pre>";
+        //echo $cookieSystemName;
+        //print_r(urlencode(json_encode($_SESSION)));
+        
+        setCookie($cookieSystemName, json_encode($_SESSION), $cookieOptions);
+        setCookie($cookieStatusName, json_encode($status), $cookieOptions);
+        //echo "<pre>PHP Cookie Setting"; print_r($_COOKIE); echo "</pre>"; 
     }   
+    
     
     
     
@@ -135,9 +143,23 @@
     <!-- Casetracker javascripts -->
     <script src="js/default.js"></script>
     <script src="js/index.js"></script>
+    <?php
+    if($oct->getSetting("externaldb", "useexternaldb")==1 && $oct->getSetting("externaldb", "externaldb") != "") {
+        if(file_exists("helpers/externaldb/".$configsettings['externaldb']['externaldb']['value'].".js")) {
+            ?>
+            <script src="helpers/externaldb/<?= $configsettings['externaldb']['externaldb']['value'] ?>.js"></script>
+            <?php
+        };
+    }
+
+    ?>
     <script>
-        globals=getSettings('OpenCaseTrackerSystem');
-        status=getSettings('OpenCaseTrackerStatus');
+        var cookiePrefix='<?= $oct->cookiePrefix ?>';
+        console.log('Setting off search for global and status cookies')
+        var globals=getSettings('<?= $cookieSystemName ?>');
+        var status=getSettings('<?= $cookieStatusName ?>');
+        //console.log('Globals');
+        //console.log(globals);
         //status=getStatus();    
     </script>
     </head>
@@ -149,6 +171,7 @@
     <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
     <input type='hidden' name='user_real_name' id='user_real_name' value='<?php echo $user_real_name ?>' />
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
+    <input type='hidden' name='set_domain' id='set_domain' value='<?=$setDomain ?>' />
         <?php
             if(!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']){
                 include("pages/login.php");

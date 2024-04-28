@@ -35,6 +35,10 @@
         $oct->connect();
 
         require_once "helpers/configsettings.php";
+
+        $oct->cookiePrefix=$oct->getSetting('installation', 'cookiePrefix');
+        $cookieStatusName=$oct->cookiePrefix."Status";
+        $cookieSystemName=$oct->cookiePrefix."System";
         
         //$oct->showArray($configsettings); die();
         if($oct->getSetting("externaldb", "useexternaldb")==1 && $oct->getSetting("externaldb", "externaldb") != "") {

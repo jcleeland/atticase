@@ -25,7 +25,7 @@
     <form class="col-5" method="post">
         <input type='hidden' name='initialise' value='true' />
         <div class='col mb-3 p-0'>
-            <h3 style="font-weight: bold"><img src='images/logo.png'>OpenCaseTracker</h3>
+            <h3 style="font-weight: bold"><img src='images/logo.png'>AttiCase</h3>
         </div>
         <div class="col header mb-3">
             Local Database Setup
@@ -61,7 +61,7 @@
                     <option value='true'>Yes</option>
                 </select>
             </div>
-            <div class='floatright w-25'>Use External DB?:</div><div style='clear: both'></div>
+            <div class='floatright w-25'>Use External Database?:</div><div style='clear: both'></div>
         </div> 
         <div class='form-group'>
             <div class='w-75 floatright'>

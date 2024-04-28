@@ -41,7 +41,7 @@
         <div class='row'>
             <div class='form-group m-1 p-1 col-xl'>
                 <div class='form-group m-1'>
-                    <input class='form-control smaller' type='text' class='form-control-sm filterQuery' id='casetext' aria-describedby='casetextHelp' placeholder='Filter by text'>
+                    <input type='text' class='form-control-sm smaller filterQuery' id='casetext' aria-describedby='casetextHelp' placeholder='Filter by text' value='<?php echo $Qcasetext ?>'>
                 </div>
                 <div class='form-group m-1'>
                     <?php

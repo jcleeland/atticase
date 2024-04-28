@@ -21,15 +21,16 @@
 * 
 */
 //error_reporting(E_ALL);
+//require_once '../../helpers/oct.php';
 
-class CaseTracker extends oct {
+class oms extends oct {
 
     var $password;
     var $username;
     var $returntransfer=TRUE;
-    var $useragent='CaseTracker';
+    var $useragent='AttiCase';
     var $httpheader=array('Content-type: application/json');
-    var $baseurl="https://oms.economicoutlook.net/cpsuvic/apis/rest/admin";
+    var $baseurl="https://oms.economicoutlook.net/cpsuvic/apis/rest/admin"; //Todo: Figure out a way to make this modifiable for different installations
 
     
     //OMS SPECIFIC FUNCTIONALITY

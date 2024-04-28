@@ -34,7 +34,7 @@ function loadMytodo(reset) {
     var today=new Date();
     
     var parameters={};
-    parameters[':assignedto']=globals.user_id;
+    parameters[':assignedto']=globals?.user_id ?? null;
     parameters[':isclosed']=1;
     parameters[':datedue']=today.getTime() / 1000 + (86400*2) | 0;
     

@@ -49,7 +49,7 @@ function loadUnallocatedcases(reset) {
     
     var start=parseInt($('#unallocatedcasesstart').val()) || 0;   //Get the text values for start & finish from the page
     var end=parseInt($('#unallocatedcasesend').val()) || 9;       //Get the text values for start & finish from the page
-    console.log('Cases start = '+start);
+    //console.log('Cases start = '+start);
     if(start<0) { //If start is less than zero, bring it up to zero
         start=0;
         $('#unallocatedcasesstart').val(0);

@@ -104,7 +104,7 @@ function loadComments() {
                 if(globals.user_id==commentdata.user_id || globals.is_admin=='1') {
                     actionPermissions=['edit', 'delete'];    
                 }
-                console.log(commentdata);
+                //console.log(commentdata);
                 var header='<div class="row">';
                 if($('#allowtime').val()=="1" && commentdata.time_spent && commentdata.time_spent > 0) {
                     header+='<div class="col"><b>Time spent:</b> '+commentdata.time_spent+' minutes</div>';

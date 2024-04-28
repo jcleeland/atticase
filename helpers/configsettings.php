@@ -28,7 +28,7 @@ $configsettings=array(
                 'title'         => 'Base URL',
                 'description'   => 'Base URL for installation',
                 'type'          => 'string',
-                'default'      => 'http://opencasetracker.yourdoman.com/',
+                'default'      => 'http://opencasetracker.yourdomain.com/',
             ),
         'phpmailerpath'     =>  array(
                 'title'         => 'PHPMailer Directory',
@@ -54,6 +54,12 @@ $configsettings=array(
                 'type'          => 'string',
                 'default'       => '/wamp64/attachments',
             ),
+        'cookiePrefix'      =>  array(
+                'title'         =>  'Cookie Prefix',
+                'description'   =>  'The text prefix for stored cookies',
+                'type'          =>  'string',
+                'default'       =>  'AttiCase',
+        ),
     ),
     'externaldb'    =>  array(
         'useexternaldb'     =>  array(

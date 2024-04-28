@@ -30,6 +30,7 @@ class oct {
     var $externalDb=true;
     var $config;
     var $userid;
+    var $cookiePrefix;
     
     var $caseitems=array(
         "date_due"=>array(
@@ -181,7 +182,7 @@ class oct {
         /*
             Do some checks to make sure that this person is entitled to see this case
         */
-        $cookies=$this->getCookies("OpenCaseTrackerSystem");
+        $cookies=$this->getCookies($this->cookiePrefix."System");
         $userId=$cookies->user_id;
         $userAccount=$this->getUserAccount($userId);
         $permissions=$this->getUserPermissions($userId);
@@ -494,7 +495,7 @@ class oct {
     }
     
     function caseList($parameters=array(), $conditions="is_closed != 1", $order="date_due ASC", $first=0, $last=1000000000) {
-        $cookies=$this->getCookies("OpenCaseTrackerSystem");
+        $cookies=$this->getCookies($this->cookiePrefix."System");
         $userId=$cookies->user_id;
         $userAccount=$this->getUserAccount($userId);
         $permissions=$this->getUserPermissions($userId);       
@@ -1050,20 +1051,42 @@ class oct {
                 
     }
     
-    function memberList($parameters=array(), $conditions="", $order="surname, pref_name", $first=0, $last=1000000000) {
-        if($conditions===null) {$conditions="1=1";}
-        if($order===null) {$order="surname, pref_name";}
+    function memberList($parameters = array(), $conditions = "", $order = "surname, pref_name", $first = 0, $last = 1000000000, $sortOrder="ASC") {
+        if ($conditions === null) {
+            $conditions = "1=1";
+        }
+        if ($order === null) {
+            $order = "surname, pref_name";
+        }
+        if (isset($_GET['orderBy'])) {
+            $order = $this->dbprefix."member_cache.".$_GET['orderBy'] . " " . $sortOrder;
+        }        
+    
+        $query = "SELECT ".$this->dbprefix."member_cache.member, surname, pref_name, subs_paid_to, joined, primary_key, modified, data, GROUP_CONCAT(task_id SEPARATOR ', ') as cases, COUNT(task_id) as case_count";
+        $query .= "\r\n  FROM " . $this->dbprefix . "member_cache";
+        $query .= "\r\n  LEFT JOIN ".$this->dbprefix."tasks ON ".$this->dbprefix."member_cache.member=".$this->dbprefix."tasks.member";
+        $query .= "\r\nWHERE $conditions";
+        $query .= "\r\nGROUP BY ".$this->dbprefix."member_cache.member";
+        $query .= "\r\nORDER BY $order";
         
-        $query = "SELECT member, surname, pref_name, subs_paid_to, joined, primary_key, data";
-        $query .="\r\n  FROM ".$this->dbprefix."member_cache";
-        $query .="\r\nWHERE $conditions";
-        $query .="\r\nORDER BY $order";
-        
-        $results=$this->fetchMany($query, $parameters, $first, $last);
-        
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
-          
-        return($output);        
+        $results = $this->fetchMany($query, $parameters, $first, $last);
+    
+        // Decrypt and convert JSON for each record
+        foreach ($results['output'] as $key => $record) {
+            $encryptedData = $record['data'];
+            $decryptedData = openssl_decrypt($encryptedData, 'aes-128-cbc', 'ct2016');
+            $results['output'][$key]['data'] = json_decode($decryptedData, true);
+        }
+    
+        $output = array("results" => $results['output'], "query" => $query, "parameters" => $parameters, "count" => count($results['output']), "total" => $results['records']);
+    
+        return ($output);
+    }
+
+    function countMembers($conditions = "1=1") {
+        $query = "SELECT COUNT(*) AS total FROM " . $this->dbprefix . "member_cache WHERE $conditions";
+        $result = $this->fetch($query);
+        return $result['total'] ?? 0;
     }
     
     function notificationsList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
@@ -1499,39 +1522,50 @@ class oct {
     ##### Creates and updates of the database
     
     function insertTable($tablename, $inserts, $debug=0) {
+
+        try {
+            $query  = "INSERT INTO ".$this->dbprefix.$tablename."\r\n";
+            
+            $fields=array();
+            $values=array();
+            $parameters=array();
+            
+            foreach($inserts as $key=>$val) {
+                $fields[]=$key;
+                $values[]=$val;
+                $parameters[":".$key]=$val;
+            }
+            
+            $query .= "(`";
+            $query .= implode("`, `", $fields);
+            $query .= "`)\r\n";
+            $query .= "VALUES (:";
+            $query .= implode( ", :", $fields);
+            $query .= ")";
+            
+            //print_r($inserts);
+            //print_r($parameters); 
+            $this->execute($query, $parameters);
+            
+            $newId=$this->db->lastInsertId();
+            
+            if($debug > 0) {
+                echo $query;
+                echo "<hr />";
+                print_r($parameters); 
+            }
+            
+            return $newId;
+        } catch (Exception $e) {
+            if ($debug > 0) {
+                echo "General error: " . htmlspecialchars($e->getMessage()) . "<hr />";
+            }
+            // Optional: rethrow the exception if it should be handled by the caller
+            // throw $e;
         
-        $query  = "INSERT INTO ".$this->dbprefix.$tablename."\r\n";
-        
-        $fields=array();
-        $values=array();
-        $parameters=array();
-        
-        foreach($inserts as $key=>$val) {
-            $fields[]=$key;
-            $values[]=$val;
-            $parameters[":".$key]=$val;
+            // Or return false or null to indicate failure
+            return "Error: ".$e->getMessage();
         }
-        
-        $query .= "(`";
-        $query .= implode("`, `", $fields);
-        $query .= "`)\r\n";
-        $query .= "VALUES (:";
-        $query .= implode( ", :", $fields);
-        $query .= ")";
-        
-        //print_r($inserts);
-        //print_r($parameters); 
-        $this->execute($query, $parameters);
-        
-        $newId=$this->db->lastInsertId();
-        
-        if($debug > 0) {
-            echo $query;
-            echo "<hr />";
-            print_r($parameters); 
-        }
-        
-        return $newId;
     }
     
     /**

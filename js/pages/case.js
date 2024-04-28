@@ -71,7 +71,7 @@ $(function() {
     })
     
     $('#deleteCase').click(function() {
-        var settings=getSettings('OpenCaseTrackerSystem');
+        var settings=getSettings(cookiePrefix+'System');
         //Check that this is an administrator
         //Check that the case is closed
         //Confirm to delete case, with warnings that it is irreversible
@@ -225,8 +225,10 @@ $(function() {
          
     //Set the tab according to the lasttab setting in the cookie (if it exists)
     var octStatus=getStatus();
+    //console.log('Searching cookie caseviews for case'+$('#caseid').val());
+    //console.log(octStatus);
     var thisCase=octStatus.caseviews['case'+$('#caseid').val()];
-    console.log(thisCase);
+    //console.log(thisCase);
     //$('#case-tabs').tabs();
     if(thisCase && thisCase.lasttab) {
         console.log('Selected by '+thisCase.lasttab.substring(1));
@@ -238,7 +240,7 @@ $(function() {
 function loadCase() {
     var today=new Date();
     var caseId=$('#caseid').val();
-    var settings=getSettings('OpenCaseTrackerSystem');
+    var settings=getSettings(cookiePrefix+'System');
     
     //console.log('SETTINGS');
     //console.log(settings);

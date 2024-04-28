@@ -118,7 +118,8 @@ function loadCaseTypes() {
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     
     var parameters={};
-    parameters[':assigned_to']=globals.user_id;
+    //console.log(globals);
+    parameters[':assigned_to']=globals?.user_id ?? null;
     var conditions='t.assigned_to = :assigned_to AND is_closed != 1';
     
     var select='lt.tasktype_name, count(*) as qty';
@@ -433,7 +434,7 @@ function loadAllCaseTypes() {
 }
 
 function loadAllCaseStats() {
-    console.log('Showing all case stats');
+    //console.log('Showing all case stats');
     $('#dashboardStatistics').html('<img src="images/logo_flip.gif" />');
     //Currently Open Cases for this User
     var parameters={};
@@ -485,8 +486,8 @@ function loadAllCaseStats() {
         resultstotal++;
     })
     
-    console.log('All results:');
-    console.log(results);
+    //console.log('All results:');
+    //console.log(results);
     
     $.each(results, function(item, contents) {
         

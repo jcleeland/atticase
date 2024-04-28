@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 /*
-This file contains all the common javascript functions for OpenCaseTracker
+This file contains all the common javascript functions for AttiCase
 
 */
 var userNames={};
@@ -229,67 +229,72 @@ function getCase(caseId) {
 }
 
 /**
-* Returns OpenCaseTracker Cookies
+* Returns AttiCase Cookies
 * 
-* @param name - OpenCaseTrackerStatus or OpenCaseTrackerSystem
+* @param name - AttiCaseStatus or AttiCaseSystem
 */
 function getSettings(name) {
-    var cookiename = name + "="; //this is looking for an empty cookie name (?)
-    //console.log(cookiename);
-    var thisCookie=document.cookie;
-    //console.log(thisCookie);
-    var ca = thisCookie.split('; ');
-    //sconsole.log(ca);
-    //ca=decodeURIComponent(ca);
-    //console.log('Cookie: '+name+' - size: '+ca.length);
-    for(var i=0;i < ca.length;i++)
-    {
-        var c = ca[i];
-        while (c.charAt(0)==' ') {
-            c = c.substring(1,c.length);
-        }
-        //console.log(c);
+    //console.log('Reading system cookie ' + name);
+    var cookiename = name + "=";
+    //console.log('Actually reading ' + cookiename);
+    var ca = document.cookie.split('; ');
+
+    //console.log('Cookie array: ', ca); // Check the structure of cookie array
+
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim(); // Trim any leading whitespace
+        //console.log('Processing cookie: ', c); // Log each cookie
+
         if (c.indexOf(cookiename) == 0) {
-            //console.log('Found '+cookiename);
-            var output=decodeURIComponent(c).substring(cookiename.length,c.length);
-            return JSON.parse(output);
+            var cookieValue = c.substring(cookiename.length);
+           // console.log('Found cookie value: ', cookieValue); // Log the found cookie value
+
+            var decodedValue = decodeURIComponent(cookieValue); // Correct place to decode
+            //console.log('Decoded cookie value: ', decodedValue); // Log the decoded value
+
+            try {
+                return JSON.parse(decodedValue); // Attempt to parse JSON
+            } catch (e) {
+                console.error('Error parsing JSON from cookie:', e);
+                //console.log(decodedValue);
+                return null; // Return null in case of an error
+            }
         }
     }
-    return null;
-    
+
+    //console.log('Cookie not found, returning null');
+    return null; // Return null if the cookie is not found
 }
+
 
 function getStatus() {
-    //console.log('Reading status cookie');
-    var cookiename = "OpenCaseTrackerStatus" + "=";
-    var thisCookie=document.cookie;
+    //console.log('Reading status cookie '+cookiePrefix+'Status');
+    var cookiename = cookiePrefix+"Status=";
+    
+    var ca = document.cookie.split('; ');
+    //console.log(ca);
 
-    var ca = thisCookie.split('; ');
-
-    var output=null;
-    for(var i=0;i < ca.length;i++)
-    {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim();
         if (c.indexOf(cookiename) == 0) {
-            output=decodeURIComponent(c).substring(cookiename.length,c.length);
+            var output = decodeURIComponent(c.substring(cookiename.length));
+            try {
+                var theend = JSON.parse(output);
+                //console.log('Valid cookie found');
+                //console.log(theend);
+                if (!theend.caseviews) {
+                    theend.caseviews = {}; // Ensure caseviews exists
+                }
+                return theend;
+            } catch (e) {
+                //console.error("Error parsing JSON from cookie:", e);
+            }
         }
     }
-    var theend=JSON.parse(output);
-    var deleteditems=false; 
-    for(const key in theend.caseviews) {
-        //console.log(key);
-        if(key.substring(0,4) != 'case') {
-            deleteditems=true;
-            delete theend.caseviews[key];
-        }
-    }
-    if(deleteditems) {
-        //write the fixed cookie
-        setStatus(theend);
-    }
-    return theend;
+    console.log('No valid cookie found');
+    return { caseviews: {} }; // Default return if no valid cookie is found
 }
+
 
 function getUsers(parameters, conditions, order, first, last) {
     return $.ajax({
@@ -310,10 +315,23 @@ function setStatus(status) {
     //console.log(status);
     //console.log('Stringified');
     //console.log(JSON.stringify(status));
-    var cookiename = "OpenCaseTrackerStatus" + "=" + JSON.stringify(status)+"; SameSite=Strict; path=/";
+    const now=new Date();
+    now.setTime(now.getTime() + (2 * 24 * 60 * 60 * 1000)); //Set for 2 days ahead;
+
+    const expires = "expires=" + now.toUTCString();
+    const path = "path=/atticase";
+    const secure = "secure";
+    const samesite = "SameSite=Strict";
+    const encodedValue = encodeURIComponent(JSON.stringify(status));
+    const cookieName=cookiePrefix+"Status";
+    const domain=$('#set_domain').val();
+
+    document.cookie = `${cookieName}=${encodedValue}; ${expires}; ${path}; domain=${domain}; ${secure}; ${samesite}`;
+    //var cookiename = cookiePrefix+"Status=" + encodeURIComponent(JSON.stringify(status))+"; SameSite=Strict; path=/atticase";
     //console.log(cookiename);
-    document.cookie=cookiename;
-                                 
+    //document.cookie=cookiename;
+    //console.log("Cookie size: "+document.cookie.length+" characters");
+    //console.log(document.cookie);                             
     //console.log("After setting, cookie looks like this");
     //console.log(document.cookie);
 }
@@ -368,7 +386,7 @@ function caseCreate(newValues, user_id) {
 }
 
 function caseDelete(caseId) {
-    var settings=getSettings('OpenCaseTrackerSystem');
+    var settings=getSettings('AttiCaseSystem');
     if(settings.administrator==1) {
         return $.ajax({
             url: 'ajax.php',
@@ -735,6 +753,29 @@ function notificationDelete(notifyId) {
     });    
 }
 
+
+/** Person Functions **/
+function clientCreate(identifier, surname, pref_name, started, primary_key, data) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'clientCreate', identifier: identifier, surname: surname, pref_name: pref_name, started: started, primary_key: primary_key, data: data},
+        dataType: 'json'
+    })
+}
+
+function clientDelete(clientId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'clientDelete', clientId: clientId},
+        dataType: 'json'
+    });
+}
+
+
+/** People of Interest Functions **/
+
 function poiConnectionsList(personId) {
     return $.ajax({
         url: 'ajax.php',
@@ -810,10 +851,6 @@ function poiPersonLookup(value) {
     })    
 }
 
-function poiCreate() {
-    
-}
-
 function poiUpdate(poiId, newValue) {
     return $.ajax({
         url: 'ajax.php',
@@ -823,9 +860,6 @@ function poiUpdate(poiId, newValue) {
     })    
 }
 
-function poiDelete() {
-    
-}
 
 function recentList(parameters, conditions, order, first, last) {
     return $.ajax({
@@ -1176,6 +1210,33 @@ function minutes2hours(minutes) {
 }
 
 /**
+ * 
+ * @param {string} date 
+ */
+function date2timestamp(date) {
+    // Check if the date is in the correct format and uses the correct separators
+    if (/^\d{4}[-\/]\d{2}[-\/]\d{2}$/.test(date)) {
+        // Normalize the date to use hyphens if it contains slashes
+        const normalizedDate = date.replace(/\//g, '-');
+
+        // Convert the normalized date to a timestamp (in milliseconds)
+        const dateObject = new Date(normalizedDate);
+
+        // Validate the date to avoid Invalid Date
+        if (isNaN(dateObject.getTime())) {
+            console.error("Error: Invalid date provided.");
+            return null;  // or undefined, depending on how you want to handle errors
+        }
+
+        // Convert the date object's time to a Unix timestamp (in seconds)
+        return Math.floor(dateObject.getTime() / 1000);
+    } else {
+        console.error("Error: Date format must be YYYY-MM-DD or YYYY/MM/DD.");
+        return null;  // or undefined, depending on how you want to handle errors
+    }
+}
+
+/**
 * Reformat a timestamp into a nice human readable date
 * 
 * @param timestamp
@@ -1245,14 +1306,17 @@ function saveCaseView(caseId, timestamp, lasttab) {
     var queryString='';
     if(status.caseviews == undefined) {
         status['caseviews']={};
+        console.log('Status cookie caseviews undefined');
     }
-    if(status.caseviews[caseId]==undefined) {
-        status.caseviews[caseId]={};
+    if(status.caseviews['case'+caseId]==undefined) {
+        console.log('Status cookie caseview '+caseId+' undefined');
+        status.caseviews['case'+caseId]={};
     }
-    cookiename='case'+caseId;
+    var cookiename='case'+caseId;
     status.caseviews[cookiename]['timestamp']=timestamp;
     status.caseviews[cookiename]['lasttab']=lasttab;
     status.caseviews[cookiename]['caseid']=caseId;
+    console.log('Saving Case View data:');
     console.log(status);
     //status.caseviews={};
     //count how many statuses there are and trim if there are more than 25
@@ -1276,17 +1340,18 @@ function saveCaseView(caseId, timestamp, lasttab) {
             }
         })       
     }
-    
+    console.log('Saving status:');
+    console.log(status);
     setStatus(status);
 }
 
 
 
-function date2timestamp(strDate) {
+/*function date2timestamp(strDate) {
     myDate=strDate.split("/");
     strDate=new Date(parseInt(myDate[2], 10), parseInt(myDate[1], 10) - 1 , parseInt(myDate[0]), 10).getTime();
     return strDate/1000;
-}
+}*/
 
 function pad(n, width, z) {
   z = z || '0';

@@ -119,7 +119,7 @@
         }
         //echo "<pre>"; print_r($_SESSION); echo "</pre>";
         //$cookiepath=dirname($_SERVER['PHP_SELF']);
-        $cookiepath="/";
+        $cookiepath="/atticase";
         if(isset($_GET['clearcookies']) && $_GET['clearcookies']=="true") {
 
             if (isset($_SERVER['HTTP_COOKIE'])) {
@@ -128,7 +128,7 @@
                 foreach($cookies as $cookie) {
                     $parts = explode('=', $cookie);
                     $name = trim($parts[0]);
-                    if($name=="OpenCaseTrackerSystem" || $name == "OpenCaseTrackerStatus" || $name == "OpenCaseTrackerStatus1") {
+                    if($name == $oct->cookiePrefix."System" || $name == $oct->cookiePrefix."Status" || $name == $oct->cookiePrefix."Status1") {
                         //echo "Deleting [$name]<br />";
                         setcookie($name, "", time()-7200);
                         setcookie($name, "", time()-7200, "/");
@@ -140,8 +140,9 @@
             
             if(isset($_COOKIE)) {
                 foreach($_COOKIE as $name=>$cookie) {
-                    if(isset($_COOKIE[$name]) && ($name=="OpenCaseTrackerSystem" || $name == "OpenCaseTrackerStatus" || $name == "OpenCaseTrackerStatus1")) {
-                        //echo "Deleting [$name] (".(time()-7200)." - ".time().")<br />";
+                    //echo $name."<br />";
+                    if(isset($_COOKIE[$name]) && ($name == $oct->cookiePrefix."System" || $name == $oct->cookiePrefix."Status" || $name == $oct->cookiePrefix."Status1")) {
+                        echo "Deleting [$name] (".(time()-7200)." - ".time().")<br />";
                         unset($_COOKIE[$name]);
                         setcookie($name, "", time()-7200);
                         setcookie($name, "", time()-7200, "/");
@@ -157,6 +158,7 @@
            //echo "<pre>"; print_r($_COOKIE); print_r($_SESSION);  print_r($_SERVER['HTTP_COOKIE']); echo "</pre>"; die();
         }
       //Reload the page
+      //echo "<pre>PHP Cookie Setting"; print_r($_COOKIE); echo "</pre>"; 
       ?>
       <center>Logging Out</center>
       <script type='text/javascript'>

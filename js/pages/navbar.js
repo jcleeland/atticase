@@ -19,8 +19,8 @@ $(function() {
     var views=Object.values(status.caseviews);
     var newViews={};
     //console.log(status);
-    var settings=getSettings('OpenCaseTrackerSystem');
-    var userId=settings.user_id;
+    var settings=getSettings(cookiePrefix+'System');
+    var userId=settings?.user_id ?? null;
     var caseviewcount=0;
     $('#casemenuitems').append("<div class='dropdown-divider'></div><div class='m-1'>Recently viewed</div>");
     views.sort((a, b) => b.viewed - a.viewed); //Sort views by viewed date

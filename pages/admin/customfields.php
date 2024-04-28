@@ -31,6 +31,10 @@ $customfieldtypes=array(
         "value"=>"t",
         "text"=>"Text",
     ),
+    array(
+        "value"=>"d",
+        "text"=>"Date",
+    )
 );
 
 $results=$oct->fetchMany("SELECT custom_field_definition_id, count(*) as total FROM ".$oct->dbprefix."custom_fields GROUP BY custom_field_definition_id ORDER BY custom_field_definition_id ASC", null, 0, 10000);
