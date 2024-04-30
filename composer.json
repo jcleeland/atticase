@@ -11,6 +11,8 @@
     ],
     "require": {
         "microsoft/microsoft-graph": "^1.88",
-		"adldap2/adldap2": "^10.4"
+		"adldap2/adldap2": "^10.4",
+		"laminas/laminas-mail": "^2.25",
+		"hfig/mapi": "^1.3"
     }
 }

@@ -435,7 +435,7 @@ class PlannerTask extends PlannerDelta
 
     /**
     * Gets the hasDescription
-    * Read-only. Value is true if the details object of the task has a non-empty description and false otherwise.
+    * Read-only. Value is true if the details object of the task has a nonempty description and false otherwise.
     *
     * @return bool|null The hasDescription
     */
@@ -450,7 +450,7 @@ class PlannerTask extends PlannerDelta
 
     /**
     * Sets the hasDescription
-    * Read-only. Value is true if the details object of the task has a non-empty description and false otherwise.
+    * Read-only. Value is true if the details object of the task has a nonempty description and false otherwise.
     *
     * @param bool $val The hasDescription
     *
@@ -613,6 +613,7 @@ class PlannerTask extends PlannerDelta
 
     /**
     * Gets the recurrence
+    * Defines active or inactive recurrence for the task. null when the recurrence has never been defined for the task.
     *
     * @return PlannerTaskRecurrence|null The recurrence
     */
@@ -631,6 +632,7 @@ class PlannerTask extends PlannerDelta
 
     /**
     * Sets the recurrence
+    * Defines active or inactive recurrence for the task. null when the recurrence has never been defined for the task.
     *
     * @param PlannerTaskRecurrence $val The recurrence
     *
@@ -668,6 +670,39 @@ class PlannerTask extends PlannerDelta
     public function setReferenceCount($val)
     {
         $this->_propDict["referenceCount"] = intval($val);
+        return $this;
+    }
+
+    /**
+    * Gets the specifiedCompletionRequirements
+    * Indicates all the requirements specified on the plannerTask. Possible values are: none, checklistCompletion, unknownFutureValue. Read-only. The plannerTaskCompletionRequirementDetails in plannerTaskDetails has details of the requirements specified, if any.
+    *
+    * @return PlannerTaskCompletionRequirements|null The specifiedCompletionRequirements
+    */
+    public function getSpecifiedCompletionRequirements()
+    {
+        if (array_key_exists("specifiedCompletionRequirements", $this->_propDict)) {
+            if (is_a($this->_propDict["specifiedCompletionRequirements"], "\Beta\Microsoft\Graph\Model\PlannerTaskCompletionRequirements") || is_null($this->_propDict["specifiedCompletionRequirements"])) {
+                return $this->_propDict["specifiedCompletionRequirements"];
+            } else {
+                $this->_propDict["specifiedCompletionRequirements"] = new PlannerTaskCompletionRequirements($this->_propDict["specifiedCompletionRequirements"]);
+                return $this->_propDict["specifiedCompletionRequirements"];
+            }
+        }
+        return null;
+    }
+
+    /**
+    * Sets the specifiedCompletionRequirements
+    * Indicates all the requirements specified on the plannerTask. Possible values are: none, checklistCompletion, unknownFutureValue. Read-only. The plannerTaskCompletionRequirementDetails in plannerTaskDetails has details of the requirements specified, if any.
+    *
+    * @param PlannerTaskCompletionRequirements $val The specifiedCompletionRequirements
+    *
+    * @return PlannerTask
+    */
+    public function setSpecifiedCompletionRequirements($val)
+    {
+        $this->_propDict["specifiedCompletionRequirements"] = $val;
         return $this;
     }
 

@@ -107,6 +107,8 @@ function loadAttachments() {
             $('#attachmentcount').html(attachments.results.length);
             $.each(attachments.results, function(i, attachmentdata) {
                 /* Put formatting into a standalone script */
+                console.log('Showing Attachment');
+                console.log(attachmentdata);
                 var parentDiv='attachmentlist';
                 var uniqueId='attachment'+attachmentdata.attachment_id;
                 var primeBox=attachmentdata.real_name;
@@ -114,11 +116,22 @@ function loadAttachments() {
                 var dateBox=timestamp2date(attachmentdata.date_added, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(attachmentdata.date_added, 'dd MM YY');
                 var actionPermissions=null;
+                var fileExtensionIndex=attachmentdata.orig_name.lastIndexOf('.');
+                fileExtension='';
+                if(fileExtensionIndex >0) {
+                    var fileExtension=attachmentdata.orig_name.substring(fileExtensionIndex +1);
+                } 
                 if(globals.user_id==attachmentdata.user_id || globals.is_admin=='1') {
                     actionPermissions=['edit', 'delete'];    
                 }                
                 var header='<a href="download.php?attachmentid='+attachmentdata.attachment_id+'" class="link" id="loadattachment_'+attachmentdata.attachment_id+'">'+attachmentdata.orig_name+'</a>';
                 var content=deWordify(attachmentdata.file_desc);
+                if(fileExtension=='eml' || fileExtension == 'msg') {
+                    header+='&nbsp;<span class="btn btn-light border rounded mb-0" style="padding: 0; font-size: 1.5rem" title="Show email" onClick="showEmail(\''+attachmentdata.attachment_id+'\')">&#x2709;</span>';
+                    content+='<div id="emailContent_'+attachmentdata.attachment_id+'" class="email-content hidden"></div>';
+                }
+
+                
     
                 insertTabCard(parentDiv, uniqueId, primeBox, briefPrimeBox, dateBox, briefDateBox, actionPermissions, header, content);
                 

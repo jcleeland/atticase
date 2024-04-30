@@ -1581,6 +1581,20 @@ function showCase(caseId) {
     window.location.href = "index.php?page=case&case=" + caseId;    
 }
 
+function showEmail(attachmentId) {
+
+    var output= $.ajax({
+        url: 'helpers/showEmail.php',
+        method: 'POST',
+        data: {attachmentId: attachmentId},
+        dataType: 'html'
+    }).done(function(response) {
+        $('#emailContent_'+attachmentId).html(response).show();
+    }).fail(function(jqXHR, textStatus) {
+        console.log("Request failed: "+textStatus);
+    }) 
+}
+
 /**
 * Creates the html code to display a card for a case in a list and insert that card into a parent div
 * 
