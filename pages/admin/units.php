@@ -81,7 +81,7 @@ foreach($units['results'] as $unit) {
                             if(isset($casegroupcounts[$id])) {
                                 echo $casegroupcounts[$id];
                             } else {
-                                echo "<span class='btn btn-warning btn-sm' title='This case group can be deleted because there are no cases assigned against it' onClick='deleteUnit(\"".$id."\")'>Del</span>";
+                                echo "<span class='btn btn-warning btn-sm' title='This unitp can be deleted because there are no cases assigned against it' onClick='deleteUnit(\"".$id."\")'>Del</span>";
                             }
                             ?>
                         </div>
@@ -118,7 +118,7 @@ foreach($units['results'] as $unit) {
                             if(isset($casegroupcounts[$cid])) {
                                 echo $casegroupcounts[$cid];
                             } else {
-                                echo "<span class='btn btn-warning btn-sm' title='This case group can be deleted because there are no cases assigned against it' onClick='deleteUnit(\"".$cid."\")'>Del</span>";
+                                echo "<span class='btn btn-warning btn-sm' title='Thisunit can be deleted because there are no cases assigned against it' onClick='deleteUnit(\"".$cid."\")'>Del</span>";
                             }
                             ?>
                         </div>
@@ -133,7 +133,7 @@ foreach($units['results'] as $unit) {
                 </div>
                 </form>
             </div>
-            <h4 class="header">Add Case Group</h4>
+            <h4 class="header">Add Unit</h4>
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                 <div class="row mb-1">

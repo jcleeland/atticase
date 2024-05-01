@@ -30,7 +30,7 @@ $firstRecord = ($recordPage - 1) * $recordsPerPage;
 $lastRecord = $firstRecord + $recordsPerPage - 1; // Calculate the last record for the page
 
 $searchTerm = $_GET['search'] ?? '';
-$searchCondition = $searchTerm ? "surname LIKE '%$searchTerm%' OR pref_name LIKE '%$searchTerm%'" : "1=1";
+$searchCondition = $searchTerm ? "surname LIKE '%$searchTerm%' OR pref_name LIKE '%$searchTerm%' OR ".$oct->dbprefix."member_cache.member LIKE '%$searchTerm%'" : "1=1";
 
 // Get total record count for pagination
 $totalRecords = $oct->countMembers($searchCondition);
@@ -45,6 +45,7 @@ if($recordPage > $totalPages) {
 $sortOrder = $_GET['orderBy'] ?? 'surname, pref_name';
 $order=$_GET['order'] ?? "ASC";
 $members = $oct->memberList(array(), $searchCondition, $sortOrder, $firstRecord, $lastRecord, $order);
+$memberCount=$members['total'];
 
 //$members = $oct->memberList(array(), $searchCondition, "surname, pref_name", $firstRecord, $lastRecord);
 
@@ -59,6 +60,13 @@ $endPage = min($totalPages, $startPage + 9);
 if ($endPage - $startPage < 9) {
     $startPage = max(1, $endPage - 9);
 }
+
+
+if($totalPages==0) $totalPages=1;
+if($startPage==0) $startPage=1;
+if($endPage==0) $endPage=1;
+if($recordPage==0) $recordPage=1;
+
 //echo "<pre>"; print_r($members); echo "</pre>";
 //$members=$oct->memberList(array(), "1=1", "surname,  pref_name", 0, 500);
 
@@ -83,159 +91,161 @@ $missings = $results['output'];
 
             <nav aria-label="Page navigation" style="display: flex; align-items: center; justify-content: space-between;" class="smaller w-100 p-1">
                 <ul class="pagination">
-                <!-- First Page Link -->
-                <li class="page-item <?= $recordPage <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=options&option=people&recordpage=1&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">First</a>
-                </li>
-                <!-- Previous Page Link -->
-                <li class="page-item <?= $recordPage <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=options&option=people&recordpage=<?= $recordPage - 1; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Previous</a>
-                </li>
-
-                <!-- Page Number Links -->
-                <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                    <li class="page-item <?= $i == $recordPage ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=options&option=people&recordpage=<?= $i; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>"><?= $i; ?></a>
+                    <!-- First Page Link -->
+                    <li class="page-item <?= $recordPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=options&option=people&recordpage=1&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">First</a>
                     </li>
-                <?php endfor; ?>
+                    <!-- Previous Page Link -->
+                    <li class="page-item <?= $recordPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=options&option=people&recordpage=<?= $recordPage - 1; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Previous</a>
+                    </li>
 
-                <!-- Next Page Link -->
-                <li class="page-item <?= $recordPage >= $totalPages ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=options&option=people&recordpage=<?= $recordPage + 1; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Next</a>
-                </li>
-                <!-- Last Page Link -->
-                <li class="page-item <?= $recordPage >= $totalPages ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=options&option=people&recordpage=<?= $totalPages; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Last</a>
-                </li>    
+                    <!-- Page Number Links -->
+                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <li class="page-item <?= $i == $recordPage ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=options&option=people&recordpage=<?= $i; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>"><?= $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Next Page Link -->
+                    <li class="page-item <?= $recordPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=options&option=people&recordpage=<?= $recordPage + 1; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Next</a>
+                    </li>
+                    <!-- Last Page Link -->
+                    <li class="page-item <?= $recordPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=options&option=people&recordpage=<?= $totalPages; ?>&search=<?= htmlspecialchars($_GET['search'] ?? '') ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>">Last</a>
+                    </li>    
                 </ul>
 
                 <ul class="pagination" style="margin-bottom: 0">
-                <!-- Search Box and Direct Page Number Input -->
-                <form action="" method="get" style="display: flex; align-items: center;">
-                    <input type="hidden" name="page" value="options">
-                    <input type="hidden" name="option" value="people">
+                    <!-- Search Box and Direct Page Number Input -->
+                    <form action="" method="get" style="display: flex; align-items: center;">
+                        <input type="hidden" name="page" value="options">
+                        <input type="hidden" name="option" value="people">
 
-                    <!-- Search Input -->
-                    <label style="margin-right: 5px;" class="smaller">Search:</label>
-                    <input type="text" name="search" class="form-control p-1 smaller" placeholder="Search..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" style="margin-right: 10px;">
+                        <!-- Search Input -->
+                        <label style="margin-right: 5px;" class="smaller">Search:</label>
+                        <input type="text" name="search" class="form-control p-1 smaller" placeholder="Search..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" style="margin-right: 10px;">
 
-                    <!-- Records Per Page Dropdown -->
-                    <label style="margin-right: 5px;" class="smaller">Records:</label>
-                    <select name="recordsPerPage" class="form-control p-1 smaller" onchange="this.form.submit()" style="margin-right: 10px; max-width: 40px">
-                        <option value="10" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '10') ? 'selected' : '' ?>>10</option>
-                        <option value="20" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '20') ? 'selected' : '' ?>>20</option>
-                        <option value="50" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '50') ? 'selected' : '' ?>>50</option>
-                    </select>
+                        <!-- Records Per Page Dropdown -->
+                        <label style="margin-right: 5px;" class="smaller"><?= $memberCount ?>&nbsp;Records:</label>
+                        <select name="recordsPerPage" class="form-control p-1 smaller" onchange="this.form.submit()" style="margin-right: 10px; max-width: 40px">
+                            <option value="10" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '10') ? 'selected' : '' ?>>10</option>
+                            <option value="20" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '20') ? 'selected' : '' ?>>20</option>
+                            <option value="50" <?= (isset($_GET['recordsPerPage']) && $_GET['recordsPerPage'] == '50') ? 'selected' : '' ?>>50</option>
+                        </select>
 
-                    <!-- Page Number Input -->
-                    <label style="margin-right: 5px;" class="smaller">Page:</label>
-                    <input type="number" name="recordpage" class="form-control p-1 smaller" min="1" max="<?= $totalPages; ?>" placeholder="Page Number" value="<?= $recordPage ?>" style="width: 60px; margin-right: 10px;">
+                        <!-- Page Number Input -->
+                        <label style="margin-right: 5px;" class="smaller">Page:</label>
+                        <input type="number" name="recordpage" class="form-control p-1 smaller" min="1" max="<?= $totalPages; ?>" placeholder="Page Number" value="<?= $recordPage ?>" style="width: 60px; margin-right: 10px;">
 
-                    <button type="submit" class="btn btn-sm btn-primary" >Go</button>&nbsp;
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="window.location.href='?page=options&option=people';">Clear</button>
-                </form>
+                        <button type="submit" class="btn btn-sm btn-primary" >Go</button>&nbsp;
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="window.location.href='?page=options&option=people';">Clear</button>
+                    </form>
                 </ul>  
             </nav>
 
             <div class="row border rounded centered">
                 <form class="w-100">
-                <div class="p-2 w-100">
-                    <div class="row mb-2">
-                        <div class="col-sm-1">
-                            <a class='btn' onclick="sortResults('member')">Identifier</a>
-                        </div>
-                        <div class="col-sm">
-                            <a class='btn' onclick="sortResults('surname')">Surname</a>
-                        </div>
-                        <div class="col-sm-2">
-                            <a class='btn' onclick="sortResults('pref_name')">Preferred Name</a>
-                        </div>
-                        <div class="col-sm-1">
-                            <a class='btn' onclick="sortResults('joined')">Started</a>
-                        </div>
-                        <div class="col-sm-2">
-                            <a class='btn'>More</a>
-                        </div>
-                        <div class="col-sm-1">
-                            <a class='btn'>Action</a>
+                    <div class="p-2 w-100">
+                        <div class="row mb-2">
+                            <div class="col-sm-1">
+                                <a class='btn' onclick="sortResults('member')">Identifier</a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a class='btn' onclick="sortResults('surname')">Surname</a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a class='btn' onclick="sortResults('pref_name')">Preferred Name</a>
+                            </div>
+                            <div class="col-sm-1">
+                                <a class='btn' onclick="sortResults('joined')">Started</a>
+                            </div>
+                            <div class="col-sm-2">
+                                <a class='btn'>More</a>
+                            </div>
+                            <div class="col-sm-1">
+                                <a class='btn'>Action</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group overflow-auto p-2" style="min-height: 40vh; max-height: 50vh" id="listParent" >
 
-<?php
-foreach($members['results'] as $client) {
-    $id=$client['member'];   
-    $clientData=$client['data']; 
-    $clientCases=$client['cases'];
-?>                
-                    <div class="row mb-2 p-1" id="client_row_<?php echo $id ?>">
-                        <input type="hidden" name="id[]" value="<?php echo $id ?>" />
-                        <div class="col-sm-1">
-                            <input action='member' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='member<?php echo $id ?>' value='<?php echo $client['member'] ?>' />
-                        </div>
-                        <div class="col-sm">
-                            <input action='lastname' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='surname<?php echo $id ?>' value='<?php echo $client['surname'] ?>' />
-                        </div>
-                        <div class="col-sm-2">
-                            <input action='position' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='pref_name<?php echo $id ?>' value='<?php echo $client['pref_name'] ?>' />
-                        </div>
-                        <div class="col-sm-1">
-                            <input action='phone' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='joined<?php echo $id ?>' value='<?php 
-                            $updatedDate=false;
-                            if(!empty($client['joined'])) {
-                                echo date("Y-m-d", $client['joined']);
-                            } elseif (!empty($client['data']) && isset($client['data']['membershipAssociation']['association']['from'])) {
-                                $updatedDate=true;
-                                echo date("Y-m-d", strtotime($clientData['membershipAssociation']['association']['from']));
-                                $oct->updateTable("member_cache", array("joined"=>strtotime($clientData['membershipAssociation']['association']['from'])), "member=$id", $oct->userid);
-                            }
-                            ?>' style='min-width: 75px' />
-                            <?php
-                            if ($updatedDate) {
-                                ?>
-                                <script type='text/javascript'>$('#joined<?php echo $id ?>').addClass('fieldUpdated');</script>
+
+                    <div class="form-group overflow-auto p-2 w-100" style="min-height: 40vh; max-height: 50vh" id="listParent" >
+
+    <?php
+    foreach($members['results'] as $client) {
+        $id=$client['member'];   
+        $clientData=$client['data']; 
+        $clientCases=$client['cases'];
+    ?>                
+                        <div class="row mb-2 p-1" id="client_row_<?php echo $id ?>">
+                            <input type="hidden" name="id[]" value="<?php echo $id ?>" />
+                            <div class="col-sm-1">
+                                <input action='member' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='member<?php echo $id ?>' value='<?php echo $client['member'] ?>' />
+                            </div>
+                            <div class="col-sm-3">
+                                <input action='lastname' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='surname<?php echo $id ?>' value='<?php echo $client['surname'] ?>' />
+                            </div>
+                            <div class="col-sm-3">
+                                <input action='position' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='pref_name<?php echo $id ?>' value='<?php echo $client['pref_name'] ?>' />
+                            </div>
+                            <div class="col-sm-1">
+                                <input action='phone' typeid='<?php echo $id ?>' class='form-control p-1 smaller updatemember' type='text' id='joined<?php echo $id ?>' value='<?php 
+                                $updatedDate=false;
+                                if(!empty($client['joined'])) {
+                                    echo date("Y-m-d", $client['joined']);
+                                } elseif (!empty($client['data']) && isset($client['data']['membershipAssociation']['association']['from'])) {
+                                    $updatedDate=true;
+                                    echo date("Y-m-d", strtotime($clientData['membershipAssociation']['association']['from']));
+                                    $oct->updateTable("member_cache", array("joined"=>strtotime($clientData['membershipAssociation']['association']['from'])), "member=$id", $oct->userid);
+                                }
+                                ?>' style='min-width: 75px' />
                                 <?php
-                            }
-                            ?>
-                        </div>
-                        <!-- Button to trigger popup -->
-                        <div class="col-sm-2 popup-button-container">
-                            <button type="button" class="btn btn-info btn-sm" onclick="togglePopup('data_popup_<?php echo $id ?>')">Data</button>
-                            <!-- Popup Data Div (initially hidden) -->
-                            <div id="data_popup_<?php echo $id ?>" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display:none;">
-                                <?php
-                                if (!empty($clientData)) {
-                                    displayData($clientData, $client['modified']);                                
+                                if ($updatedDate) {
+                                    ?>
+                                    <script type='text/javascript'>$('#joined<?php echo $id ?>').addClass('fieldUpdated');</script>
+                                    <?php
                                 }
                                 ?>
                             </div>
-                            <button type="button" class="btn btn-info btn-sm" onclick="togglePopup('case_popup_<?php echo $id ?>')">Cases</button>
-                            <!-- Popup Case Div (initially hidden) -->
-                            <div id="case_popup_<?php echo $id ?>" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display:none;">
-                                <?php
-                                if (!empty($clientCases)) {
-                                    displayCases($clientCases);                                
-                                }
-                                ?>
+                            <!-- Button to trigger popup -->
+                            <div class="col-sm-2 popup-button-container">
+                                <button type="button" class="btn btn-info btn-sm" onclick="togglePopup('data_popup_<?php echo $id ?>')">Data</button>
+                                <!-- Popup Data Div (initially hidden) -->
+                                <div id="data_popup_<?php echo $id ?>" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display:none;">
+                                    <?php
+                                    if (!empty($clientData)) {
+                                        displayData($clientData, $client['modified']);                                
+                                    }
+                                    ?>
+                                </div>
+                                <button type="button" class="btn btn-info btn-sm" onclick="togglePopup('case_popup_<?php echo $id ?>')">Cases</button>
+                                <!-- Popup Case Div (initially hidden) -->
+                                <div id="case_popup_<?php echo $id ?>" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display:none;">
+                                    <?php
+                                    if (!empty($clientCases)) {
+                                        displayCases($clientCases);                                
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-1">
+                                <span class="btn btn-sm btn-warning" title="Delete this client/member from Atticus database" onClick="deleteClient('<?php echo $id ?>');">Del</span>
                             </div>
                         </div>
-
-                        <div class="col-sm-1">
-                            <span class="btn btn-sm btn-warning" title="Delete this client/member from Atticus database" onClick="deleteClient('<?php echo $id ?>');">Del</span>
+                        <div class="row m-2 hidden connectionlists smaller" id="connectionlist<?php echo $id ?>">
+                            <div id="connections<?php echo $id ?>" class="border rounded">
+                            </div>    
                         </div>
+    <?php
+    }
+    ?>                
+                    
+                    
+                    
                     </div>
-                    <div class="row m-2 hidden connectionlists smaller" id="connectionlist<?php echo $id ?>">
-                        <div id="connections<?php echo $id ?>" class="border rounded">
-                        </div>    
-                    </div>
-<?php
-}
-?>                
-                
-                
-                
-                </div>
                 </form>
             </div>
             

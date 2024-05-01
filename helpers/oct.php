@@ -116,12 +116,29 @@ class oct {
           return($stmt->rowCount());
     }
     
-    function fetch($query, $parameters=array()) {
-          $stmt=$this->db->prepare($query) or die("The prepared statement ($query) does not work");
-          $stmt->execute($parameters);
-          return($stmt->fetch(PDO::FETCH_ASSOC));
+    function fetch($query, $parameters = array()) {
+        try {
+            // Prepare the statement
+            $stmt = $this->db->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Failed to prepare statement: " . implode(", ", $this->db->errorInfo()));
+            }
+    
+            // Execute the statement with parameters
+            if (!$stmt->execute($parameters)) {
+                throw new Exception("Failed to execute statement: " . implode(", ", $stmt->errorInfo()));
+            }
+    
+            // Fetch and return the result
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            // You can log this exception, display a user-friendly message, or handle it however appropriate
+            error_log('Error in fetch function: ' . $e->getMessage());
+            return false;  // Or handle it differently
+        }
     }
     
+
     function fetchMany($query, $parameters=array(), $first=0, $last=100000000, $debug=false) {
           if($debug) {
               echo "<pre>DEBUGGING INFO\r\n";
@@ -138,21 +155,31 @@ class oct {
               echo "\r\n-----";
           }
 
-          $stmt->execute($parameters);
-          $count=0;
+          try {
+            $stmt->execute($parameters);
+            if(!$stmt) {
+                throw new Exception("Failed to execute statement: ".implode(", ", $this->db->errorInfo()));
+            }
+            $count=0;
 
-          $output=array();  //Create an empty array for the results
-          while($row=$stmt->fetch(PDO::FETCH_ASSOC)) {
-              if($debug) {
-                  echo "\r\nFETCHING!\r\n";
-                  print_r($row);
-              }
-              if($count >= $first && $count <= $last) {
-                $output[]=$row;
-              }
-              $count++;
+            $output=array();  //Create an empty array for the results
+            while($row=$stmt->fetch(PDO::FETCH_ASSOC)) {
+                if($debug) {
+                    echo "\r\nFETCHING!\r\n";
+                    print_r($row);
+                }
+                if($count >= $first && $count <= $last) {
+                  $output[]=$row;
+                }
+                $count++;
+            }
+            return(array("output"=>$output, "records"=>$count, "query"=>$query));
+
+          } catch (Exception $e) {
+            error_log('Error in execute function: '.$e->getMEssage());
           }
-          return(array("output"=>$output, "records"=>$count, "query"=>$query));
+
+
     }
 
 

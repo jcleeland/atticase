@@ -45,10 +45,6 @@ body {
   top: 0;
   background: rgba(0, 0, 0, 0.0);
 }
-.filter {
-    /* overflow-y: auto; */
-    /* height: calc(100vh - 105px); */
-}
 .caselist {
     overflow-y: auto;
     height: calc(100vh - 105px);
@@ -229,7 +225,7 @@ body {
 
 a.fa-icon, a.fa-phone, a.fa-email, a.fa-chat, a.fa-userlink {
     overflow-wrap: break-word;
-    font-decoration: none;
+    text-decoration: none;
     color: (0,0,0,0.75);
 }
 
@@ -623,7 +619,9 @@ a.fa-userlink::after {
     border-radius: 1rem;
     font-family: 'Courier';
     -webkit-mask-image: url('../images/grunge.png');
-    -webkit-mask-size: 944px 604px;    
+    mask-image: url('../images/grunge.png');
+    -webkit-mask-size: 944px 604px;
+    mask-size: 944px 604px;        
     mix-blend-mode: multiply;
     z-index: 100; 
 }
@@ -645,6 +643,7 @@ a.fa-userlink::after {
     border: 0.5rem double #D23;
     transform: rotate(-5deg);
     -webkit-mask-position: 2re 3rem;
+    mask-position: 2re 3rem;
     font-size: 3rem;
 }
 
@@ -867,5 +866,32 @@ a.fa-userlink::after {
     float: left;
     padding-right: 10px;
     font-weight: bold;
+}
+
+.height2lines {
+    max-height: 2.5em;
+    overflow: scroll;
+}
+
+.height4lines {
+    max-height: 4.5em;
+    overflow: scroll;
+}
+
+.height6lines {
+    max-height: 7em;
+    overflow: scroll;
+}
+
+.height8lines {
+    max-height: 9em;
+    overflow: scroll;
+}
+
+.fakeformborder {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: white;
 }
 
