@@ -27,7 +27,7 @@ class oct {
     var $dbtype="mysql";
     var $dbprefix="casetracker_";
     var $db;
-    var $externalDb=true;
+    var $externalDb=false;
     var $config;
     var $userid;
     var $cookiePrefix;
@@ -98,11 +98,14 @@ class oct {
             PDO::ATTR_EMULATE_PREPARES      => true,
         ];
         try {
-            $this->db=new PDO($dsn, $this->dbuser, $this->dbpass, $options);
+            $connection=$this->db=new PDO($dsn, $this->dbuser, $this->dbpass, $options);
+            if($connection) {
+                return true;
+            }
         } catch(\PDOException $e) {
             //Send the error message to the error popup ($e->getMessage())
             //throw new \PDOException($e->getMessage(), (int)$e->getCode());
-            echo "Database connection failed: ".$e->getMessage();
+            return false;
         }
     }
     
@@ -215,9 +218,11 @@ class oct {
         $permissions=$this->getUserPermissions($userId);
         //$this->showArray($permissions);
         
-        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uc.real_name as closedby_real_name, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name, t.member as clientname";
+        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uc.real_name as closedby_real_name, uo.real_name as openedby_real_name, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";
         if($this->externalDb===true) {
             $query .= ", mem.data, CONCAT(mem.pref_name, ' ', mem.surname) as clientname, mem.modified as externaldbmodified";
+        } else {
+            $query .= ", t.name as clientname";
         }
         $query.="\r\n                 FROM ".$this->dbprefix."tasks t
 
@@ -525,14 +530,14 @@ class oct {
         $cookies=$this->getCookies($this->cookiePrefix."System");
         $userId=$cookies->user_id;
         $userAccount=$this->getUserAccount($userId);
-        $permissions=$this->getUserPermissions($userId);       
-        
+        $permissions=$this->getUserPermissions($userId);   
         if($conditions === null) {$conditions="is_closed != 1";}
         if($order===null) {$order="date_due ASC";}
         $order=str_replace("_dot_", ".", $order);
         
         $county="SELECT count(t.task_id) as total";
-        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, lvc.*, uo.*, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";
+        $query="SELECT t.*, p.*, lt.*, lc.*, lv.*, uo.*, flr.*, mst.*, u.real_name as assigned_real_name, ue.real_name as last_edited_real_name";
+        
         if($this->externalDb===true) {
             //$query .= ", mem.*";
             $query .= ", mem.data, mem.pref_name, mem.surname,        
@@ -544,6 +549,7 @@ class oct {
                 $order=str_replace("client_name", "CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname) WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None' ELSE t.member END", $order );
             }            
         } else {
+            $query .= ", t.name as clientname";
             if(strpos($order, "client_name") > -1) {
                 $order=str_replace('client_name', 'name', $order);
             }
@@ -554,13 +560,14 @@ class oct {
                      LEFT JOIN ".$this->dbprefix."list_tasktype lt ON t.task_type = lt.tasktype_id
                      LEFT JOIN ".$this->dbprefix."list_category lc ON t.product_category = lc.category_id
                      LEFT JOIN ".$this->dbprefix."list_version lv ON t.product_version = lv.version_id
-                     LEFT JOIN ".$this->dbprefix."list_version lvc ON t.closedby_version = lvc.version_id
                      LEFT JOIN ".$this->dbprefix."users u ON t.assigned_to = u.user_id
                      LEFT JOIN ".$this->dbprefix."users uo ON t.opened_by = uo.user_id
                      LEFT JOIN ".$this->dbprefix."users ue on t.last_edited_by = ue.user_id
                      LEFT JOIN ".$this->dbprefix."list_resolution flr ON t.resolution_reason = flr.resolution_id
                      LEFT JOIN ".$this->dbprefix."master mst ON t.task_id = mst.servant_task
                  ";
+        //Removed LEFT JOIN ".$this->dbprefix."list_version lvc ON t.closedby_version = lvc.version_id
+        // because I'm pretty sure it's entirely redundant             
         
         //External Database Link
         if($this->externalDb===true) {
@@ -863,8 +870,16 @@ class oct {
         if($order===null) {$order="event_date DESC";}
         
         $query = "SELECT h.*, u.*, t.*";
-        $query.=", t.name as clientname";
-         
+        if($this->externalDb===true) {
+            //$query .= ", mem.*";
+            $query .= ", mem.data, mem.pref_name, mem.surname,        
+            CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
+                WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
+                ELSE t.member
+            END as clientname";
+        } else {
+            $query .= ", t.name as clientname";
+        }         
         $query .="\r\n  FROM ".$this->dbprefix."history h";
         $query .= "\r\n  INNER JOIN ".$this->dbprefix."tasks t ON t.task_id = h.task_id";
         $query .= "\r\n INNER JOIN ".$this->dbprefix."users u ON u.user_id=h.user_id";         
@@ -1216,6 +1231,7 @@ class oct {
                 $order=str_replace("client_name", "CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname) WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None' ELSE t.member END", $order );
             }        
         } else {
+            $query .= ", t.name as clientname";
             if(strpos($order, "client_name") > -1) {
                 $order=str_replace('client_name', 'name', $order);
             }
@@ -1253,6 +1269,7 @@ class oct {
         if($conditions===null) {$conditions="1=1";}
         if($order===null) {$order="date_added DESC";}
         
+        //This first query selects all the cases that have been specifically "related" to this one
         $query = "SELECT t.*, rel.related_id";
         if($this->externalDb===true) {
             $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
@@ -1270,9 +1287,12 @@ class oct {
         
         $query .="\r\nWHERE $conditions";
         $query .="\r\nORDER BY $order";
+        $query2=$query;
         
         $results=$this->fetchMany($query, $parameters, $first, $last);
         
+        //And now we'll collect all the cases that share the same "member number"
+
         if(isset($parameters[':taskid'])) {
             
             $query = "SELECT t.*, floor(rand()*(15000-5+1)+5) as related_id";
@@ -1290,7 +1310,7 @@ class oct {
             }             
             
             
-            $query .=" \r\nWHERE (t.member = (SELECT member FROM ".$this->dbprefix."tasks WHERE task_id=:taskid AND member IS NOT NULL AND member != '')";
+            $query .=" \r\nWHERE (t.member = (SELECT member FROM ".$this->dbprefix."tasks WHERE task_id=:taskid AND member IS NOT NULL AND member != '' AND member != '0')";
             $query .= "\r\n OR t.name = (SELECT name FROM ".$this->dbprefix."tasks WHERE task_id=:taskid AND name IS NOT NULL AND name != ''))";
             $query .= "\r\n AND t.task_id != :taskid";
             $query .=" \r\nORDER BY $order";
@@ -1305,7 +1325,7 @@ class oct {
             
         } 
 
-        $output=array("results"=>$results['output'], "query"=>$query, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
+        $output=array("results"=>$results['output'], "query"=>$query, "query2"=>$query2, "parameters"=>$parameters, "count"=>count($results['output']), "total"=>$results['records']);
           
         return($output);         
         

@@ -43,10 +43,6 @@
 
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
-    <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
-    <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
-    <input type='hidden' name='user_real_name' id='user_real_name' value='<?php echo $user_real_name ?>' />
-    <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
 <?php
 $filecontents='<?php
   /** File created by AttiCase initialisation system **/
@@ -78,8 +74,43 @@ fclose($file);
 //    - if there aren't, then offer the opportunity to setup the database
 // - if there isn't, offer the opportunity to create the database (including setup)
 //
+require_once 'config/config.php';
+require_once "helpers/oct.php";
+
+$oct=new oct;
+$oct->dbuser=$settings['dbuser'];
+$oct->dbpass=$settings['dbpass'];
+$oct->dbhost=$settings['dbhost'];
+$oct->dbname=$settings['dbname'];
+$oct->dbprefix=$settings['dbprefix'];
+$output=$oct->connect();
+print_r($output);
+
+if(!$output) {
+    //Database not available
+    $message="Could not find database with the name ".$settings['dbname']."<br /><br />";
+    if(isset($message)) {
+        ?>
+        <div id='alertBox' class='alert'>Error!<br /><?= $message ?></div>
+        <script type='text/javascript'>
+            // Script to fade out the alert after 1 minute (60000 milliseconds)
+            window.onload = function() {
+            setTimeout(function() {
+                var alertBox = document.getElementById('alertBox');
+                if (alertBox) {
+                alertBox.classList.add('fade-out');
+                }
+            }, 10000); // Change 60000 to however many milliseconds you want (60000ms = 1 minute)
+            };
+        </script>
+        <div style='position: relative; top: 200px; left: 45%'><a href='index.php' class='btn btn-primary'>Try again</a></div>
+        <?php
+    }    
+    //include("helpers/initial.php");
+    die();
+}
 ?>
         <h1>Basic Configuration File has been created.</h1>
-        <a href='index.php'>Start</a>
+        <div style='position: relative; top: 200px; left: 45%'><a href='index.php' class='btn btn-primary'>Start</div>
     </body>
 </html>

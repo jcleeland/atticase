@@ -20,7 +20,31 @@
 // If there is, then alert the user
 // If there isn't, check the permissions on the directory to see if the config.php file is allowed to be created
 //  - if there is no permission, alert the user  
+
+$dbname=$oct->dbname ? $oct->dbname : "";
+$dbuser=$oct->dbuser ? $oct->dbuser : "";
+$dbpass=$oct->dbpass ? $oct->dbpass : "";
+$dbhost=$oct->dbhost ? $oct->dbhost : "localhost";
+$dbprefix=$oct->dbprefix ? $oct->dbprefix : "atticase_";
+
+if(isset($message)) {
+    ?>
+    <div id='alertBox' class='alert'>Error!<br /><?= $message ?></div>
+    <script type='text/javascript'>
+        // Script to fade out the alert after 1 minute (60000 milliseconds)
+        window.onload = function() {
+        setTimeout(function() {
+            var alertBox = document.getElementById('alertBox');
+            if (alertBox) {
+            alertBox.classList.add('fade-out');
+            }
+        }, 10000); // Change 60000 to however many milliseconds you want (60000ms = 1 minute)
+        };
+    </script>
+    <?php
+}
 ?>
+
 <div class="row h-50 justify-content-center align-items-center">
     <form class="col-5" method="post">
         <input type='hidden' name='initialise' value='true' />
@@ -30,24 +54,27 @@
         <div class="col header mb-3">
             Local Database Setup
         </div>
+        <div class="mb-3 smaller">
+            AttiCase needs to be connected to a database. Your system administrator should have created an empty database on your local server and given you the name, username and password for it. Enter those details below.
+        </div>
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='text' class='form-control' name='dbname' id='dbname' placeholder='Database name' /></div>
+            <div class='w-75 floatright'><input type='text' class='form-control' name='dbname' id='dbname' placeholder='Database name' value='<?= $dbname ?>' /></div>
             <div class='floatright w-25'>DB Name:</div><div style='clear: both'></div>
         </div> 
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='text' class='form-control' name='dbhost' id='dbhost' placeholder='Database Host IP' /></div>
+            <div class='w-75 floatright'><input type='text' class='form-control' name='dbhost' id='dbhost' placeholder='Database Host IP' value='<?= $dbhost ?>' /></div>
             <div class='floatright w-25'>DB Host IP:</div><div style='clear: both'></div>       
         </div>
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='text' class='form-control' name='dbuser' id='dbuser' placeholder='Database User Name' /></div>
+            <div class='w-75 floatright'><input type='text' class='form-control' name='dbuser' id='dbuser' placeholder='Database User Name' value='<?= $dbuser ?>' /></div>
             <div class='floatright w-25'>DB Username:</div><div style='clear: both'></div>       
         </div>
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='password' class='form-control' name='dbpass' id='dbpass' placeholder='Database Password' /></div>
+            <div class='w-75 floatright'><input type='password' class='form-control' name='dbpass' id='dbpass' placeholder='Database Password' value='<?= $dbpass ?>' /></div>
             <div class='floatright w-25'>DB Password:</div><div style='clear: both'></div>       
         </div>
         <div class='form-group'>
-            <div class='w-75 floatright'><input type='' class='form-control' name='dbprefix' id='dbprefix' placeholder='Database Prefix' value='oct_' /></div>
+            <div class='w-75 floatright'><input type='' class='form-control' name='dbprefix' id='dbprefix' placeholder='Database Prefix' value='<?= $dbprefix ?>' /></div>
             <div class='floatright w-25'>DB Prefix:</div><div style='clear: both'></div>       
         </div>
         
@@ -66,6 +93,7 @@
         <div class='form-group'>
             <div class='w-75 floatright'>
                 <select class='form-control' name='externaldb' id='externaldb' placeholder='External DB Model' />
+                    <option value=''>None</option>
                     <option value='oms'>OMS (Open Membership System)</option>
                 </select>
             </div>

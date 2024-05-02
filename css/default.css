@@ -895,3 +895,51 @@ a.fa-userlink::after {
     background-color: white;
 }
 
+.alert {
+    padding: 20px;
+    padding-top: 32px;
+    background-color: #fc7066ce; /* Red */
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    position: fixed;
+    border-radius: 6px;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    box-shadow: 0 6px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Using ::before to automatically insert the title */
+.alert::before {
+    content: "NOTIFICATION"; /* Title text */
+    background-color: #f44336; /* Red */
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 0;
+    border-bottom: 1px solid #ffffff66; /* Semi-transparent white */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  
+  /* Animation keyframes for fading out */
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  /* Initial state before fading out */
+  .alert.fade-out {
+    animation-name: fadeOut;
+    animation-duration: 2s;
+    animation-fill-mode: forwards; /* Keeps the element in the state of the last keyframe when finished */
+  }

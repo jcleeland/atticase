@@ -23,6 +23,12 @@
     error_reporting(E_ALL);
     /*                                                      */
 
+    //Some useful values for each page
+    $todaystart=mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+    $todayend=mktime(23,59,59, date("m"), date("d"), date("Y"));
+    $monthstart=mktime(0,0,0, date("m"), 1, date("Y"));
+    $yearstart=mktime(0,0,0, 1, 1, date("Y"));
+
     require_once "helpers/startup.php";
 
 
@@ -39,7 +45,9 @@
     
     $regex = "/^.*?\.([^:]*)/";
     preg_match($regex, $setDomain, $matches); //Remove the subdomain and any port information for the cookie storage to avoid "invalid domain" errors.
-    $setDomain=$matches[count($matches)-1];
+    if(count($matches) != 0) {
+        $setDomain=$matches[count($matches)-1];
+    }
     //echo $setDomain."<br />";
     $cookieOptions=array(
         "expires"=>time()+3600*24*(2),
@@ -108,12 +116,6 @@
     
     // NAVIGATION
     $page=isset($_GET['page']) ? $_GET['page'] : "dashboard";
-    
-    //Some useful values for each page
-    $todaystart=mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-    $todayend=mktime(23,59,59, date("m"), date("d"), date("Y"));
-    $monthstart=mktime(0,0,0, date("m"), 1, date("Y"));
-    $yearstart=mktime(0,0,0, 1, 1, date("Y"));
     
 ?>
 <html>

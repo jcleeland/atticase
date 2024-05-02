@@ -56,9 +56,7 @@
      }
  }
  
- 
- 
- switch($layout) {
+switch($layout) {
      case "1c4i":
  ?>            
     <div class="col-sm-12 mb-1">

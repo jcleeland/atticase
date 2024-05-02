@@ -14,7 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */    
+ */
+
+
 ?>
 <html>
     <head>
@@ -41,14 +43,9 @@
     </head>
     <body>
 
-    <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
-    <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
-    <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />
-    <input type='hidden' name='user_name' id='user_name' value='<?php echo $user_name ?>' />
-    <input type='hidden' name='user_real_name' id='user_real_name' value='<?php echo $user_real_name ?>' />
-    <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
     <?php
-        if(isset($_POST['initialise']) && $_POST['initialise']=="true" && !empty($_POST['dbname']) && !empty($_POST['dbhost']) && !empty($_POST['dbuser']) && !empty($_POST['dbpass']) && !empty($_POST['dbprefix']) && ($_POST['useexternaldb']=="false" || ($_POST['useexternaldb']=="true" && !empty($_POST['externaldb'])))) {
+
+        if(isset($_POST['initialise']) && $_POST['initialise']=="true" && !empty($_POST['dbname']) && !empty($_POST['dbhost']) && !empty($_POST['dbuser']) && !empty($_POST['dbprefix']) && ($_POST['useexternaldb']=="false" || ($_POST['useexternaldb']=="true" && !empty($_POST['externaldb'])))) {
             
             include("pages/initialise.php");
             

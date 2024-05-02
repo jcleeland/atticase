@@ -32,7 +32,15 @@
         $oct->dbhost=$settings['dbhost'];
         $oct->dbname=$settings['dbname'];
         $oct->dbprefix=$settings['dbprefix'];
-        $oct->connect();
+        $output=$oct->connect();
+        
+        if(!$output) {
+            //Database not available
+            $message="Could not find database with the name ".$settings['dbname'];
+            include("helpers/initial.php");
+            die();
+        }
+
 
         require_once "helpers/configsettings.php";
 

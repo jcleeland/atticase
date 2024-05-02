@@ -163,7 +163,6 @@ function loadMyrecent(reset) {
             pagerNumbers('myrecent', start, end, cases.total);
             $('#myrecentlist').html('');
             $.each(cases.results, function(i, casedata) {
-                /* Put formatting into a standalone script */
                 if(!$('#caseCardParent_myrecentlist'+casedata.task_id).length) {
                     insertCaseCard('myrecentlist', 'myrecentlist'+casedata.task_id, casedata);
                     $('#caseheadermessage_myrecentlist'+casedata.task_id).show().prepend('<div class="col mt-2 m-0">This case was modified by '+casedata.changedby_real_name+' on '+timestamp2date(casedata.event_date, "dd/mm/yy g:i a")+'</div>');
