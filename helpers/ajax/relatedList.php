@@ -1,4 +1,5 @@
 <?php
+/** @var Oct $oct */
     $first=isset($_POST['first']) ? $_POST['first'] : 0;
     $last=isset($_POST['last']) ? $_POST['last'] : 1000000000;
     $parameters=isset($_POST['parameters']) ? $_POST['parameters'] : null;

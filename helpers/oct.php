@@ -1274,7 +1274,7 @@ class oct {
         if($this->externalDb===true) {
             $query .= ", mem.*, CONCAT(mem.pref_name, ' ', mem.surname) as clientname";
         } else {
-            $query .=", t.name as clientname";
+            $query .=", t.name as clientname, 'Linked by User' as reason";
         }       
         
         
@@ -1317,6 +1317,7 @@ class oct {
             $results2=$this->fetchMany($query, $parameters, $first, $last, false);
             if(is_array($results2['output'])) {
                 foreach($results2['output'] as $newrow) {
+                    $newrow['reason']="Matched client name";
                     $results['output'][]=$newrow;
                 }
             }
@@ -1331,7 +1332,7 @@ class oct {
         
     }
     
-    function relatedCreate($paramaters=array(), $conditions=null) {
+    function relatedCreate($parameters=array(), $conditions=null) {
         $query = "INSERT INTO ".$this->dbprefix."related";
         $query .= "\r\n (`related_id`, `this_task`, `related_task`)";
         $query .= "\r\n VALUES(NULL, :this_task, :related_task)";

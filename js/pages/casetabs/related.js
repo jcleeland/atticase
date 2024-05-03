@@ -68,7 +68,7 @@ function loadRelateds() {
             $.each(relateds.results, function(i, relateddata) {
                 var parentDiv='relatedlist';
                 var uniqueId='related'+relateddata.related_id;
-                var primeBox='<a href="index.php?page=case&case='+relateddata.task_id+'">#'+relateddata.task_id+'</a>';
+                var primeBox='<a href="index.php?page=case&case='+relateddata.task_id+'">#'+relateddata.task_id+'</a><br /><span class="smaller">'+relateddata.reason+'</span>';
                 var briefPrimeBox='<a href="index.php?page=case&case='+relateddata.task_id+'">#</a>';
                 var dateBox=timestamp2date(relateddata.date_opened, 'dd/mm/yy g:i a');
                 var briefDateBox=timestamp2date(relateddata.date_opened, 'dd MM YY');

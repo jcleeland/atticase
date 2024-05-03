@@ -42,7 +42,7 @@ use Hfig\MAPI\OLE\Pear;
 $attachmentPath = __DIR__."/../tmp/attachments";
 $attachmentWebPath="tmp/attachments";
 $expirationTime=3600; //3600 seconds = 1 hour
-if($handle=opendir($attachmentPath)) {
+if(@$handle=opendir($attachmentPath)) {
     while(false !== ($file = readdir($handle))) {
         if($file != "." && $file != "..") {
             $filePath=$attachmentPath.'/'.$file;
@@ -265,7 +265,7 @@ if(isset($_POST['attachmentId'])) {
         }
         echo $header.$content;
     } else {
-        echo "File does not exist.";
+        echo "<center><i>The attachment does not exist in AttiCase's file storage. See your system administrator.</i></center>";
     }
 } else {
     echo "No attachment ID provided.";

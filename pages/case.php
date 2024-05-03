@@ -218,7 +218,7 @@
                         
                         <?php
                             foreach($customfields['results'] as $key=>$field) {
-                                if(!$key %2) {  //Odd numbered entries
+                                if(!($key %2)) {  //Odd numbered entries
                                     ?>
                                     <div class="row mb-1">
                                         <div class="subSection-label col-xs-4">
@@ -494,7 +494,7 @@
 
                         <?php
                             foreach($customfields['results'] as $key=>$field) {
-                                if(!$key %2) { //Odd numbered entries
+                                if(!($key %2)) { //Odd numbered entries
                                     ?>
                                         <div class="row">
                                             <div class="subSection-label col-xs-4">
