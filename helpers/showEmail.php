@@ -167,6 +167,7 @@ if(isset($_POST['attachmentId'])) {
                             break;
                         } else {
                             $content = nl2br($partContent);  // Convert to HTML for display
+                            //$content=$partContent;
                         }
                     } elseif ($part->getHeaderField('Content-Disposition') === 'inline' &&
                             $part->getHeaderField('Content-ID') != '') {
@@ -207,6 +208,9 @@ if(isset($_POST['attachmentId'])) {
                             if (strtolower($contentTransferEncoding[0]) === 'base64') {
                                 $attachmentData = base64_decode($attachmentData);
                             }
+                            if (strtolower($contentTransferEncoding[0]) === 'quoted-printable') {
+                                $attachmentData = quoted_printable_decode($attachmentData);
+                            }
 
                             file_put_contents($attachmentPath, $attachmentData);
                             $attachments[] = [
@@ -223,8 +227,18 @@ if(isset($_POST['attachmentId'])) {
             } else {
                 // Non-multipart (simple single part message)
                 $content = $message->getContent();
-                if (strtolower($message->getHeaderField('Content-Transfer-Encoding')) == 'base64') {
+                $contentType = strtok($message->getHeaderField('Content-Type'), ';');
+                $contentTransferEncoding='8bit';
+                try {
+                    $contentTransferEncoding = $message->getHeaderField('Content-Transfer-Encoding');
+                } catch (\Laminas\Mail\Storage\Exception\InvalidArgumentException $e) {
+                    
+                }
+                if (strtolower($contentTransferEncoding) == 'base64') {
                     $content = base64_decode($content);
+                }
+                if (strtolower($contentTransferEncoding) == 'quoted-printable') {
+                    $content = quoted_printable_decode($content);
                 }
                 if ((isset($contentType) && $contentType !== 'text/html') || (!isset($contentType))) {
                     $content = nl2br($content);

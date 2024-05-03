@@ -220,7 +220,7 @@
                             foreach($customfields['results'] as $key=>$field) {
                                 if(!($key %2)) {  //Odd numbered entries
                                     ?>
-                                    <div class="row mb-1">
+                                    <div class="row align-items-center mb-1">
                                         <div class="subSection-label col-xs-4">
                                             <?php echo $field['custom_field_name'] ?>
                                         </div>
@@ -351,7 +351,7 @@
                             foreach($customfields['results'] as $key=>$field) {
                                 if($key %2) {  //Even numbered entries
                                     ?>
-                                    <div class="row mb-1">
+                                    <div class="row align-items-center mb-1">
                                         <div class="subSection-label col-xs-4">
                                             <?php echo $field['custom_field_name'] ?>
                                         </div>
@@ -496,7 +496,7 @@
                             foreach($customfields['results'] as $key=>$field) {
                                 if(!($key %2)) { //Odd numbered entries
                                     ?>
-                                        <div class="row">
+                                        <div class="row align-items-center">
                                             <div class="subSection-label col-xs-4">
                                                 <?php echo $field['custom_field_name'] ?>
                                             </div>
@@ -574,7 +574,7 @@
                             foreach($customfields['results'] as $key=>$field) {
                                 if($key %2) { //Even numbered entries
                                     ?>
-                                        <div class="row">
+                                        <div class="row align-items-center">
                                             <div class="subSection-label col-xs-4">
                                                 <?php echo $field['custom_field_name'] ?>
                                             </div>
