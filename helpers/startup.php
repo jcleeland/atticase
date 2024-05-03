@@ -51,7 +51,10 @@
         //$oct->showArray($configsettings); die();
         if($oct->getSetting("externaldb", "useexternaldb")==1 && $oct->getSetting("externaldb", "externaldb") != "") {
         //if($configsettings['externaldb']['useexternaldb']['value']==1 && $configsettings['externaldb']['externaldb']['value'] != "") {
+            $oct->externalDb=true;
             require_once("helpers/externaldb/".$configsettings['externaldb']['externaldb']['value'].".php");
+        } else {
+            $oct->externalDb=false;
         }
         
         include "scripts/authenticate.php";   

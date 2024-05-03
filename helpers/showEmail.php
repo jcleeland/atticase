@@ -38,6 +38,23 @@ use Laminas\Mail\Storage\Message as LaminasMessage;
 use Hfig\MAPI;
 use Hfig\MAPI\OLE\Pear;
 
+//Clean up old temporary attachment files
+$attachmentPath = __DIR__."/../tmp/attachments";
+$attachmentWebPath="tmp/attachments";
+$expirationTime=3600; //3600 seconds = 1 hour
+if($handle=opendir($attachmentPath)) {
+    while(false !== ($file = readdir($handle))) {
+        if($file != "." && $file != "..") {
+            $filePath=$attachmentPath.'/'.$file;
+            if(filemtime($filePath) < time() - $expirationTime) {
+                if(is_file($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+        }
+    }
+}
+
 if(isset($_POST['attachmentId'])) {
     $attachmentId=$_POST['attachmentId'];
     $fileinfo=$oct->getAttachment($attachmentId);
@@ -51,8 +68,14 @@ if(isset($_POST['attachmentId'])) {
         $orig_name=urlencode($origname);
         $extension = strtolower(pathinfo($origname, PATHINFO_EXTENSION));
         $content = '';
+        $attachments = [];  // Array to store attachment data
+
 
         if ($extension === 'msg') {
+/**
+ * Handling *.MSG files
+ */
+
             // Handle MSG file using Hfig\MAPI
             try {
                 $messageFactory = new MAPI\MapiMessageFactory();
@@ -73,24 +96,39 @@ if(isset($_POST['attachmentId'])) {
                 $msgdate = $msg->getSendTime(); // or another method depending on the exact property names
                 $date=$msgdate->format("Y-m-d H:i");
                 $content = $msg->getBodyHTML(); // Assuming simple retrieval of the body
-                /*$content = nl2br($content);
-                $pattern = '/(<br\s*\/?>\s*)+/i';
-                $content = preg_replace_callback($pattern, function($matches) {
-                    // Count how many <br /> are in the full match
-                    $count = substr_count($matches[0], '<br />');
                 
-                    // Return half the number of <br /> tags, rounded up
-                    return str_repeat("<br />\n", ceil($count / 2));
-                }, $content); */
+                $msgattachments=$msg->getAttachments();
+                foreach($msgattachments as $msgattachment) {
+                    //echo "<pre>"; var_dump(get_class_methods($msgattachment)); echo "</pre>";
+                    $filename=$msgattachment->getFileName();
+                    $attachmentfilecontent=$msgattachment->getData();
+                    file_put_contents($attachmentPath."/$filename", $attachmentfilecontent);
+                    $attachments[] = [
+                        'path' => $attachmentPath."/$filename",
+                        'url'  => $attachmentWebPath."/$filename",
+                        'name' => $filename
+                    ];
+                }
             } catch (\Throwable $e) {
                 echo "Error: ". $e->getMessage();
             }
+
+
+
+
+
+
+/**
+ * Handling *.EML files
+ */
+
         } elseif ($extension === 'eml') {
             // Handle EML file using Laminas\Mail
             $eml = file_get_contents($path);
+            //echo "<pre style='scroll-y: auto; max-height: 300px'>"; print_r($eml); echo "</pre>";
             $message = new LaminasMessage(['raw' => $eml]);
             $headers=$message->getHeaders();
-            //echo "<pre>"; print_r($headers); echo "</pre>";
+            //echo "<pre style='scroll-y: auto; max-height: 300px'>"; print_r($headers); echo "</pre>";
             $imageCidMap = [];
 
             $subject = $message->subject;
@@ -101,12 +139,23 @@ if(isset($_POST['attachmentId'])) {
             $date = new DateTime($message->date);
             $date = $date->format('Y-m-d H:i a');
             //print_r($date);
-            //echo "<pre>"; var_dump($message->from); echo "</pre>";
+            //echo "<pre style='scroll-y: auto; max-height: 500px'>"; var_dump($message->from); echo "</pre>";
             
             if ($message->isMultipart()) {
                 foreach (new \RecursiveIteratorIterator($message) as $part) {
+                    
                     $contentType = strtok($part->getHeaderField('Content-Type'), ';');
-                    $contentTransferEncoding = strtolower($part->getHeaderField('Content-Transfer-Encoding'));
+                    
+                    
+                    $contentTransferEncoding = '8bit';  // Default to '8bit'
+                    //print_r($part); echo "<hr />";
+
+                    try {
+                        // Attempt to retrieve the Content-Transfer-Encoding header
+                        $contentTransferEncoding = strtolower($part->getHeaderField('Content-Transfer-Encoding'));
+                    } catch (\Laminas\Mail\Storage\Exception\InvalidArgumentException $e) {
+                        // If the header is not found, it defaults to '8bit'
+                    }
 
                     if ($contentType === 'text/html' || $contentType === 'text/plain') {
                         $partContent = $part->getContent();
@@ -120,7 +169,7 @@ if(isset($_POST['attachmentId'])) {
                             $content = nl2br($partContent);  // Convert to HTML for display
                         }
                     } elseif ($part->getHeaderField('Content-Disposition') === 'inline' &&
-                              $part->getHeaderField('Content-ID') != '') {
+                            $part->getHeaderField('Content-ID') != '') {
                         $cid = str_replace(['<', '>'], '', $part->getHeaderField('Content-ID'));
                         $fileExtension = substr($contentType, strpos($contentType, '/') + 1);
                         $imagePath = __DIR__."/../tmp/$cid.$fileExtension";
@@ -130,8 +179,47 @@ if(isset($_POST['attachmentId'])) {
                         }
                         file_put_contents($imagePath, $imageData);
                         $imageCidMap[$cid] = $imagePath;
+                    } else if ($part->getHeaderField('Content-Disposition', \Laminas\Mail\Header\HeaderInterface::FORMAT_RAW) == 'attachment') {
+                        $filename = $part->getHeaderField('Content-Disposition', \Laminas\Mail\Header\HeaderInterface::FORMAT_PARAMETER)['filename'];
+                        $attachmentData = $part->getContent();
+                        if ($contentTransferEncoding === 'base64') {
+                            $attachmentData = base64_decode($attachmentData);
+                        }
+                        file_put_contents($attachmentPath, $attachmentData);
+                        $attachments[] = [
+                            'path' => $attachmentPath,
+                            'url'  => $attachmentWebPath,
+                            'name' => $filename
+                        ];
                     }
                 }
+                
+                foreach ($message as $part) {
+                    try {
+                        $contentDisposition = $part->getHeaderField('Content-Disposition', \Laminas\Mail\Header\HeaderInterface::FORMAT_RAW);
+                        //print_r($contentDisposition);
+                        if (strpos(strtolower($contentDisposition[0]), 'attachment') !== false) {
+                            $filename = $contentDisposition['filename']; // Get the filename from the part
+                            $attachmentData = $part->getContent();
+                            //print_r($attachmentData);
+                            $contentTransferEncoding = $part->getHeaderField('Content-Transfer-Encoding', \Laminas\Mail\Header\HeaderInterface::FORMAT_RAW);
+                            //print_r($contentTransferEncoding);
+                            if (strtolower($contentTransferEncoding[0]) === 'base64') {
+                                $attachmentData = base64_decode($attachmentData);
+                            }
+
+                            file_put_contents($attachmentPath, $attachmentData);
+                            $attachments[] = [
+                                'path' => $attachmentPath."/$filename",
+                                'url'  => $attachmentWebPath."/$filename",
+                                'name' => $filename
+                            ];
+                        }
+                    } catch (\Exception $e) {
+                        // Handle exceptions or missing headers gracefully
+                    }
+                }
+
             } else {
                 // Non-multipart (simple single part message)
                 $content = $message->getContent();
@@ -153,12 +241,28 @@ if(isset($_POST['attachmentId'])) {
 
         $header=<<<HTML
         <div class="email-header">
-            <h1><b>$subject</b></h1>
-            <p><div class='emailheaderlabel'>From:</div> $from</p>
-            <p><div class='emailheaderlabel'>To:</div> $to</p>
-            <p><div class='emailheaderlabel'>Date:</div> $date</p>
+            <div class="email-header-row">
+                <h1><b>$subject</b></h1>
+            </div>
+            <div class="email-header-row">
+                <div class='emailheaderlabel'>From:</div><div class="emailheadercontent">$from</div>
+            </div>
+            <div class="email-header-row">
+                <div class='emailheaderlabel'>To:</div><div class="emailheadercontent">$to</div>
+            </div>
+            <div class="email-header-row">
+                <div class='emailheaderlabel'>Date:</div><div class="emailheadercontent">$date</div>
+            </div>
         </div>
         HTML;
+        if(isset($attachments) && count($attachments) > 0) {
+            $attachmentaddon='<div class="email-header email-header-row"><p><div class="emailheaderlabel">Attachments:</div><div class="emailheadercontent">';
+            foreach ($attachments as $attachment) {
+                $attachmentaddon.='<div class="emailattachment floatleft smaller"><a href="' . htmlspecialchars($attachment['url']) . '" download="' . htmlspecialchars($attachment['name']) . '"><img src="images/portfolio.svg" title="' . htmlspecialchars($attachment['name']) . '" />'.htmlspecialchars($attachment['name']).'</a></div>';
+            }
+            $attachmentaddon.="<div style='clear: both'></div></div></div>";
+            $header.=$attachmentaddon;
+        }
         echo $header.$content;
     } else {
         echo "File does not exist.";

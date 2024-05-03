@@ -162,3 +162,27 @@ function loadAttachments() {
         //pagerNumbers('todo', 0, 0, 0);
     });    
 }
+
+function showEmail(attachmentId) {
+
+    if($('#emailContent_'+attachmentId).is(':visible')) {
+        $('#emailContent_'+attachmentId).hide('slow');
+    } else {
+        var output= $.ajax({
+            url: 'helpers/showEmail.php',
+            method: 'POST',
+            data: {attachmentId: attachmentId},
+            dataType: 'html'
+        }).done(function(response) {
+            //var currentHeight=$('#emailContent_'+attachmentId).height();
+            $('#cardbody_attachment'+attachmentId).css('max-height', '400px').css('display', 'flex').css('flex-direction', 'column'); //Make the parent div bigger for easier viewing of an email
+    
+            $('#emailContent_'+attachmentId).css('flex-grow', '1').css('overflow-y', 'auto').html(response).show('slow');
+            
+        }).fail(function(jqXHR, textStatus) {
+            console.log("Request failed: "+textStatus);
+        }) 
+    }
+
+
+}

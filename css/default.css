@@ -597,6 +597,10 @@ a.fa-userlink::after {
     float: right;
 }
 
+.floatleft {
+    float: left;
+}
+
 .stamp-container {
     width: 100%;
     text-align: center;    
@@ -849,6 +853,10 @@ a.fa-userlink::after {
     border-radius: 4px;
 }
 
+.email-header-row {
+    display: flex;
+}
+
 .email-header h1 {
     font-size: 20px;
     color: #333;
@@ -857,15 +865,23 @@ a.fa-userlink::after {
 .email-header p {
     font-size: 16px;
     color: #666;
-    margin-bottom: 0px;    
+    margin-bottom: 0px; 
+
 }
 
 .emailheaderlabel {
-    width: 90px; 
+    flex-grow: 1;
+    overflow: auto;
+    min-width: 120px; 
+    max-width: 150px;
     text-align: right; 
-    float: left;
     padding-right: 10px;
     font-weight: bold;
+}
+
+.emailheadercontent {
+    flex-grow: 1;
+    overflow: auto;
 }
 
 .height2lines {
@@ -942,4 +958,23 @@ a.fa-userlink::after {
     animation-name: fadeOut;
     animation-duration: 2s;
     animation-fill-mode: forwards; /* Keeps the element in the state of the last keyframe when finished */
+  }
+
+  .emailattachment {
+    border: 1px solid #888;
+    border-radius: 4px;
+    padding: 4px;
+    background-color:rgba(255, 255, 255, 0.5);
+    margin: 2px;
+    box-shadow: #fff;
+
+  }
+
+  .emailattachment img {
+    margin-right: 4px;
+  }
+
+  .emailattachment a {
+    text-decoration: none !important;
+    color: black !important;
   }

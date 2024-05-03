@@ -15,16 +15,22 @@ $(function() {
 }) 
 
 function loadEnquirycases(reset) {
-    var today=new Date();
-    
+    var onemonthago=new Date();
+    onemonthago.setMonth(onemonthago.getMonth() -2);
+    console.log(onemonthago);
+    onemonthago=Math.floor(onemonthago.getTime() / 1000);
     var parameters={};
     parameters[':is_enquiry']=1;
-    parameters[':isclosed']=1; //we reverse this in the conditions, to find cases where is_closed is NOT equal to 1 (ie: open)
+    parameters[':opened']=onemonthago;
+    //parameters[':isclosed']=1; //we reverse this in the conditions, to find cases where is_closed is NOT equal to 1 (ie: open)
     //parameters[':datedue']=today.getTime() / 1000 + (86400*2) | 0;
     
-    var conditions='lv.is_enquiry = :is_enquiry AND is_closed != :isclosed';
+    var conditions='lv.is_enquiry = :is_enquiry';
+    conditions += ' AND t.date_opened >= :opened';
+
+    //conditions+='AND is_closed != :isclosed';
     
-    var order='date_due ASC';
+    var order='date_due DESC';
     var status=getStatus();
     if(status.orders != undefined) {
         if(status.orders.enquirycases !== undefined) {
