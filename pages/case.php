@@ -26,7 +26,7 @@
     $caseTypeSelect=$oct->buildSelectList($casetypes['results'], array("id"=>"edit_task_type", "class"=>"updateCase w-100"), "tasktype_id", "tasktype_name", null, "Select case", null);
     $departments=$oct->departmentList(array(), $oct->dbprefix."list_category.show_in_list=1");
     $departmentSelect=$oct->buildSelectList($departments['results'], array("id"=>"edit_product_category", "class"=>"updateCase"), "category_id", "category_name", null, "Select department", "parent_name");
-    $users=$oct->userList(array(), "account_enabled=1 AND group_in NOT IN ('9')", null);
+    $users=$oct->userList(array(), "account_enabled=1 and group_open=1", null);
     $userSelect=$oct->buildSelectList($users['results'], array("id"=>"edit_assigned_to", "class"=>"updateCase"), "user_id", "real_name", $user_id, "Select user", "group_name");
     $resolutions=$oct->resolutionList(array(), "show_in_list=1");
     $resolutionsSelect=$oct->buildSelectList($resolutions['results'], array("id"=>"close_resolution_reason", "class"=>"closeCase"), "resolution_id", "resolution_name", null, "Select reason");
@@ -303,7 +303,7 @@
                                         $unitlist=$oct->unitList();
                                 }
                                 switch($configsettings['general']['unit_list_use']['value']) {
-                                    case "1":
+                                    case "1": //Suggested units
                                         echo "<div class='lookahead-input-wrapper'>";
                                         echo "<input type='text' id='edit_unit' class='updateCase lookahead-input-field w-100' />";
                                         echo "<ul class='lookahead-input-dropdown w-100'></ul>";
@@ -313,15 +313,22 @@
                                         }
                                         echo "</ul>";  
                                         break;
-                                    case "2":
+                                    case "2": //Required units
+                                        //echo "<pre>"; print_r($unitlist); echo "</pre>";
+                                        
                                         echo "<select id='edit_unit' class='updateCase'>";
                                         echo "<option value=''>Select a unit location...</option>";
                                         foreach($unitlist['results'] as $unititem) {
-                                            echo "<option>".$unititem['unit_descrip']."</option>";
-                                        }
+                                            if($unititem['parent_id'] != '0' && $unititem['parent_id'] != "") {
+                                                echo "<option style='font-size: 0.9em'><span style='padding-left: 20px;'>&nbsp;&nbsp;&nbsp;&nbsp;".$unititem['unit_descrip']."</span></option>";
+                                            } else {
+                                                echo "<option>".$unititem['unit_descrip']."</option>";
+                                            }
+                                        }                                        
+
                                         echo "</select>";                                        
                                         break;
-                                    default:
+                                    default: //Free text
                                         ?>
                                             <input type="text" id="edit_unit" class="updateCase w-100" />
                                         <?php
