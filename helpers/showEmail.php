@@ -39,6 +39,7 @@ use Hfig\MAPI;
 use Hfig\MAPI\OLE\Pear;
 
 //Clean up old temporary attachment files
+$tempPath = __DIR__."/../tmp";
 $attachmentPath = __DIR__."/../tmp/attachments";
 $attachmentWebPath="tmp/attachments";
 $expirationTime=3600; //3600 seconds = 1 hour
@@ -173,7 +174,7 @@ if(isset($_POST['attachmentId'])) {
                             $part->getHeaderField('Content-ID') != '') {
                         $cid = str_replace(['<', '>'], '', $part->getHeaderField('Content-ID'));
                         $fileExtension = substr($contentType, strpos($contentType, '/') + 1);
-                        $imagePath = __DIR__."/../tmp/$cid.$fileExtension";
+                        $imagePath =  $tempPath."/".$cid.$fileExtension;
                         $imageData = $part->getContent();
                         if ($contentTransferEncoding === 'base64') {
                             $imageData = base64_decode($imageData);
@@ -186,10 +187,10 @@ if(isset($_POST['attachmentId'])) {
                         if ($contentTransferEncoding === 'base64') {
                             $attachmentData = base64_decode($attachmentData);
                         }
-                        file_put_contents($attachmentPath, $attachmentData);
+                        file_put_contents($attachmentPath."/$filename", $attachmentData);
                         $attachments[] = [
-                            'path' => $attachmentPath,
-                            'url'  => $attachmentWebPath,
+                            'path' => $attachmentPath."/$filename",
+                            'url'  => $attachmentWebPath."/$filename",
                             'name' => $filename
                         ];
                     }
@@ -212,7 +213,7 @@ if(isset($_POST['attachmentId'])) {
                                 $attachmentData = quoted_printable_decode($attachmentData);
                             }
 
-                            file_put_contents($attachmentPath, $attachmentData);
+                            file_put_contents($attachmentPath."/$filename", $attachmentData);
                             $attachments[] = [
                                 'path' => $attachmentPath."/$filename",
                                 'url'  => $attachmentWebPath."/$filename",
