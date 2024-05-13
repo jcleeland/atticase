@@ -27,6 +27,9 @@ $dbpass=$oct->dbpass ? $oct->dbpass : "";
 $dbhost=$oct->dbhost ? $oct->dbhost : "localhost";
 $dbprefix=$oct->dbprefix ? $oct->dbprefix : "atticase_";
 
+$useexternaldb=isset($settings['useexternaldb']) ? $settings['useexternaldb'] : "false";
+$externaldb=isset($settings['externaldb']) ? $settings['externaldb'] : "";
+
 if(isset($message)) {
     ?>
     <div id='alertBox' class='alert'>Error!<br /><?= $message ?></div>
@@ -85,7 +88,7 @@ if(isset($message)) {
             <div class='w-75 floatright'>
                 <select name='useexternaldb' class='form-control' id='useexternaldb' placeholder='Use external DB?'>
                     <option value='false'>No</option>
-                    <option value='true'>Yes</option>
+                    <option value='true' <?php if($useexternaldb) echo "selected" ?>>Yes</option>
                 </select>
             </div>
             <div class='floatright w-25'>Use External Database?:</div><div style='clear: both'></div>
@@ -94,7 +97,7 @@ if(isset($message)) {
             <div class='w-75 floatright'>
                 <select class='form-control' name='externaldb' id='externaldb' placeholder='External DB Model' />
                     <option value=''>None</option>
-                    <option value='oms'>OMS (Open Membership System)</option>
+                    <option value='oms' <?php if($externaldb=="oms") echo "selected" ?>>OMS (Open Membership System)</option>
                 </select>
             </div>
             <div class='floatright w-25'>External DB Model:</div><div style='clear: both'></div>       

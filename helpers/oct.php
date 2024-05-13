@@ -540,7 +540,7 @@ class oct {
         
         if($this->externalDb===true) {
             //$query .= ", mem.*";
-            $query .= ", mem.data, mem.pref_name, mem.surname,        
+            $query .= ", mem.data, mem.pref_name, mem.surname, mem.modified as clientModified,        
             CASE WHEN CONCAT (mem.pref_name, ' ', mem.surname) != ' ' THEN CONCAT (mem.pref_name, ' ', mem.surname)
                 WHEN CONCAT (mem.pref_name, ' ', mem.surname) = ' ' AND t.member=0 THEN 'None'
                 ELSE t.member

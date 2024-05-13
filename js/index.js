@@ -773,6 +773,15 @@ function clientDelete(clientId) {
     });
 }
 
+function clientUpdate(identifier, surname, pref_name, started, primary_key, data) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'clientUpdate', identifier: identifier, surname: surname, pref_name: pref_name, started: started, primary_key: primary_key, data: data},
+        dataType: 'json'
+    })
+}
+
 
 /** People of Interest Functions **/
 
@@ -1360,6 +1369,7 @@ function pad(n, width, z) {
 }
 
 function getInitials(string) {
+    if(string=='') return 'NA';
     var matches = string.match(/\b(\w)/g);
     var initials=matches.join('');
     return initials;
