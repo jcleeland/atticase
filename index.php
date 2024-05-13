@@ -164,6 +164,9 @@
         //console.log(globals);
         //status=getStatus();    
     </script>
+    <!-- include summernote css/js -->
+    <link href="js/summernote/summernote-bs4.css" rel="stylesheet">
+    <script src="js/summernote/summernote-bs4.js"></script>    
     </head>
     <body>
 
