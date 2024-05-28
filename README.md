@@ -1,3 +1,3 @@
-# opencasetracker
- OpenCaseTracker
-A web based tool for industrial case management
+# attiCase
+ AttiCase
+A web based tool for employment case management
