@@ -38,26 +38,26 @@ foreach($results['output'] as $pcount) {
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-2">
-                        <div class="col-sm">
-                            Firstname
-                        </div>
-                        <div class="col-sm">
-                            Lastname
-                        </div>
-                        <div class="col-sm-2">
-                            Position
-                        </div>
-                        <div class="col-sm-3">
-                            Organisation
-                        </div>
-                        <div class="col-sm">
-                            Phone
-                        </div>
-                        <div class="col-sm-2">
-                            Email
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Firstname</span>
                         </div>
                         <div class="col-sm text-center">
-                            Links
+                            <span class="admin-headers">Lastname</span>
+                        </div>
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Position</span>
+                        </div>
+                        <div class="col-sm-3 text-center">
+                            <span class="admin-headers">Organisation</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Phone</span>
+                        </div>
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Email</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Links</span>
                         </div>
                         <div class="col-sm">
                             &nbsp;
@@ -128,23 +128,23 @@ foreach($pois['results'] as $poi) {
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm">
-                            Firstname
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Firstname</span>
                         </div>
-                        <div class="col-sm">
-                            Lastname
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Lastname</span>
                         </div>
-                        <div class="col-sm-2">
-                            Position
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Position</span>
                         </div>
-                        <div class="col-sm-3">
-                            Organisation
+                        <div class="col-sm-3 text-center">
+                            <span class="admin-headers">Organisation</span>
                         </div>
-                        <div class="col-sm">
-                            Phone
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Phone</span>
                         </div>
-                        <div class="col-sm-2">
-                            Email
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Email</span>
                         </div>
                         <div class="col-sm">
                             

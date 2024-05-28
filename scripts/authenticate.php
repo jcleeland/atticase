@@ -80,8 +80,9 @@
                 }
                 //$oct->showArray($results);
             } catch (\Adldap\Auth\BindException $e) {
-                echo "<span class='danger'>Error message from LDAP ($user)</span>";
-                $oct->showArray($e);
+                $oct->showArray($e, 'LDAP Error');
+                $oct->showArray($configsettings['ldap'], 'LDAP Settings');
+                //Todo: If the auth script can't contact the LDAP server, and the noone can login, how can the settings be changed?
                 die();
             }
             

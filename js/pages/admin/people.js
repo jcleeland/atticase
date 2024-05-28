@@ -7,6 +7,14 @@ $(function() {
             nextElement.toggleClass('hidden');
         }
     });
+
+    // Add event listener to each input
+    $('.row.mb-2.p-1 input[type="text"]').on('input', function() {
+        // Show the "Save changes" button when a change is detected
+        $(this).closest('.row.mb-2.p-1').find('.save-changes').show();
+    });    
+
+
 });
 
 function deleteClient(id) {
@@ -20,6 +28,33 @@ function deleteClient(id) {
         })
     }
 };
+
+function updateClient(id) {
+    // Get the row for this client
+    var row = $('#client_row_' + id);
+
+    // Get the input values from this row
+    var identifier = row.find('#id' + id).val();
+    var surname = row.find('#surname' + id).val();
+    var pref_name = row.find('#pref_name' + id).val();
+    var started = new Date(row.find('#joined' + id).val()).getTime() / 1000;
+    var primary_key = row.find('#primary_key' + id).val();
+    var data = row.find('#data' + id).val();
+
+    clientUpdate(identifier, surname, pref_name, started, primary_key, data)
+    .done(function(response) {
+        // Handle the response from the server
+        console.log(response);
+
+        // Hide the "Save changes" button
+        row.find('.save-changes').hide();
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        // Handle any errors
+        console.error('Error updating client: ', textStatus, ', Details: ', errorThrown);
+        console.error('Response: ', jqXHR.responseText);
+    });    
+}
 
 function togglePopup(popupId) {
     // Close all other popups

@@ -36,20 +36,20 @@ foreach($results['output'] as $cgcount) {
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-8">
-                            Name
-                        </div>
-                        <div class="col-sm">
-                            Position
-                        </div>
-                        <div class="col-sm">
-                            Show
-                        </div>
-                        <div class="col-sm">
-                            Enquiry?
+                        <div class="col-sm-8 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
                         <div class="col-sm text-center">
-                            Cases
+                            <span class="admin-headers">Position</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Show</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Enquiry?</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Cases</span>
                         </div>
                     </div>
                 </div>
@@ -95,18 +95,18 @@ foreach($casegroups['results'] as $casegroup) {
                 <h4 class="header">Add Case Group</h4>
                 <div class="row border rounded centered">
                     <div class="p-2 w-100">
-                        <div class="row mb-1">
+                        <div class="row mb-1 text-center">
                             <div class="col-sm-8">
-                                Name
+                                <span class="admin-headers">Name<span>
                             </div>
                             <div class="col-sm">
-                                Position
+                                <span class="admin-headers">Position</span>
                             </div>
                             <div class="col-sm">
-                                Show
+                                <span class="admin-headers">Show</span>
                             </div>
                             <div class="col-sm">
-                                Enquiry?
+                                <span class="admin-headers">Enquiry?</span>
                             </div>
                             <div class="col-sm text-center">
                             </div> 

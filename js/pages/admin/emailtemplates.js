@@ -44,13 +44,13 @@ function templateGroupFilter(value) {
         } else {
             var templateGroup = $(this).data('group-id');
             if(value=='user') {
-                if (templateGroup == 99) {
+                if (templateGroup == 999) {
                     $(this).show();
                 } else {
                     $(this).hide();
                 }
             } else {
-                if (templateGroup != 99) {
+                if (templateGroup != 999) {
                     $(this).show();
                 } else {
                     $(this).hide();

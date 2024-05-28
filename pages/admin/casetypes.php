@@ -35,26 +35,24 @@ foreach($results['output'] as $cgcount) {
             <h4 class="header">Case Types</h4>
             <div class="row border rounded centered">
                 <form class="w-100">
-                <div class="p-2 w-100">
-                    <div class="row mb-1">
-                        <div class="col-sm-4">
-                            Name
+                    <div class="row pb-0 mb-0">
+                        <div class="col-sm-4 text-center">
+                            <span class='small btn bg-light text-secondary border-bottom rounded p-1' >Name</span>
                         </div>
-                        <div class="col-sm-5">
-                            Description
-                        </div>
-                        <div class="col-sm">
-                            Position
+                        <div class="col-sm-5 text-center">
+                            <span class='small btn bg-light text-secondary border-bottom rounded p-1' >Description</span>
                         </div>
                         <div class="col-sm text-center">
-                            Show
+                            <span class='small btn bg-light text-secondary border-bottom rounded p-1' >Position</span>
                         </div>
                         <div class="col-sm text-center">
-                            Cases
+                            <span class='small btn bg-light text-secondary border-bottom rounded p-1' >Show</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class='small btn bg-light text-secondary border-bottom rounded p-1' >Cases</span>
                         </div>
                     </div>
-                </div>
-                <div class="form-group overflow-auto p-2" style="max-height: 600px" >
+                <div class="form-group overflow-auto p-1 w-100" style="min-height: 40vh; max-height: 60vh" >
 
 <?php
 foreach($casetypes['results'] as $casetype) {
@@ -100,17 +98,17 @@ foreach($casetypes['results'] as $casetype) {
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-4">
-                            Name
+                        <div class="col-sm-4 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
-                        <div class="col-sm-5">
-                            Description
-                        </div>
-                        <div class="col-sm">
-                            Position
+                        <div class="col-sm-5 text-center">
+                            <span class="admin-headers">Description</span>
                         </div>
                         <div class="col-sm text-center">
-                            Show
+                            <span class="admin-headers">Position</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Show</span>
                         </div>
                         <div class="col-sm text-center">
                             &nbsp;

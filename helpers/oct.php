@@ -1116,8 +1116,10 @@ class oct {
         // Decrypt and convert JSON for each record
         foreach ($results['output'] as $key => $record) {
             $encryptedData = $record['data'];
+            if ($encryptedData !== null) {
             $decryptedData = openssl_decrypt($encryptedData, 'aes-128-cbc', 'ct2016');
             $results['output'][$key]['data'] = json_decode($decryptedData, true);
+            }
         }
     
         $output = array("results" => $results['output'], "query" => $query, "parameters" => $parameters, "count" => count($results['output']), "total" => $results['records']);
@@ -1607,6 +1609,7 @@ class oct {
         } catch (Exception $e) {
             if ($debug > 0) {
                 echo "General error: " . htmlspecialchars($e->getMessage()) . "<hr />";
+                echo "SQL: " . $query . "<hr />";
             }
             // Optional: rethrow the exception if it should be handled by the caller
             // throw $e;
@@ -1893,8 +1896,12 @@ class oct {
     }    
     
     function showArray($array, $title="Showing array (debug)") {
-        echo "<pre><b>$title</b><br />";
+        echo "<pre style='border: 1px solid #111; overflow: auto; max-height: 500px; padding: 0;'>";
+        echo "<div style='position: sticky; top: 0; background: green; color: #fff; padding: 5px; text-align: center;'><span style='font-weight: bold; font-size: 1.2rem'>Atticase Debug Management</span><br />$title</div>";
+        echo "<div style='margin-top: 40px; padding: 5px;'>";
+        //echo "<b>$title</b><br />";
         print_r($array);
+        echo "</div>";
         echo "</pre>";    
     }
 

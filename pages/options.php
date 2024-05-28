@@ -75,8 +75,10 @@ if(isset($configsettings['general']['unit_list_use']['value']) && $configsetting
         <!--<div class="col-xs-12 col-sm-10">
             <pre>
             <?php
-                foreach($prefs as $name=>$pref) {
-                    echo "<b>".$name."</b>: ".$pref['value']."<br /><i>".$pref['description']."</i><br /><br />";
+                if(isset($prefs) && is_array($prefs)) {
+                    foreach($prefs as $name=>$pref) {
+                        echo "<b>".$name."</b>: ".$pref['value']."<br /><i>".$pref['description']."</i><br /><br />";
+                    }
                 }
             ?>
             </pre>
@@ -84,5 +86,4 @@ if(isset($configsettings['general']['unit_list_use']['value']) && $configsetting
 <?php
     }
 ?>
-
 </div>

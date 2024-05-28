@@ -61,3 +61,42 @@ $(function() {
     })
 
 });
+
+function toggleVisibility(setting, comparitorkey, comparitorvalue) {
+    console.log('Seeting, key and value are: ' + setting, comparitorkey, comparitorvalue);
+    if ($('#config_' + comparitorkey).is(':checkbox')) {
+        // Handle checkboxes
+        var isChecked = $('#config_' + comparitorkey).is(':checked');
+        var comparitorBool = (comparitorvalue.toLowerCase() === 'true');
+
+        if (isChecked == comparitorBool) {
+            $('#systemsetting_' + setting).show();
+        } else {
+            $('#systemsetting_' + setting).hide();
+        }
+    } else {
+        
+        // Handle other input types
+        if ($('#config_' + comparitorkey).val() == comparitorvalue) {
+            $('#systemsetting_' + setting).show();
+        } else {
+            $('#systemsetting_' + setting).hide();
+        }
+    }
+}
+
+function testEmailSend() {
+    var to=$('#config_admin_email').val();
+    var from=$('#config_retrievalaccount' ).val();
+    console.log('From: '+from);
+    var fromname=$('#config_project_title').val();
+    var cc=[];
+    var bcc=[];
+    var isHtml=1;
+    var subject='Test AttiCase Email';
+    var message='<b>Test outgoing email from AttiCase</b><br />If you have received this email then your AttiCase installation is able to send emails.';
+    var attachments=[];
+    $.when(sendEmail(to, toname, from, fromname, cc, bcc, isHtml, subject, message, attachments)).done(function(output) {
+        console.log(output);
+    })
+}

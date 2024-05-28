@@ -19,12 +19,12 @@
     use Microsoft\Graph\Model; */        
 
     //All the things needed to get opencasetracker scripts connected and up and running
-    if(!file_exists("config/config.php")) {
-        include("helpers/initial.php");
+    if(!file_exists(__DIR__."/../config/config.php")) {
+        include(__DIR__."/../helpers/initial.php");
         die();
     } else {
-        require_once 'config/config.php';
-        require_once "helpers/oct.php";
+        require_once __DIR__.'/../config/config.php';
+        require_once __DIR__."/../helpers/oct.php";
 
         $oct=new oct;
         $oct->dbuser=$settings['dbuser'];
@@ -42,7 +42,7 @@
         }
 
 
-        require_once "helpers/configsettings.php";
+        require_once __DIR__."/configsettings.php";
 
         $oct->cookiePrefix=$oct->getSetting('installation', 'cookiePrefix');
         $cookieStatusName=$oct->cookiePrefix."Status";
@@ -52,11 +52,11 @@
         if($oct->getSetting("externaldb", "useexternaldb")==1 && $oct->getSetting("externaldb", "externaldb") != "") {
         //if($configsettings['externaldb']['useexternaldb']['value']==1 && $configsettings['externaldb']['externaldb']['value'] != "") {
             $oct->externalDb=true;
-            require_once("helpers/externaldb/".$configsettings['externaldb']['externaldb']['value'].".php");
+            require_once(__DIR__."/../helpers/externaldb/".$configsettings['externaldb']['externaldb']['value'].".php");
         } else {
             $oct->externalDb=false;
         }
         
-        include "scripts/authenticate.php";   
+        include __DIR__."/../scripts/authenticate.php";   
     }
 ?>

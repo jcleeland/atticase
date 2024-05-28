@@ -1,5 +1,5 @@
 $(function() {
-    var system=getSettings("OpenCaseTrackerSystem");
+    var system=getSettings("AttiCaseSystem");
     var isAdmin=system.is_admin;
     console.log(system);
     $('.changegroup').click(function() {

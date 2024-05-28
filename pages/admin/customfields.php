@@ -54,17 +54,17 @@ foreach($results['output'] as $cfcount) {
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-7">
-                            Name
-                        </div>
-                        <div class="col-sm">
-                            Type
+                        <div class="col-sm-7 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
                         <div class="col-sm text-center">
-                            Visible
+                            <span class="admin-headers">Type</span>
                         </div>
                         <div class="col-sm text-center">
-                            Cases
+                            <span class="admin-headers">Visible</span>
+                        </div>
+                        <div class="col-sm text-center">
+                        <span class="admin-headers">Cases</span>
                         </div>
                     </div>
                 </div>
@@ -120,14 +120,14 @@ foreach($customfields['results'] as $customfield) {
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-7">
-                            Name
-                        </div>
-                        <div class="col-sm">
-                            Type
+                        <div class="col-sm-7 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
                         <div class="col-sm text-center">
-                            Visible
+                            <span class="admin-headers">Type</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Visible</span>
                         </div>
                         <div class="col-sm text-center">
                             &nbsp;

@@ -47,11 +47,11 @@
 
         if(isset($_POST['initialise']) && $_POST['initialise']=="true" && !empty($_POST['dbname']) && !empty($_POST['dbhost']) && !empty($_POST['dbuser']) && !empty($_POST['dbprefix']) && ($_POST['useexternaldb']=="false" || ($_POST['useexternaldb']=="true" && !empty($_POST['externaldb'])))) {
             
-            include("pages/initialise.php");
+            include(__DIR__."/../pages/initialise.php");
             
         } else {
     
-            include("pages/initial.php");
+            include(__DIR__."/../pages/initial.php");
             //echo "<hr /><pre>";print_r($_POST);
         }
     ?>

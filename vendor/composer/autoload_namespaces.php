@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'OLE' => array($vendorDir . '/pear/ole'),
-    'Console' => array($vendorDir . '/pear/console_getopt'),
 );

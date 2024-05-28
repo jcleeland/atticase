@@ -37,20 +37,20 @@ foreach($results['output'] as $cgcount) {
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-4">
-                            Name
+                        <div class="col-sm-4 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
-                        <div class="col-sm-5">
-                            Description
-                        </div>
-                        <div class="col-sm">
-                            Position
+                        <div class="col-sm-5 text-center">
+                            <span class="admin-headers">Description</span>
                         </div>
                         <div class="col-sm text-center">
-                            Show
+                            <span class="admin-headers">Position</span>
                         </div>
                         <div class="col-sm text-center">
-                            Cases
+                            <span class="admin-headers">Visible</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Cases</span>
                         </div>
                     </div>
                 </div>
@@ -100,17 +100,17 @@ foreach($resolutions['results'] as $resolution) {
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-4">
-                            Name
+                        <div class="col-sm-4 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
-                        <div class="col-sm-5">
-                            Description
-                        </div>
-                        <div class="col-sm">
-                            Position
+                        <div class="col-sm-5 text-center">
+                            <span class="admin-headers">Description</span>
                         </div>
                         <div class="col-sm text-center">
-                            Show
+                            <span class="admin-headers">Position</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Visible</span>
                         </div>
                         <div class="col-sm text-center">
                             &nbsp;

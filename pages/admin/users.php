@@ -85,7 +85,7 @@ foreach($usergroups['results'] as $usergroup) {
                     <div class="row m-0 ml-1 mr-1 p-0 bg-data rounded smallish" style='margin-bottom: 10px !important'>
                         <input type="hidden" name="groupid[]" value="<?php echo $usergroup['group_id'] ?>" />
                         <div class="col-sm-2 p-1">
-                            <a class="btn p-0 pr-2 mb-0" data-toggle="collapse" href="#<?php echo preg_replace('/[^\da-z]/i', '', str_replace(" ", "", $usergroup['group_name'])) ?>" role="button" aria-expanded="false" aria-controls="<?php echo str_replace(" ", "", $usergroup['group_name']) ?>"><img src='./images/chevron-right.svg' height='15px' title='Group ID <?php echo $usergroup['group_id'] ?>' /><?php echo $usergroup['group_name'] ?></a>
+                            <a class="btn btn-textleft p-0 pr-2 mb-0" data-toggle="collapse" href="#<?php echo preg_replace('/[^\da-z]/i', '', str_replace(" ", "", $usergroup['group_name'])) ?>" role="button" aria-expanded="false" aria-controls="<?php echo str_replace(" ", "", $usergroup['group_name']) ?>"><img src='./images/chevron-right.svg' height='15px' title='Group ID <?php echo $usergroup['group_id'] ?>' /><?php echo $usergroup['group_name'] ?></a>
                         </div>
                         <div class="col-sm-4 p-1 small">
                             <?php echo $usergroup['group_desc'] ?>
@@ -269,33 +269,31 @@ foreach($usergroups['results'] as $usergroup) {
                 <div class="p-2 w-100 dataheader smaller">
                     <div class="row mb-1">
                         <div class="col-sm-2" title="Full name of user">
-                            Name
+                        <span class="admin-headers">Name</span>
                         </div>
                         <div class="col-sm-1" title="System username of user">
-                            Username
+                        <span class="admin-headers">Username</span>
                         </div>
                         <div class="col-sm-2" title="Email address of user">
-                            Email
+                        <span class="admin-headers">Email</span>
                         </div>
                         <div class="col-sm-1" title="Phone number of user">
-                            Phone
+                        <span class="admin-headers">Phone</span>
                         </div>
                         <div class="col-sm-1" title="Group user is assigned to">
-                            User Group
+                        <span class="admin-headers">User Group</span>
                         </div>
                         <div class="col-sm-1" title="The default case view for user">
-                            Default case view
+                        <span class="admin-headers">Default case view</span>
                         </div>
                         <div class="col-sm-1" title="Send email notifications even when action is performed by user">
-                            Notify self
+                        <span class="admin-headers">Notify self</span>
                         </div>
-                        <div class="col-sm-1" title="Default case group that new cases are assigned to">
-                            Default case group
+                        <div class="col-sm-2" title="Default case group that new cases are assigned to">
+                        <span class="admin-headers">Default case group</span>
                         </div>
                         <div class="col-sm-1" title="Regularity of summary notification emails">
-                            Notify rate
-                        </div>
-                        <div class="col-sm-1">
+                        <span class="admin-headers">Notify rate</span>
                         </div>
                     </div>
                 </div>
@@ -359,31 +357,31 @@ foreach($usergroups['results'] as $usergroup) {
                 <div class="p-2 w-100 dataheader smaller">
                     <div class="row mb-1">
                          <div class="col-sm-2" title="Name of group">
-                            Group name
+                        <span class="admin-headers">Group name</span>
                          </div>
                          <div class="col-sm-3" title="Description of group">
-                            Group description
+                            <span class="admin-headers">Group description</span>
                          </div>
                          <div class="col-sm-1" title="Group members have administrator permissions">
-                            Admin
+                            <span class="admin-headers">Admin</span>
                          </div>
                          <div class="col-sm-1" title="Group members can open cases">
-                            Open
+                            <span class="admin-headers">Open</span>
                          </div>
                          <div class="col-sm-1" title="Group members can modify cases">
-                            Modify
+                            <span class="admin-headers">Modify</span>
                          </div>
                          <div class="col-sm-1" title="Group members can comment on cases">
-                            Comment
+                            <span class="admin-headers">Comment</span>
                          </div>
                          <div class="col-sm-1" title="Group members can upload files (attachments)">
-                            Files
+                            <span class="admin-headers">Files</span>
                          </div>
                          <div class="col-sm-1" title="Group members can restrict access to cases">
-                            Restrict
+                            <span class="admin-headers">Restrict</span>
                          </div>
                          <div class="col-sm-1" title="Group is active">
-                            Active
+                            <span class="admin-headers">Active</span>
                          </div>
                     </div>
                 </div>

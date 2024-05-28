@@ -39,11 +39,11 @@ $customtexttypes=array(
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-2">
-                        <div class="col-sm-2">
-                            Action
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Action</span>
                         </div>
-                        <div class="col-sm-9">
-                            Text
+                        <div class="col-sm-9 text-center">
+                            <span class="admin-headers">Text</span>
                         </div>
                     </div>
                 </div>
@@ -89,11 +89,11 @@ foreach($customtexts['results'] as $customtext) {
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-2">
-                            Action
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Action</span>
                         </div>
-                        <div class="col-sm-9">
-                            Text
+                        <div class="col-sm-9 text-center">
+                            <span class="admin-headers">Text</span>
                         </div>
                         <div class="col-sm text-center">
                             &nbsp;

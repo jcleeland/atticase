@@ -54,29 +54,29 @@ $newuserselect=$oct->buildSelectList($users['results'], $selectattributes, "user
                 <form class="w-100">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-2">
-                            Name
+                        <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
-                        <div class="col-sm-4">
-                            Description
-                        </div>
-                        <div class="col-sm">
-                            Owner
-                        </div>                   
-                        <div class="col-sm">
-                            Position
-                        </div>
-                        <div class="col-sm">
-                            Parent
-                        </div>
-                        <div class="col-sm">
-                            Show
-                        </div>
-                        <div class="col-sm">
-                            Notifications
+                        <div class="col-sm-4 text-center">
+                            <span class="admin-headers">Description</span>
                         </div>
                         <div class="col-sm text-center">
-                            Cases
+                            <span class="admin-headers">Owner</span>
+                        </div>                   
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Position</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Parent</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Visible</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Notifications</span>
+                        </div>
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Cases</span>
                         </div>
                     </div>
                 </div>
@@ -170,23 +170,23 @@ $newuserselect=$oct->buildSelectList($users['results'], $selectattributes, "user
             <div class="row border rounded centered">
                 <div class="p-2 w-100">
                     <div class="row mb-1">
-                        <div class="col-sm-2">
-                            Name
+                    <div class="col-sm-2 text-center">
+                            <span class="admin-headers">Name</span>
                         </div>
-                        <div class="col-sm-4">
-                            Description
+                        <div class="col-sm-4 text-center">
+                            <span class="admin-headers">Description</span>
                         </div>
-                        <div class="col-sm">
-                            Owner
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Owner</span>
                         </div>                   
-                        <div class="col-sm">
-                            Position
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Position</span>
                         </div>
-                        <div class="col-sm">
-                            Parent
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Parent</span>
                         </div>
-                        <div class="col-sm">
-                            Show
+                        <div class="col-sm text-center">
+                            <span class="admin-headers">Visible</span>
                         </div>
                         <div class="col-sm-2">
                             &nbsp;

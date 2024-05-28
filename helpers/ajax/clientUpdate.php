@@ -27,7 +27,7 @@
         $wheres="member = '$identifier'";
         
         $results=$oct->updateTable($tablename, $updates, $wheres, null, 0);
-        $output=array("results"=>"New row inserted with id ".$identifier, "query"=>null, "parameters"=>$inserts, "count"=>1, "total"=>1, "insertid"=>$identifier, "response"=>$results);
+        $output=array("results"=>"New row inserted with id ".$identifier, "query"=>null, "parameters"=>$updates, "count"=>1, "total"=>1, "insertid"=>$identifier, "response"=>$results);
     }
     
 ?>

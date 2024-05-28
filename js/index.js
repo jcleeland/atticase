@@ -1500,10 +1500,15 @@ function pagerNumbers(pagername, start, end, total) {
         displayEnd++;     // people think of the first record as record one. So we "display" the number one higher than we use to search
         if(displayEnd > total) displayEnd=total;
         //console.log('Results found - '+displayEnd);
-        if(total==0) {
+        if(parseInt(total)==0) {
             qty=0;
             start=0;
             end=0;
+        }
+        console.log('Pager: start - '+start+', end - '+end+', total - '+total+', qty - '+qty);
+        if(parseInt(qty) > (parseInt(total)-parseInt(start))) {
+            console.log('Total is greater than qty');
+            qty=parseInt(total)-parseInt(start);
         }
         
         $('#'+pagername+'start').attr("value", start);
@@ -1563,6 +1568,8 @@ function savePagerSettings(pagername, start, end, qty) {
 */
 function pagerNumberSettings(pagername) {
     var status=getStatus();
+    console.log('Pager Number Setting Function');
+    console.log(status);
     if(status.pagers!=undefined) {
         if(status.pagers[pagername]!=undefined) {
             output=status.pagers[pagername];
@@ -2037,3 +2044,26 @@ function isHTML(str) {
     var doc = new DOMParser().parseFromString(str, "text/html");
     return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
   }
+
+/**
+ * Use the sendEmail.php script to send an email
+ * @param {string} to - Email address
+ * @param {string} toname - Name of recipient
+ * @param {string} from - Email address
+ * @param {string} fromname - Name of sender
+ * @param {array} cc 
+ * @param {array} bcc 
+ * @param {boolean} isHtml 
+ * @param {string} subject 
+ * @param {string} message 
+ * @param {array} attachments 
+ * @returns 
+ */
+function sendEmail(to, toname, from, fromname, cc, bcc, isHtml, subject, message, attachments) {
+    return $.ajax({
+        url: 'helpers/sendEmail.php',
+        method: 'POST',
+        data: {to: to, toname: toname, from: from, fromname: fromname, cc: cc, bcc: bcc, isHtml: isHtml, subject: subject, message: message, attachments: attachments},
+        dataType: 'json',
+    })
+}

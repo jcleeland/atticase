@@ -522,6 +522,10 @@ a.fa-userlink::after {
     color: white; 
 }
 
+.btn-textleft {
+    text-align: left !important;
+}
+
 .oct-warning {
     background-color: #ff6b77;
     color: white;
@@ -1042,7 +1046,32 @@ a.fa-userlink::after {
 
   .rounded {
     border-radius: 0.25rem;
-    margin: 0.1rem;
-    padding: 0.1rem;
   }
 
+  .h-scroll {
+    overflow-x: auto;
+  }
+  
+  .admin-headers {
+    cursor: pointer;
+    background-color: #f8f9fa !important;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-radius: 0.25rem !important;
+    color: #6c757d !important;
+    display: inline-block;
+    font-size: 95%;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.25rem !important;
+    text-align: center;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    user-select: none;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    
+  }
+
+  .helpcursor {
+    cursor: help;
+  }
