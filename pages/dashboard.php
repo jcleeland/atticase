@@ -22,10 +22,11 @@
  // - one column 2 items  (1c2i)
  // - two columns 3 items (2c3i) (top row two columns wide)
  // - two columns 4 items (2c4i)
+ $item[]="noticeboard.php";
  $item[]="statistics.php";
- $item[]="unallocatedcases.php";
  $item[]="mytodo.php";
  $item[]="myrecent.php";
+ $item[]="unallocatedcases.php";
  
  $layout="2c4i";
  
@@ -55,154 +56,143 @@
          }
      }
  }
+
+ echo "<div class='container-fluid'>";
  
-switch($layout) {
+ switch($layout) {
      case "1c4i":
- ?>            
-    <div class="col-sm-12 mb-1">
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[0]); ?>
-            </div>
-
-        </div>
-
-        <div class="row justify-content-sm-center">
-        
-            <div class="col-lg border rounded filter m-1">
-                <?php include("pages/dashboard/".$item[1]); ?>
-
-            </div>
-
-        </div>
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[2]); ?>
-            </div>
-
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 mb-1 d-flex flex-column h-25">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
          </div>
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[3]); ?>
-            </div>
-
-        </div>
-
-    </div>
-<?php       
-        break;
+         <div class="col-12 mb-1 d-flex flex-column h-25">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+         </div>
+         <div class="col-12 mb-1 d-flex flex-column h-25">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[2]); ?>
+             </div>
+         </div>
+         <div class="col-12 mb-1 d-flex flex-column h-25">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[3]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
      case "1c2i":
- ?>            
-    <div class="col-sm-12 mb-1">
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[0]); ?>
-            </div>
-
-        </div>
-
-        <div class="row justify-content-sm-center">
-        
-            <div class="col-lg border rounded filter m-1">
-                <?php include("pages/dashboard/".$item[1]); ?>
-
-            </div>
-
-        </div>
-<?php     
-        break;
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
+         </div>
+         <div class="col-12 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
      case "2c3i":
-?>            
-    <div class="col-sm-12 mb-1">
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[0]); ?>
-            </div>
-
-        </div>
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[1]); ?>
-            </div>
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[2]); ?>
-            </div>
-
-        </div>
-
-    </div>
-<?php 
-        break;
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 col-lg-12 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[2]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
      case "2c3ib":
-?>            
-    <div class="col-sm-12 mb-1">
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[0]); ?>
-            </div>
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[1]); ?>
-            </div>
-
-        </div>
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[2]); ?>
-            </div>
-
-        </div>
-    </div>
-<?php 
-        break;        
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-100">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+         </div>
+         <div class="col-12 mb-1 d-flex flex-column h-50">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[2]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
+     case "2c1f2h":
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-100">
+             <div class="border rounded m-1 flex-fill">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 d-flex flex-column mb-1 h-100">
+             <div class="border rounded m-1 flex-fill h-halfleft">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+             <div class="border rounded m-1 flex-fill h-halfleft">
+                 <?php include("pages/dashboard/".$item[2]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
      case "2c4i":
      default:
-?>            
-    <div class="col-sm-12 mb-1">
+ ?>
+     <div class="row h-fullleft">
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-halfleft">
+             <div class="border rounded m-1 flex-fill h-fullleft">
+                 <?php include("pages/dashboard/".$item[0]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-halfleft">
+             <div class="border rounded m-1 flex-fill h-fullleft">
+                 <?php include("pages/dashboard/".$item[1]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-halfleft">
+             <div class="border rounded m-1 flex-fill h-fullleft">
+                 <?php include("pages/dashboard/".$item[2]); ?>
+             </div>
+         </div>
+         <div class="col-12 col-lg-6 mb-1 d-flex flex-column h-halfleft">
+             <div class="border rounded m-1 flex-fill h-fullleft">
+                 <?php include("pages/dashboard/".$item[3]); ?>
+             </div>
+         </div>
+     </div>
+ <?php
+         break;
+ }
+ 
+ echo "</div>";
+ ?> 
 
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[0]); ?>
-            </div>
-
-            <div class="col-lg border rounded filter m-1">
-                <?php include("pages/dashboard/".$item[1]); ?>
-
-            </div>
-
-        </div>
-
-        <div class="row justify-content-sm-center">
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[2]); ?>
-            </div>
-
-            <div class="col-lg border rounded m-1">
-                <?php include("pages/dashboard/".$item[3]); ?>
-            </div>
-
-        </div>
-
-    </div>
-<?php     
-        break;
- }              
-?>
+ 

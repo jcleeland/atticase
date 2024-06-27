@@ -46,7 +46,7 @@ $(document).ready(function(){
 });
 
 </script>
-<div class='pager rounded-bottom'>&nbsp;
+<div class='pager rounded-bottom clearfix'>&nbsp;
     <div class="float-right mr-1 ml-0 pl-1 pr-1 smallish pointer pagerbutton" id="<?php echo $pagername ?>last" title='last page' value=''><img src='images/end.svg' /></div>
     <div class="float-right mr-0 ml-0 pl-1 pr-1 smallish pointer pagerbutton" id="<?php echo $pagername ?>end" title='next page' value='49'><img src='images/chevron-right.svg' /></div>
     <div class="float-right m-0 p-0 pl-1 pr-1 smallish pagerposition" id="<?php echo $pagername ?>position"></div>

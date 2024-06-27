@@ -382,6 +382,13 @@ a.fa-userlink::after {
     font-size: 75%;
     font-weight: 400;
 }
+.smallest {
+    font-size: 60%;
+    font-weight: 400;
+}
+.italic {
+    font-style: italic !important;
+}
 .form-transparent {
     background-color: transparent;
 }
@@ -924,7 +931,7 @@ a.fa-userlink::after {
     border-radius: 5px;
     position: fixed;
     border-radius: 6px;
-    top: 20px;
+    top: 80px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -940,6 +947,7 @@ a.fa-userlink::after {
     font-weight: bold;
     padding: 5px 0;
     border-bottom: 1px solid #ffffff66; /* Semi-transparent white */
+    border-radius: 6px;
     position: absolute;
     top: 0;
     left: 0;
@@ -1075,3 +1083,100 @@ a.fa-userlink::after {
   .helpcursor {
     cursor: help;
   }
+
+  .datepicker_extras {
+    min-width: 10em !important; 
+    min-height: 2em !important; 
+    background-color: white !important; 
+    border:1px solid #ced4da !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+  }
+
+  .noticeboarditem {
+    background-color: #ffffff;
+    border: 1px solid #6ab446;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .noticeboardheader {
+    padding: 0;
+    margin: 0;
+    /* background-color: #6ab446; */
+  }
+
+  .noticeboardfooter {
+    padding: 0.1rem 1rem;
+    margin: 0;
+    background-color:#6ab446;
+    color: white;
+  }
+
+  .noticeboardfooter a {
+    color: white;
+  }
+
+  .noticeboardtitle {
+    padding: 0.25rem 1rem;
+    background-color: #6ab446;
+    color: white;
+    font-size: 1.25em;
+    font-weight: 650;
+  }
+
+  .noticeboardpostedby {
+    padding: 0 .5rem;
+    background-color: rgb(3, 70, 12);
+    color: white;
+    font-size: 0.75em;
+    font-weight: normal;
+    margin-top: 0.1rem;
+  }
+
+  .noticeboardmessage {
+    font-size: 0.9em;
+    margin-top: 0.5rem;
+    color: #333;
+    max-height: calc(33vh);
+  }
+
+  .full-height-container {
+    height: calc(75vh); /* Adjust as needed for the header height */
+    display: flex;
+  }
+
+  .half-height-container {
+    height: 42%;
+    display: flex;
+  }
+
+  .flex-grow {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
+
+  .col-lg {
+    height: 99%;
+  }
+
+  .h-halfleft {
+    height: 49% !important;
+  }
+
+  .h-fullleft {
+    height: 88% !important;
+  }
+
+  .h-fullleftplus {
+    height: 95% !important;
+  }
+
+  .breadcrumb {
+    padding: 0.25rem 1rem;
+    margin-bottom: 0.25rem;
+  }
+

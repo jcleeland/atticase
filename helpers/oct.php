@@ -1905,6 +1905,31 @@ class oct {
         echo "</pre>";    
     }
 
+    /**
+     * Cleans up the $_GET and $_POST arrays
+     */
+    function cleanget($key) {
+        if(isset($_GET[$key])) {
+            $output=htmlspecialchars($_GET[$key]);
+        } else {
+            echo "Couldn't find $key in GET<br />";
+            print_r($_GET);
+            return false;
+        }
+        return $output;
+    }
+
+    function cleanpost($key) {
+        if(isset($_POST[$key])) {
+            $output=htmlspecialchars($_POST[$key]);
+        } else {
+            echo "Couldn't find $key in POST<br />";
+            print_r($_POST);
+            return false;
+        }
+        return $output;
+    }
+
 }
 
 

@@ -1,5 +1,4 @@
 <?php
-    //print_r($_POST);
     $casetypeName=isset($_POST['casetypeName']) ? $_POST['casetypeName'] : null;
     $casetypeDescrip=isset($_POST['casetypeDescrip']) ? $_POST['casetypeDescrip'] : null;
     $listPosition=isset($_POST['listPosition']) ? $_POST['listPosition'] : null;

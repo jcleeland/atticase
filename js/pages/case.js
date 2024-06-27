@@ -17,6 +17,8 @@
 $(function() {
     loadCase();
 
+    //toggleDatepickers();
+
     const inputField = $('.lookahead-input-field');
     const inputDropdown = $('.lookahead-input-dropdown');
     const options = $('#options li').map(function() { return $(this).text(); }).get();

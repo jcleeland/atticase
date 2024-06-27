@@ -177,6 +177,9 @@
     <input type='hidden' name='user_real_name' id='user_real_name' value='<?php echo $user_real_name ?>' />
     <input type='hidden' name='attachments_dir' id='attachments_dir' value='/var/attachments/' />
     <input type='hidden' name='set_domain' id='set_domain' value='<?=$setDomain ?>' />
+
+
+
         <?php
             if(!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']){
                 include("pages/login.php");
@@ -190,11 +193,16 @@
             <?php
                 include("pages/header.php");
             ?>
-            
+            <!-- starting loaded page: <?= $page ?> -->
             <?php
+            //check that the page exists
+            if(file_exists("pages/".$page.".php")) {
                 include("pages/".$page.".php");
+            } else {
+                //show a nice "can't find this" page
+                include("pages/404.php");
+            }
             ?>
-            
             <?php    
             }
             ?>

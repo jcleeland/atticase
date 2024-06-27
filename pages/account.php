@@ -203,8 +203,9 @@ $selecteddashboarditems=explode(",", $accountdata['dateformat_extended']);
                                 <option value=''>System default</option>
                                 <option value='1c2i' <?php if($accountdata['dateformat'] == '1c2i') echo "selected" ?>>1 Column, 2 Items</option>
                                 <option value='1c4i' <?php if($accountdata['dateformat'] == '1c4i') echo "selected" ?>>1 Column, 4 Items</option>
-                                <option value='2c3i' <?php if($accountdata['dateformat'] == '2c3i') echo "selected" ?>>1 Columns, 3 Items (top row double width)</option>
-                                <option value='2c3ib' <?php if($accountdata['dateformat'] == '2c3ib') echo "selected" ?>>1 Columns, 3 Items (bottom row double width)</option>
+                                <option value='2c3i' <?php if($accountdata['dateformat'] == '2c3i') echo "selected" ?>>2 Columns, 3 Items (top row double width)</option>
+                                <option value='2c3ib' <?php if($accountdata['dateformat'] == '2c3ib') echo "selected" ?>>2 Columns, 3 Items (bottom row double width)</option>
+                                <option value='2c1f2h' <?php if($accountdata['dateformat'] == '2c1f2h') echo "selected" ?>>2 Columns, 3 Items (1st Full height, 2nd 2 at half height)</option>
                                 <option value='2c4i' <?php if($accountdata['dateformat'] == '2c4i') echo "selected" ?>>2 Columns, 4 Items</option>
                             </select>
                         </div>

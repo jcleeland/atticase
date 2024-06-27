@@ -30,9 +30,11 @@ $options=array(
     "customtexts"=>"Custom Texts",
     "emailtemplates"=>"Email Templates",
     "departments"=>"Departments",
+    "noticeboard"=>"Notice Board",
     "notifications"=>"Notifications",
     "poi"=>"People of Interest",
     "resolutions"=>"Resolutions",
+    "scheduler"=>"Scheduler",
     "systemsettings"=>"System Settings",
     "users"=>"Users and Groups"
 );
@@ -67,7 +69,12 @@ if(isset($configsettings['general']['unit_list_use']['value']) && $configsetting
         <div class="col-xs-12 col-sm-10">
             <?php
                 if(isset($_GET['option'])) {
-                    include("pages/admin/".$_GET['option'].".php");
+                    //Check if the option page exists
+                    if(!file_exists("pages/admin/".$_GET['option'].".php")) {
+                        echo "<div class='alert alert-warning'>The requested option page is not currently available</div>";
+                    } else {
+                        include("pages/admin/".$_GET['option'].".php");
+                    }
                 }
                 
             ?>

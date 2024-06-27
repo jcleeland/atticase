@@ -16,29 +16,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 ?>
-<script src="js/pages/dashboard/homeStats.js"></script>
-<h4 class="header">Statistics</h4>
-<div class="pager rounded-bottom">&nbsp;
-    <select id='statsChooser' name='statsChooser' class='form-control-xs float-right p-0 w-25x mr-1' style='font-size: 8pt !important; height: 20px'>
-        <optgroup label='My stats'>
-            <option value='CaseStats'>My Case Load</option>
-            <option value='CaseDepartments'>My Case departments</option>
-            <option value='CaseTypes'>My Case types</option>
-            <option value='CaseDates'>My Case statuses</option>
-        </optgroup>
-        <optgroup label='Site stats'>
-            <option value='AllCaseStats'>Case Load</option>
-            <option value='AllCaseDepartments'>Case departments</option>
-            <option value='AllCaseTypes'>Case types</option>
-            <option value='AllCaseDates'>Case statuses</option>
-        </optgroup>
-    </select>
-</div>
-<div class="row border rounded bg-light justify-content-sm-center m-1 w-100">
-    <div class='border rounded m-2 w-100' >
-        <div id='dashboardStatistics' class='rounded text-center' style='min-height: 300px'><img src='images/logo_flip.gif' /></div>
+<div class="row overflow-hidden flex-grow h-100">
+<div class="col-12">
+    <script src="js/pages/dashboard/statistics.js"></script>
+    <h4 class="header">Statistics</h4>
+    <div class="pager rounded-bottom">&nbsp;
+        <select id='statsChooser' name='statsChooser' class='form-control-xs float-right p-0 w-25x mr-1' style='font-size: 8pt !important; height: 20px'>
+            <optgroup label='My stats'>
+                <option value='CaseStats'>My Case Load</option>
+                <option value='CaseDepartments'>My Case departments</option>
+                <option value='CaseTypes'>My Case types</option>
+                <option value='CaseDates'>My Case statuses</option>
+            </optgroup>
+            <optgroup label='Site stats'>
+                <option value='AllCaseStats'>Case Load</option>
+                <option value='AllCaseDepartments'>Case departments</option>
+                <option value='AllCaseTypes'>Case types</option>
+                <option value='AllCaseDates'>Case statuses</option>
+            </optgroup>
+        </select>
+    </div>
+    <div class="row overflow-hidden border rounded bg-light justify-content-sm-center m-0 w-100 h-fullleft">
+        <div class='col-12 w-100 h-fullleftplus overflow-hidden m-0 p-0' id="statsParent">
+            <div id='dashboardStatistics' class='overflow-hidden rounded text-center h-100'><img src='images/logo_flip.gif' /></div>
+        </div>
+    </div>
+    <script>
+    $(document).ready(function() {
+        // Calculate the height of #statsParent
+        var height = $('#statsParent').height(); // Get the height of #statsParent
+        //console.log('Height is ' + height);
+
+        // Set the height and min-height of #dashboardStatistics
+        $('#dashboardStatistics').css({
+            'height': height + 'px',
+            'min-height': height + 'px'
+        });
+    });
+    </script>
+    <?php
+    
+    ?>
     </div>
 </div>
-<?php
-  
-?>

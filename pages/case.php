@@ -193,7 +193,7 @@
                                 <?php echo $caseTypeSelect ?>
                             </div>
                         </div>
-                        <div class="row mb-1">
+                        <div class="row mb-1"><!--Intentionally left blank-->
                             <div class="subSection-label col-xs-4">&nbsp;
                             </div>
                             <div class="subSection-field col-xs-8">&nbsp;
@@ -230,7 +230,7 @@
 
                                                 case "d":
                                                     ?>
-                                                    <input type="text" size="10" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
+                                                    <input type="text" style="min-width: 10em; min-height: 2em; background-color: white; border:1px solid #8f8f9d" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase datepicker' />
                                                     <?php
                                                     break;
                                                 case "c":
@@ -238,6 +238,19 @@
                                                     <input type="checkbox" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
                                                     <?php
                                                     break;
+                                                case "l":
+                                                    ?>
+                                                    <select id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase'>
+                                                        <?php
+                                                            $listitems=$oct->fetchMany("SELECT * FROM ".$oct->dbprefix."custom_field_lists WHERE custom_field_definition_id=? ORDER BY custom_field_order", array($field['custom_field_definition_id']), 0, 10000);
+                                                            echo "<option value=''></option>";
+                                                            foreach($listitems['output'] as $listitem) {
+                                                                echo "<option>".$listitem['custom_field_value']."</option>";
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                    <?php
+                                                    break;                                                    
                                                 default:
                                                     ?>
                                                     <input type="text" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase w-100' />
@@ -368,12 +381,25 @@
 
                                                 case "d":
                                                     ?>
-                                                    <input type="text" size="10" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
+                                                    <input type="text" style="min-width: 10em; min-height: 2em; background-color: white; border:1px solid #8f8f9d" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='datepicker updateCase' />
                                                     <?php
                                                     break;
                                                 case "c":
                                                     ?>
                                                     <input type="checkbox" id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase' />
+                                                    <?php
+                                                    break;
+                                                case "l":
+                                                    ?>
+                                                    <select id="edit_custom_field_<?php echo $field['custom_field_definition_id'] ?>" class='updateCase'>
+                                                        <?php
+                                                            $listitems=$oct->fetchMany("SELECT * FROM ".$oct->dbprefix."custom_field_lists WHERE custom_field_definition_id=? ORDER BY custom_field_order", array($field['custom_field_definition_id']), 0, 10000);
+                                                            echo "<option value=''></option>";
+                                                            foreach($listitems['output'] as $listitem) {
+                                                                echo "<option>".$listitem['custom_field_value']."</option>";
+                                                            }
+                                                        ?>
+                                                    </select>
                                                     <?php
                                                     break;
                                                 default:
@@ -481,6 +507,15 @@
                             </div>
                         </div>
 
+                        <div class="row"><!-- intentionally left blank -->
+                            <div class="subSection-label col-xs-4">
+                                &nbsp;
+                            </div>
+                            <div class="subSection-field col-xs-8 case_type" style="padding-bottom: 30px" >
+                                &nbsp;
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="subSection-label col-xs-4">
                                 Line Manager
@@ -565,7 +600,7 @@
                             <div class="subSection-label col-xs-4">
                                 Unit
                             </div>
-                            <div class="subSection-field col-xs-8 unit" id="unit_cover">
+                            <div class="subSection-field col-xs-8 unit" style="line-height: 1.2em; max-height: 1.2em; padding-bottom: 30px; overflow-x: auto; white-space: nowrap" id="unit_cover">
                                 
                             </div>
                         </div>

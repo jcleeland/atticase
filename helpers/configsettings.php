@@ -333,6 +333,18 @@ $configsettings=array(
                 '4'             => 'Advanced (Data, commands, connection status and full debug)',
             ),
         ),
+        'email_testmode'    => array(
+            'title'         => 'Email Test Mode',
+            'description'   => 'Send all emails to a test email address (default=off)',
+            'type'          => 'boolean',
+            'default'       => 'false',
+        ),
+        'email_test_address'    => array(
+            'title'         => 'Test Email',
+            'description'   => 'The email address to send all emails to in test mode',
+            'type'          => 'string',
+            'default'       => ''
+        ),
     ),
     'emailgeneral'  =>  array(        
         'mailsizemultiplier'=>  array(

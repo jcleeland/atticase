@@ -525,6 +525,46 @@ function customFieldDelete(customFieldDefinitionId) {
     })      
 }
 
+function customFieldListItemCreate(customFieldDefinitionId, customFieldValue, customFieldOrder) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldItemCreate', customFieldDefinitionId: customFieldDefinitionId, customFieldValue: customFieldValue, customFieldOrder: customFieldOrder},
+        dataType: 'json'
+    })    
+}
+
+/**
+ * Updates a single value in the custom_field_lists table - requires the list_id, the name of the field to update, and the new value
+ * @param {} customFieldListId 
+ * @param {*} customFieldName 
+ * @param {*} customFieldValue 
+ * @returns 
+ */
+function customFieldItemUpdate(customFieldListId, customFieldName, customFieldValue) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldItemUpdate', customFieldListId: customFieldListId, customFieldName: customFieldName, customFieldValue: customFieldValue},
+        dataType: 'json'
+    })    
+}
+
+/**
+ * Deletes an individual custom field item if customFieldListId is provided or all items if customFieldDefinitionId is provided
+ * @param {} customFieldListId 
+ * @param {*} customFieldDefinitionId 
+ * @returns true if successful, false if not
+ */
+function customFieldItemDelete(customFieldListId, customFieldDefinitionId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'customFieldItemDelete', customFieldListId: customFieldListId, customFieldDefinitionId: customFieldDefinitionId},
+        dataType: 'json'
+    })      
+}
+
 function customTextUpdate(customTextId, fieldName, value) {
     return $.ajax({
         url: 'ajax.php',
@@ -781,6 +821,35 @@ function clientUpdate(identifier, surname, pref_name, started, primary_key, data
         dataType: 'json'
     })
 }
+
+/** Noticeboard functions **/
+function noticeboardCreate(title, message, publish_date, expiry_date, published, created_by, allow_comments) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'noticeboardCreate', title: title, message: message, publish_date: publish_date, expiry_date: expiry_date, published: published, created_by: created_by, allow_comments: allow_comments},
+        dataType: 'json'
+    })    
+}
+
+function noticeboardDelete(id) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'noticeboardDelete', id: id},
+        dataType: 'json'
+    })      
+}
+
+function noticeboardUpdate(id, title, message, publish_date, expiry_date, published, created_by, allow_comments) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'noticeboardUpdate', id: id, title: title, message: message, publish_date: publish_date, expiry_date: expiry_date, published: published, created_by: created_by, allow_comments: allow_comments},
+        dataType: 'json'
+    })    
+}
+
 
 
 /** People of Interest Functions **/
@@ -1053,9 +1122,16 @@ function toggleCaseCards() {
 }
 
 function toggleDatepickers() {
-    //console.log('toggling');
+    //console.log('toggling datepickers');
     $('.datepicker').each(function() {
+        
         //console.log(this.id);
+        var computedStyles = window.getComputedStyle(this);
+        var currentStyles={
+            'border': computedStyles.border+ ' !important',
+            'background-color': computedStyles.backgroundColor+' !important',
+        }
+
         //console.log($(this)[0].classList);
         var classes=$(this)[0].classList;
         var classString=Array.from(classes).join(" ");
@@ -1064,8 +1140,12 @@ function toggleDatepickers() {
             $(this).css("width", (($(this).val().length+1)*(fontSize/2))+'px');
             var height=parseInt($(this).css("height"));
             $(this).css("height", (height-2)+'px');
+
+            //Determine the date format based on the presence of the 'datepicker-small' class
+            var dateFormat = $(this).hasClass('datepicker-small') ? 'd M' : 'dd/mm/yy';
+            //console.log('Date format: '+dateFormat);
             $(this).datepicker({
-                dateFormat: "dd/mm/yy", 
+                dateFormat: dateFormat, 
                 changeMonth: true, 
                 changeYear: true, 
                 onSelect: function(dateText, inst) {
@@ -1099,6 +1179,8 @@ function toggleDatepickers() {
 
                 },
             });
+            $(this).css(currentStyles);
+            
         } else {
             //console.log('Doesnt have date picker class')
         }
@@ -1505,7 +1587,7 @@ function pagerNumbers(pagername, start, end, total) {
             start=0;
             end=0;
         }
-        console.log('Pager: start - '+start+', end - '+end+', total - '+total+', qty - '+qty);
+        //console.log('Pager: start - '+start+', end - '+end+', total - '+total+', qty - '+qty);
         if(parseInt(qty) > (parseInt(total)-parseInt(start))) {
             console.log('Total is greater than qty');
             qty=parseInt(total)-parseInt(start);
@@ -1568,8 +1650,8 @@ function savePagerSettings(pagername, start, end, qty) {
 */
 function pagerNumberSettings(pagername) {
     var status=getStatus();
-    console.log('Pager Number Setting Function');
-    console.log(status);
+    //console.log('Pager Number Setting Function');
+    //console.log(status);
     if(status.pagers!=undefined) {
         if(status.pagers[pagername]!=undefined) {
             output=status.pagers[pagername];
@@ -1630,11 +1712,11 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     if(casedata.date_due < $('#today_start').val()) {dateclass='date-overdue';}
     if(casedata.date_due >= $('#today_start').val() && casedata.date_due <= $('#today_end').val()) {dateclass='date-due';}
     
-    var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
+    //var lasteditedby=(casedata.last_edited_real_name) ? casedata.last_edited_real_name : "Unknown";
     var assignedto=(casedata.assigned_real_name) ? casedata.assigned_real_name : 'Unassigned';
     //console.log(parentDiv+' for case '+casedata.task_id+': Date Due: '+casedata.date_due+' - today_start: '+$('#today_start').val());
     
-    $('#'+parentDiv).append('<div class="row m-1" id="caseCardParent_'+uniqueId+'" onDblClick="gotoCase(\''+caseId+'\')"></div>');
+    $('#'+parentDiv).append('<div class="row m-1 clearfix" id="caseCardParent_'+uniqueId+'" onDblClick="gotoCase(\''+caseId+'\')"></div>');
         
     //The "leftCaseCol_" div contains the Case Number
     $('#caseCardParent_'+uniqueId).append('<div class="float-left p-0 col m-0" style="min-width: 56px; max-width: 65px;" id="leftCaseCol_'+uniqueId+'"></div>');
@@ -1667,7 +1749,9 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
     
         //Right Col
         //Client/Member name field
+        //Client name visible in larger screens
         $('#caseheader_'+uniqueId).append("<div class='col-2 d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" overflow-hidden' title='"+client+"'>"+client+"<a class='fa-userlink' href=''></a></div>");
+        //Client name visible only as initials in smaller screens
         $('#caseheader_'+uniqueId).append("<div class='col-2 d-xs-block d-lg-none d-md-none d-sm-block d-xs-block border rounded pl-1 pr-1 mr-1 client-link userlink-"+casedata.member_status+" overflow-hidden' title='"+client+"'>"+getInitials(client)+"<a class='fa-userlink' href=''></a></div>");
         
         //Department field
@@ -1681,8 +1765,8 @@ function insertCaseCard(parentDiv, uniqueId, casedata) {
         $('#caseheader_'+uniqueId).append("<div class='col-2 d-xs-block d-lg-none d-md-none d-none d-sm-block d-xs-block officer border rounded pl-1 pr-1 mr-1 overflow-hidden' id='officer_"+casedata.assigned_to+"' title='"+assignedto+"'>"+getInitials(assignedto)+"</div>");
                         
         //Date due field
-        $('#caseheader_'+uniqueId).append("<div class='col text-center mr-2 border rounded pl-1 pr-1 calendar-div pointer flex-nowrap "+dateclass+"'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
-        //$('#caseheader_'+uniqueId).append("<div class='d-sm-block d-xs-block d-md-block officer float-right m-0 mb-1 mr-1 border rounded pl-1 pr-1' id='miniofficer_"+casedata.assigned_to+"'>"+getInitials(assignedto)+"</div>");
+        $('#caseheader_'+uniqueId).append("<div class='col d-xl-block d-lg-block d-md-block d-none d-sm-none d-xs-none text-center mr-2 border rounded pl-1 pr-1 calendar-div pointer flex-nowrap "+dateclass+" overflow-hidden'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker' value='"+thisDateDue+"' /></div>");
+        $('#caseheader_'+uniqueId).append("<div class='col d-sm-none d-xs-none d-xl-none d-lg-none d-md-none text-center mr-2 border rounded pl-1 pr-1 calendar-div pointer flex-nowrap "+dateclass+" overflow-hidden'><input type='text' id='caselist_date_due_"+casedata.task_id+"' class='datepicker datepicker-small' value='"+thisDateDue+"' /></div>");
         
         
         //$('#caseheader_'+uniqueId).append("<div style='clear: both'></div>");
@@ -1947,8 +2031,11 @@ function drawPieChart(name, values, id, xtitle, ytitle, method, chartheight, leg
 
 function googleMultiBarChart(id, title, data) {
     var datum=google.visualization.arrayToDataTable(data);
+    //console.log('Drawing pie chart to this width: '+$('#'+id).css("width"));
+    //console.log('Drawing pie chart to this height (based on '+id+'): '+$('#'+id).height());
     var options={
-        width: $('#'+id).css("width"),
+        width: $('#'+id).width(),
+        height: $('#'+id).height(),
         backgroundColor: 'white',
         title: title,
         bars: 'veritical',
@@ -1967,7 +2054,8 @@ function googleMultiBarChart(id, title, data) {
 function googleMultiLineChart(id, title, data) {
     var datum=google.visualization.arrayToDataTable(data);
     var options={
-        width: $('#'+id).css("width"),
+        width: $('#'+id).width(),
+        height: $('#'+id).height(),
         backgroundColor: 'white',
         title: title,
         //vAxis: {title: 'Cases', viewWindow: {min:0}},
@@ -1976,7 +2064,7 @@ function googleMultiLineChart(id, title, data) {
         legend: {position: 'top'},
         curveType: 'function',
         pointSize: 4,
-        'chartArea': {'width': '85%', 'top': 60, 'bottom': 50}
+        'chartArea': {'width': '90%', 'top': 60, 'bottom': 50}
     }
     var chart=new google.visualization.LineChart(document.getElementById(id));
     chart.draw(datum, options);
@@ -1985,7 +2073,8 @@ function googleMultiLineChart(id, title, data) {
 function googlePieChart(id, title, data) {
     var datum=google.visualization.arrayToDataTable(data);
     var options={
-        width: $('#'+id).css("width"),
+        width: $('#'+id).width(),
+        height: $('#'+id).height(),
         backgroundColor: 'white',
         title: title,
         //vAxis: {title: 'Cases', viewWindow: {min:0}},

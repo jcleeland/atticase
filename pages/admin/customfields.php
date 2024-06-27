@@ -34,6 +34,10 @@ $customfieldtypes=array(
     array(
         "value"=>"d",
         "text"=>"Date",
+    ),
+    array(
+        "value"=>"l",
+        "text"=>"List",
     )
 );
 
@@ -76,17 +80,47 @@ foreach($customfields['results'] as $customfield) {
     $selectattributes=array(
         "name"=>"custom_field_type[]", 
         "id"=>"customfieldtype$id",
-        "class"=>"form-control smaller w-100 updatecustomfield",
+        "class"=>"form-control smaller w-100 updatecustomfield customfieldtype",
         "placeholder"=>"Custom Field Type",
         "action"=>"custom_field_type",
+        "data-original"=>$customfield['custom_field_type'],
         "typeid"=>$id,
     );
-    $cftypeselect=$oct->buildSelectList($customfieldtypes, $selectattributes, "value", "text", $customfield['custom_field_type']);    
+    $cftypeselect=$oct->buildSelectList($customfieldtypes, $selectattributes, "value", "text", $customfield['custom_field_type']);   
+    
+    //If this is a list field, get the list items
+    if($customfield['custom_field_type']=="l") {
+        $extracss="";
+        $listitems=$oct->fetchMany("SELECT * FROM ".$oct->dbprefix."custom_field_lists WHERE custom_field_definition_id=? ORDER BY custom_field_order", array($id), 0, 10000);
+    } else {
+        $extracss="hidden";
+        $listitems=array("output"=>array());
+    }
 ?>                
                     <div class="row mb-1">
                         <input type="hidden" name="id[]" value="<?php echo $id ?>" />
                         <div class="col-sm-7">
                             <input action="custom_field_name" typeid="<?php echo $id ?>" class="form-control smaller updatecustomfield" placeholder="Field Name" id="customfieldname<?php echo $id ?>" type="text" name="custom_field_name[]" value="<?php echo $customfield['custom_field_name'] ?>" />
+                            <div id="customfieldname<?php echo $id ?>-list" class="smaller <?= $extracss ?>" style="min-height: 2.8rem">
+                                <div class="float-left position-absolute col-sm-1 text-center p-0" style="z-index: 1">
+                                    <span class="btn btn-light btn-sm mt-1" title="Add a new item to this list" onClick="addAnotherOption('customfieldname<?= $id ?>-list', '<?= $id ?>')"><img style="width: 0.5rem" src="images/plus.svg" /></span><br />
+                                    <span class="btn btn-light btn-sm mt-1" title="Remove last item from this list" onClick="removeLastOption('customfieldname<?= $id ?>-list', '<?= $id ?>')"><img style="width: 0.5rem" src="images/minus.svg" /></span>
+                                </div>
+                                    
+                                <?php foreach($listitems['output'] as $listitem) { ?>
+                                
+                                    <div class="row mb-1 mt-1 customfieldlistitem" data-fieldlistid="<?= $listitem['custom_field_list_id'] ?>">
+                                        <div class="col-sm-1"></div>
+                                        <div class="col-sm-9">
+                                            <input action="custom_field_value" typeid="<?= $listitem['custom_field_list_id'] ?>" class="form-control smaller updatecustomfieldlist" placeholder="List Item" id="customfieldvalue<?php echo $id ?>_<?= $listitem['custom_field_list_id'] ?>" type="text" name="custom_field_value[]" value="<?php echo $listitem['custom_field_value'] ?>" />
+                                        </div>
+                                        <div class="col-sm-2 text-center">
+                                            <input action="custom_field_order" typeid="<?= $listitem['custom_field_list_id'] ?>" class="form-control smaller updatecustomfieldlist" placeholder="List Item Order" id="customfieldorder<?php echo $id ?>_<?= $listitem['custom_field_list_id'] ?>" type="text" name="custom_field_order[]" value="<?php echo $listitem['custom_field_order'] ?>" />
+                                        </div>
+                                    </div>
+
+                                <?php } ?>
+                            </div>
                         </div>
                         <div class="col-sm">
                             <?php echo $cftypeselect ?>
@@ -138,13 +172,20 @@ foreach($customfields['results'] as $customfield) {
                        <div class="row mb-1">
                             <div class="col-sm-7">
                                 <input action='custom_field_name' class="form-control smaller" placeholder="Field Name" id="customfieldname" type="text" name="custom_field_name" />
+                                
+                                <div class="smaller hidden text-info m-2 border rounded">
+                                    
+                                    Once you have added this new field with the "List" type you will be able to add new items to the list that displays with it.
+                                
+                                </div>
+                            
                             </div>
                             <div class="col-sm">
                             <?php
                                 $selectattributes=array(
                                     "name"=>"custom_field_type", 
                                     "id"=>"customfieldtype",
-                                    "class"=>"form-control smaller w-100 updatecustomfield",
+                                    "class"=>"form-control smaller w-100 customfieldtype",
                                     "placeholder"=>"Custom Field Type",
                                     "action"=>"custom_field_type"
                                 );

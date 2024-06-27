@@ -16,25 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 ?>
-<script src="js/pages/dashboard/myrecent.js"></script>
-<div class="float-right mt-1 text-muted">
-    <select class="form-control-sm form-transparent-sm text-muted" id="myrecentFocus">
-        <option>Mine</option>
-        <option>All</option>
-    </select>
-    <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />-->
-</div>
+<div class="row overflow-hidden flex-grow h-100 smaller">
+    <div class="col-12 h-100">
+        <script src="js/pages/dashboard/myrecent.js"></script>
+        <div class="float-right mt-1 text-muted clearfix">
+            <select class="form-control-sm form-transparent-sm text-muted" id="myrecentFocus">
+                <option>Mine</option>
+                <option>All</option>
+            </select>
+            <!--<input type=text class="form-control-sm form-transparent-sm text-muted" style='width: 80px;' id="filterRecent" title="Search displayed recent items" />-->
+        </div>
 
-<h4 class="header" class="float-left">Recently changed</h4>
-
-
-<?php 
-    $pagername="myrecent"; 
-    include('pages/helpers/pager.php'); 
-?>
-<div class="overflow-auto" style="max-height: 300px" id="myrecentlist">
-    <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
-<?php
-
-?>
+        <h4 class="p-0 header" class="float-left">Recently changed</h4>
+        <?php 
+            $pagername="myrecent"; 
+            include('pages/helpers/pager.php'); 
+        ?>
+        <div class="overflow-auto flex-grow h-fullleft pb-4" id="myrecentlist">
+            <center><img src='images/logo_spin.gif' width='50px' /><br />Searching...</center>
+        </div>
+    </div>
 </div>

@@ -26,7 +26,8 @@
     
     
 ?>
-
+<div class="row overflow-hidden flex-grow h-100">
+    <div class="col-12 h-100">
         <script src="js/pages/dashboard/filters.js"></script>
         <h4 class="header">Search cases</h4>
         <div class="pager rounded-bottom">
@@ -38,7 +39,7 @@
             </div>
 
         </div>
-        <div class='row'>
+        <div class='row p-1'>
             <div class='form-group m-1 p-1 col-xl'>
                 <div class='form-group m-1'>
                     <input type='text' class='form-control-sm smaller filterQuery' id='casetext' aria-describedby='casetextHelp' placeholder='Filter by text' value='<?php echo $Qcasetext ?>'>
@@ -85,7 +86,7 @@
 
             </div>
         </div>
-        <div class='collapse row' id='filterMore'>
+        <div class='collapse row p-1' id='filterMore'>
             <div class='form-group m-1 p-1 col-xl border rounded'>
                 <div class='form-group m-1'>
                     <div class="smaller">
@@ -128,7 +129,7 @@
                 </div>
             </div>
         </div>        
-        <div class="row">
+        <div class="row p-1">
             <div class='form-group m-1 p-1 col-xl text-center'>
                 <div class='form-group m-1'>        
                     <button type='submit' class='btn btn-main btn-sm w-100 ml-1' id='FilterSearch'>Search</button>
@@ -146,11 +147,9 @@
             </div>
  
         </div>
-        <p>
 
-        <div class="row">
+        <div class="row p-1">
 
         </div>  
-<?php
-  
-?>
+    </div>
+</div>

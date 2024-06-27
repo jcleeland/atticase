@@ -45,6 +45,12 @@ $subject=$_POST['subject'];
 $isHtml=isset($_POST['isHtml']) ? $_POST['isHtml'] : true;
 $debuglevel=isset($configsettings['emailsending']['sendemaildebug']['value']) && $configsettings['emailsending']['sendemaildebug']['value'] ==true &&  isset($configsettings['emailsending']['smtp_debug']['value']) ? $configsettings['emailsending']['smtp_debug']['value'] : 0;
 
+if($configsettings['emailsending']['email_testmode']['value']==true) {
+    $to=$configsettings['emailsending']['email_testaddress']['value'];
+    $bcc=array(); //Overwrite any bcc settings
+    $cc=array(); //Overwrite any cc settings
+}
+
 try {
     //Server settings
     $mail->isSMTP();     

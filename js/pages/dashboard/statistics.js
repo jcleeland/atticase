@@ -1,13 +1,16 @@
 $(function() {
-    loadCaseTypes();
-    $('#statsChooser').val("CaseTypes");
+    $('#statsChooser').val("AllCaseTypes");
+    loadAllCaseTypes();
+    
+    $(window).smartresize(function() {
+        setTimeout(function() { // Introduce a delay
+            var fn = 'load' + $('#statsChooser').val();
+            console.log('Smart resizing for ' + fn);
 
-    $(window).smartresize(function(){
-        var fn='load'+$('#statsChooser').val();
-        
-        var choice=window[fn];
-        
-        if(typeof choice==="function") choice.apply(null);
+            var choice = window[fn];
+
+            if (typeof choice === "function") choice.apply(null);
+        }, 500); // Delay in milliseconds, adjust as needed
     });
 
     $('#statsChooser').change(function() {
@@ -563,8 +566,8 @@ function loadAllCaseStats() {
                                         grapharray.push(b);
                                     })
                                     //var grapharray=Object.entries(graph);
-                                    console.log('Pushing chart now:');
-                                    console.log(grapharray);
+                                    //console.log('Pushing chart now:');
+                                    //console.log(grapharray);
                                     google.charts.setOnLoadCallback(function () {
                                         //drawLineChart(z, y, 'dashboardStatistics', 'Date', 'Cases', null, null, 'none');
                                         googleMultiLineChart('dashboardStatistics', 'Cases', grapharray);
