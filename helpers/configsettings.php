@@ -584,4 +584,111 @@ foreach($prefs as $key=>$val) {
 unset($prefs);
 //$oct->showArray($configsettings);
 $oct->config=$configsettings;
+
+
+
+
+
+
+
+$defaultSystemEmails=array(
+    array(
+        'project_id'=>999,
+        'event_type'=>1000,
+        'name' => 'New user registration',
+        'subject' => 'Congratulations you are now registered for AttiCase',
+        'message' => 'Dear {firstname},<br><br>Thank you for registering with AttiCase.  We are pleased to have you as a member of our community.<br><br>Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>1001,
+        'name' => 'Password reset',
+        'subject' => 'Password reset request',
+        'message' => 'Dear {firstname},<br><br>We have received a request to reset your password.  If you did not request this, please contact us immediately.<br><br>Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>1,
+        'name'=> 'New case created',
+        'subject' => 'New case created',
+        'message' => 'Dear {firstname},<br><br>A new case has been created in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => '',
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>40,
+        'name'=> 'Case updated',
+        'subject' => 'Case updated',
+        'message' => 'Dear {firstname},<br><br>A case has been updated in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>2,
+        'name'=> 'Case closed',
+        'subject' => 'Case closed',
+        'message' => 'Dear {firstname},<br><br>A case has been closed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>13,
+        'name'=> 'Case reopened',
+        'subject' => 'Case reopened',
+        'message' => 'Dear {firstname},<br><br>A case has been reopened in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>14,
+        'name' => 'Case assigned',
+        'subject' => 'Case assigned',
+        'message' => 'Dear {firstname},<br><br>A case has been assigned to you in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>42,
+        'name'=> 'Case unassigned',
+        'subject' => 'Case unassigned',
+        'message' => 'Dear {firstname},<br><br>A case has been unassigned in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>4,
+        'name'=> 'Case note',
+        'subject' => 'Note added to case',
+        'message' => 'Dear {firstname},<br><br>A note has been added to a case in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>7,
+        'name'=> 'Case attachment added',
+        'subject' => 'Attachment added to case',
+        'message' => 'Dear {firstname},<br><br>An attachment has been added to a case in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>43,
+        'name'=> 'Case status change',
+        'subject' => 'Case status change',
+        'message' => 'Dear {firstname},<br><br>The status of a case has been changed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    ),
+    array(
+        'project_id'=>999,
+        'event_type'=>41,
+        'name'=> 'Case review date change',
+        'subject' => 'Case due date change',
+        'message' => 'Dear {firstname},<br><br>The due date of a case has been changed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
+        'attachment' => ''
+    )
+);
+
+
 ?>

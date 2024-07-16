@@ -210,6 +210,11 @@ $selecteddashboarditems=explode(",", $accountdata['dateformat_extended']);
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-4 col-xs-4 m-1"></div>
+                            
+                        <div class="col-7 col-xs-7 m-1 text-center" id="layout-preview"></div>
+                    </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                     <div class="row">
@@ -227,7 +232,7 @@ $selecteddashboarditems=explode(",", $accountdata['dateformat_extended']);
                 <div class="col-xs-12 col-sm-12">
                     <div class="row">
                         <div class='subSection-field w-100 m-1'>
-                            <button class='btn btn-primary float-right m-2' id='save_dashboard'>Save Dashboard</button>
+                            <button class='btn btn-primary float-right m-2' id='save_dashboard'>Save Dashboard Settings</button>
                         </div>
                     </div>            
                 </div>                

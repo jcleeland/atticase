@@ -915,6 +915,12 @@ a.fa-userlink::after {
     overflow: scroll;
 }
 
+.height10lines {
+    max-height: 11em;
+    overflow: scroll;
+
+}
+
 .fakeformborder {
     border: 1px solid #ced4da;
     border-radius: 4px;
@@ -1178,5 +1184,30 @@ a.fa-userlink::after {
   .breadcrumb {
     padding: 0.25rem 1rem;
     margin-bottom: 0.25rem;
+  }
+
+  .modal-dialog-centered {
+    display: block !important;
+  }
+  .modal-dialog {
+    margin-top: 50px;
+    overflow-y: auto;
+  }
+  .modal-content {
+    min-height: 200px !important;
+    max-height: 80%;
+  }
+  .modal {
+    z-index: 99999;
+  }
+
+  .modal-content-success {
+    background-color: #dff0d8; /* Light green background */
+    color: #3c763d; /* Dark green text */
+  }
+
+  .modal-content-danger {
+    background-color: #f2dede; /* Light red background */
+    color: #a94442; /* Dark red text */
   }
 

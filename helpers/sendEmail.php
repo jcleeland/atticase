@@ -46,11 +46,12 @@ $isHtml=isset($_POST['isHtml']) ? $_POST['isHtml'] : true;
 $debuglevel=isset($configsettings['emailsending']['sendemaildebug']['value']) && $configsettings['emailsending']['sendemaildebug']['value'] ==true &&  isset($configsettings['emailsending']['smtp_debug']['value']) ? $configsettings['emailsending']['smtp_debug']['value'] : 0;
 
 if($configsettings['emailsending']['email_testmode']['value']==true) {
-    $to=$configsettings['emailsending']['email_testaddress']['value'];
+    $to=$configsettings['emailsending']['email_test_address']['value'];
     $bcc=array(); //Overwrite any bcc settings
     $cc=array(); //Overwrite any cc settings
 }
 
+ob_start();
 try {
     //Server settings
     $mail->isSMTP();     
@@ -87,13 +88,27 @@ try {
 
     //Content
     $mail->isHTML($isHtml);                                  
-    $mail->Subject = 'Here is the subject';
+    $mail->Subject = $subject;
     $mail->Body    = $message;
     $mail->AltBody = strip_tags($message);
 
     $mail->send();
-    echo 'Email successfully sent to '.$to;
+
+    $debugOutput = ob_get_contents();
+
+    $output=array(
+        "status"=>"success",
+        "message"=>'Message has been sent to '.$to,
+        "debug"=>$debugOutput
+    );
+
 } catch (Exception $e) {
-    echo 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+    $debugOutput = ob_get_contents();
+    $output=array("status"=>"error", "message"=>'Message could not be sent to '.$to.'. Mailer Error: ' . $mail->ErrorInfo, "debug"=>$debutOutput);
+    //echo 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+} finally {
+    ob_end_clean();
+    echo json_encode($output);
+    exit();
 }
 ?>

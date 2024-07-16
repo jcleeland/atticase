@@ -32,6 +32,58 @@ class oct {
     var $userid;
     var $cookiePrefix;
     
+    var $eventTypes=[
+        0 => "Base field change",
+        1 => "Case opened",
+        2 => "Case closed",
+        3 => "Case deleted",
+        4 => "Note added",
+        5 => "Note edited",
+        6 => "Note deleted",
+        7 => "Attachment added",
+        8 => "Attachment deleted",
+        9 => "User added to case notification list",
+        10 => "User removed from notification list",
+        11 => "Case related to another",
+        12 => "Case unlinked as related case",
+        13 => "Reopened case",
+        14 => "Case assigned",
+        15 => "Case related to another (other way round)",
+        16 => "Case unlinked as related case (other way round)",
+        17 => "Added reminder to case",
+        18 => "Removed reminder from case",
+        19 => "Case made a child",
+        20 => "Case no longer linked to child",
+        21 => "Case made a parent",
+        22 => "Case no longer linked to master",
+        23 => "Added a strategy note",
+        24 => "Deleted strategy note",
+        25 => "Read strategy note",
+        26 => "Case made a companion case",
+        27 => "Case removed as companion case",
+        28 => "Case made a companion case (other way round)",
+        29 => "Case removed as companion case (other way round)",
+        30 => "Add checked (list item?)",
+        40 => "Generic change to case",
+        41 => "Changed review date",
+        42 => "Case unassigned",
+        43 => "Status of case changed",
+        45 => "Enquiry case created",
+        60 => "Add person of interest",
+        61 => "Removed person of interest",
+        71 => "Note changed",
+        81 => "Attachment modified",
+        99 => "Deleted billable time",
+        98 => "Invoice printed against billing times",
+        91 => "Invoice payment received",
+        92 => "Invoice payment deleted",
+        97 => "Invoice unissued against billing times",
+        96 => "Added billable time",
+        1000 => "New user registration",
+        1001 => "Password reset",
+        "default" => "Generic"
+    ];
+
     var $caseitems=array(
         "date_due"=>array(
             "Title"=>"Review date",
@@ -99,6 +151,7 @@ class oct {
         ];
         try {
             $connection=$this->db=new PDO($dsn, $this->dbuser, $this->dbpass, $options);
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             if($connection) {
                 return true;
             }
@@ -113,10 +166,15 @@ class oct {
         return $this->config[$section][$name]['value'];
     }
     
-    function execute($query, $parameters=array()) {
-          $stmt=$this->db->prepare($query) or die("The prepared statement ($query) does not work");
-          $stmt->execute($parameters);
-          return($stmt->rowCount());
+    function execute($query, $parameters = array()) {
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($parameters);
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            // Handle error
+            die("Error executing query: " . $e->getMessage());
+        }
     }
     
     function fetch($query, $parameters = array()) {
@@ -1377,6 +1435,21 @@ class oct {
         }
         return($output);      
     }
+
+    /**
+     * Sends notification emails when a case changes
+     * 
+     * @param int $eventType - the type of event that has occurred
+     * @param int $taskId - the task_id of the case
+     * @param int $userId - the user_id of the user who made the change
+     * @param array $changesArray - an array of changes made to the case
+     */
+    function sendNotifications($eventType, $taskId, $userId, $changesArray=array()) {
+        $content="";
+        //Get a list of email notifications
+        //$userName=$this->getUserName($userId);
+      
+    }
     
     function strategyList($parameters=array(), $conditions="", $order="created ASC", $first=0, $last=1000000000) {
         if($conditions===null) {$conditions="1=1";}
@@ -1717,17 +1790,25 @@ class oct {
         
         
         
-        $this->execute($query, $parameters);
-        
+        $output=$this->execute($query, $parameters);
+           
+        //print_r($output);
+
         if($debug>0) {
             echo $query;
             echo "<hr />";
             print_r($parameters);
-            echo "<hr />";         
+            echo "<hr />";  
+            //echo error_get_last();
+            echo "<hr />";
+            echo error_get_last();       
         }
 
-        
-        return null;
+        if($output) {
+            return (true);
+        } else {
+            return($output);
+        }
         
         
     }

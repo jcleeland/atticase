@@ -21,99 +21,7 @@ $users=$oct->userList(array(), null, null, 0, 1000000000);
 //echo "<pre class='overflow-auto' style='max-height: 270px'>"; print_r($userselect); echo "</pre>";
 $emailtemplates=$oct->emailTemplateList(array(), null, null, 0, 10000000);
 
-$defaultsystememails=array(
-    array(
-        'project_id'=>999,
-        'name' => 'New user registration',
-        'subject' => 'Congratulations you are now registered for AttiCase',
-        'message' => 'Dear {firstname},<br><br>Thank you for registering with AttiCase.  We are pleased to have you as a member of our community.<br><br>Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name' => 'Password reset',
-        'subject' => 'Password reset request',
-        'message' => 'Dear {firstname},<br><br>We have received a request to reset your password.  If you did not request this, please contact us immediately.<br><br>Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'New case created',
-        'subject' => 'New case created',
-        'message' => 'Dear {firstname},<br><br>A new case has been created in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => '',
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case updated',
-        'subject' => 'Case updated',
-        'message' => 'Dear {firstname},<br><br>A case has been updated in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case closed',
-        'subject' => 'Case closed',
-        'message' => 'Dear {firstname},<br><br>A case has been closed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case reopened',
-        'subject' => 'Case reopened',
-        'message' => 'Dear {firstname},<br><br>A case has been reopened in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case assigned',
-        'subject' => 'Case assigned',
-        'message' => 'Dear {firstname},<br><br>A case has been assigned to you in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case unassigned',
-        'subject' => 'Case unassigned',
-        'message' => 'Dear {firstname},<br><br>A case has been unassigned in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case comment',
-        'subject' => 'Case comment',
-        'message' => 'Dear {firstname},<br><br>A comment has been added to a case in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case attachment',
-        'subject' => 'Case attachment',
-        'message' => 'Dear {firstname},<br><br>An attachment has been added to a case in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case status change',
-        'subject' => 'Case status change',
-        'message' => 'Dear {firstname},<br><br>The status of a case has been changed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case priority change',
-        'subject' => 'Case priority change',
-        'message' => 'Dear {firstname},<br><br>The priority of a case has been changed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    ),
-    array(
-        'project_id'=>999,
-        'name'=> 'Case due date change',
-        'subject' => 'Case due date change',
-        'message' => 'Dear {firstname},<br><br>The due date of a case has been changed in AttiCase.  Please log in to view the details.<br><br>{caselink}<br /><br />Best wishes,<br>AttiCase Support Team',
-        'attachment' => ''
-    )
-)
+
 
 ?>
 <script src="js/pages/admin/emailtemplates.js"></script>
@@ -142,12 +50,13 @@ $defaultsystememails=array(
                 foreach($emailtemplates['results'] as $template) {
                     $indent="";
                     $id=$template['template_id'];
-                    $groupid=$template['project_id']; //Todo - change the database name to email_template_group_id
+                    if(!isset($template['event_type'])) $template['event_type']="";
+                    $groupid=$template['project_id']; //Todo - change the database name to email_template_group_id and add event_type field
                     if ($groupid==999) {
-                        $parentKey = searchArray($defaultsystememails, 'name', $template['name']);
+                        $parentKey = searchArray($defaultSystemEmails, 'name', $template['name']);
                         if ($parentKey !== null) {
                             // Key-value pair found
-                            unset($defaultsystememails[$parentKey]);
+                            unset($defaultSystemEmails[$parentKey]);
                         }
                     }
                     ?>
@@ -159,6 +68,23 @@ $defaultsystememails=array(
                                 <div class="col-1"></div>
                                 <div class="col-11">
                                     <div class="text-right w-100 row m-0 p-0 mb-1">
+                                        <div class="text-right w-100 row m-0 p-0 mb-1">
+                                            <div class="col-2">
+                                                Event Type:
+                                            </div>
+                                            <div class="col-10 pr-0">
+                                                <select action="emailtemplate_event_type" emailtemplateid="<?= $id ?>" class="form-control smaller updateemailtemplatefield" id="emailtemplateeventtype_<?php echo $id ?>" name="emailtemplate_event_type[]" >
+                                                    <option value="">**Case / Client emails</option>
+                                                    <?php
+                                                    foreach($oct->eventTypes as $key=>$val) {
+                                                        echo "<option value='$key'";
+                                                        if($key==$template['event_type']) echo " selected";
+                                                        echo ">$val</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>                                        
                                         <div class="col-2">
                                             Subject:
                                         </div>
@@ -187,7 +113,7 @@ $defaultsystememails=array(
                     <?php
                 }
 
-                foreach($defaultsystememails as $template) {
+                foreach($defaultSystemEmails as $template) { 
                     $id=0;
                     $groupid=$template['project_id'];
                     ?>
@@ -198,6 +124,23 @@ $defaultsystememails=array(
                             <div class="row">
                                 <div class="col-1"></div>
                                 <div class="col-11">
+                                    <div class="text-right w-100 row m-0 p-0 mb-1">
+                                        <div class="col-2">
+                                            Event Type:
+                                        </div>
+                                        <div class="col-10 pr-0">
+                                            <select action="emailtemplate_event_type" emailtemplateid="<?= $id ?>" class="form-control smaller updateemailtemplatefield" id="emailtemplateeventtype_<?php echo $id ?>" name="emailtemplate_event_type[]" >
+                                                <option value="">Please choose...</option>
+                                                <?php
+                                                foreach($oct->eventTypes as $key=>$val) {
+                                                    echo "<option value='$key'";
+                                                    if($key==$template['event_type']) echo " selected";
+                                                    echo ">$val</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="text-right w-100 row m-0 p-0 mb-1">
                                         <div class="col-2">
                                             Subject:

@@ -21,4 +21,7 @@
     
     $output=$oct->historyCreate($parameters);
     //echo "<pre>"; print_r($output); echo "</pre>";
+
+    //This feels like the most logical place to call the notifications function
+    // - send the same data that has created a history entry to the notifications tool
 ?>

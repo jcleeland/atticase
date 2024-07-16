@@ -87,6 +87,17 @@ $(function() {
             userNames[x.user_id]=x.real_name;
         })
     })
+
+    //Check if there is a message to display
+    var message=typeof $('#message').val() !== "undefined" && $('#message').val() != "" ? $('#message').val() : "";
+    var messageTitle=typeof $('#messageTitle').val() !== "undefined" && $('#messageTitle').val() != "" ? $('#messageTitle').val() : "Notification";
+    var messageFade = typeof $('#messageFade').val() !== "undefined" && $('#messageFade').val() != "" ? parseInt($('#messageFade').val(), 10) : null;
+
+    if(message != "") {
+        showMessage(messageTitle, message, messageFade);
+    }
+
+
     
 })
 
@@ -1670,10 +1681,70 @@ function pagerNumberSettings(pagername) {
     return output;
 }
 
-function showMessage(title, message) {
+/**
+ * Displays 
+ * @param {*} title 
+ * @param {*} message 
+ * @param {*} status | null or 'message' shows a neutral box, success shows 'green' and 'error' shows 'red'
+ * @param {*} fadeOutTime | null or a number of milliseconds to wait before fading out the message (leave empty or null to keep the message displayed)
+ * @param {*} isModal | true or false - whether to display the message as a modal or not 
+*/
+function showMessage(title, message, status='message', isModal = true) {
     $('#messageCentreTitle').html(title);
     $('#messageCentreMessage').html(message);
-    $('#messageCentre').modal('show');
+
+    // Remove previous status classes from .modal-content
+    $('.card-header').removeClass('modal-content-success modal-content-danger');
+
+    // Apply new status class based on the "status" parameter to .modal-content
+    switch(status) {
+        case 'success':
+            $('.card-header').addClass('modal-content-success');
+            break;
+        case 'error':
+            $('.card-header').addClass('modal-content-danger');
+            break;
+        // Add more cases as needed
+        default:
+            // Optional: Remove all status classes or apply a default class
+            break;
+    }    
+
+    if(isModal) {
+        // Modal behaviour
+        console.log('This is modal');
+        $('#messageCentre').modal('show');
+    } else {
+        // Non modal behaviour
+        console.log('This is non modal');
+        $('#messageCentre').show().css({
+            'position': 'fixed',
+            'top': '15%',
+            'left': '50%',
+            'transform': 'translateX(-50%)',
+            'zIndex': '99999',
+            'opacity': '1'        
+        });
+        $('#messageCentreModalContent').css({
+            'zIndex': '99999'
+        })
+
+        //$('.modal-backdrop').remove();
+
+        console.log('Fading out');
+        $('#messageCentre').fadeOut(3500, function() {
+            // Reset styles after fade out for future use
+            $(this).css({
+                'position': '',
+                'top': '',
+                'left': '',
+                'transform': '',
+                'zIndex': '',
+                'display': '' // Remove display property to allow .show() to work next time
+            });
+        });
+    }
+    
 };
 
 function showCase(caseId) {

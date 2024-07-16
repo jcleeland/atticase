@@ -71,7 +71,9 @@ if(isset($configsettings['general']['unit_list_use']['value']) && $configsetting
                 if(isset($_GET['option'])) {
                     //Check if the option page exists
                     if(!file_exists("pages/admin/".$_GET['option'].".php")) {
-                        echo "<div class='alert alert-warning'>The requested option page is not currently available</div>";
+                        echo "<input type='hidden' id='message' value='The requested option page is not available' />";
+                        echo "<input type='hidden' id='messageTitle' value='Page not found' />";
+                        //echo "<div class='alert alert-warning'>The requested option page is not currently available</div>";
                     } else {
                         include("pages/admin/".$_GET['option'].".php");
                     }

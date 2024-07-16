@@ -170,6 +170,26 @@
     </head>
     <body>
 
+    <!-- Message Centre -->
+    <div class="modal fade" id="messageCentre" tabindex="-1" role="dialog" aria-labelledby="messageCentreTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="messageCentreModalContent">
+            <div class="modal-header card-header">
+            <h5 class="modal-title" id="messageCentreTitle">Message Centre</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body" id="messageCentreMessage">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>    
+
     <input type='hidden' name='today_start' id='today_start' value='<?php echo $todaystart ?>' />
     <input type='hidden' name='today_end' id='today_end' value='<?php echo $todayend ?>' />
     <input type='hidden' name='user_id' id='user_id' value='<?php echo $user_id ?>' />

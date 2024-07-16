@@ -76,7 +76,9 @@
                         }
                     }
                 } else {
-                    echo "<span class='danger'>Username & password combination failed LDAP authentication</span>";
+                    echo "<input type='hidden' id='message' value='Username & password combination failed LDAP authentication' />";
+                    echo "<input type='hidden' id='messageTitle' value='Login failed' />";
+                    //echo "<span class='danger'>Username & password combination failed LDAP authentication</span>";
                 }
                 //$oct->showArray($results);
             } catch (\Adldap\Auth\BindException $e) {
@@ -108,7 +110,8 @@
                     $_SESSION['group_in']=$out['group_in'];
                     $_SESSION['email_address']=$out['email_address'];
                 } else {
-                    echo "<div class='text-center w-100 text-danger'><br />Login failed<br /></div>";
+                    echo "<input type='hidden' name='message' value='Login failed' />";
+                    //echo "<div class='text-center w-100 text-danger'><br />Login failed<br /></div>";
                 }
             }          
         }

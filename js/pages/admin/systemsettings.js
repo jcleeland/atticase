@@ -86,7 +86,8 @@ function toggleVisibility(setting, comparitorkey, comparitorvalue) {
 }
 
 function testEmailSend() {
-    var to=$('#config_admin_email').val();
+    var to=$('#config_email_test_address').val();
+    var toname='Test Recipient';
     var from=$('#config_retrievalaccount' ).val();
     console.log('From: '+from);
     var fromname=$('#config_project_title').val();
@@ -97,6 +98,19 @@ function testEmailSend() {
     var message='<b>Test outgoing email from AttiCase</b><br />If you have received this email then your AttiCase installation is able to send emails.';
     var attachments=[];
     $.when(sendEmail(to, toname, from, fromname, cc, bcc, isHtml, subject, message, attachments)).done(function(output) {
-        console.log(output);
-    })
+        if(output.status=='success') {
+            var message='A test email has been sent to '+to+'. Please check your inbox and spam folder. If you do not receive the email, please check your email settings in the System Settings page.';
+            if($('#config_sendemaildebug').is(':checked')) {
+                message=message+'<br /><br /><b>Debug Output:</b><pre class="scrollablediv height8lines smallest border">'+output['debug']+'</pre>';
+            }
+        } else {
+            var message='The test email could not be sent. Please check your email settings in the System Settings page.';
+            if($('#config_sendemaildebug').is(':checked')) {
+                message=message+'<br /><br /><b>Debug Output:</b><pre class="scrollablediv height8lines smallest border">'+output['debug']+'</pre>';
+            }
+        }
+
+
+        showMessage('Test Email Sent', message, output.status, true);
+    });
 }
