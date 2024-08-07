@@ -1,147 +1,146 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1deb5ubuntu1
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3306
--- Generation Time: Feb 22, 2023 at 04:48 PM
--- Server version: 8.0.32-0ubuntu0.22.04.2
--- PHP Version: 8.1.2-1ubuntu2.10
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
---
--- Database: `casetracker3`
---
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_attachments`
+-- Table structure for table `{prefix}attachments`
 --
 
-CREATE TABLE `oct_attachments` (
+CREATE TABLE `{prefix}attachments` (
   `attachment_id` mediumint NOT NULL,
   `task_id` mediumint NOT NULL DEFAULT '0',
-  `orig_name` varchar(255) NOT NULL DEFAULT '',
-  `file_name` varchar(30) NOT NULL DEFAULT '',
-  `file_desc` varchar(100) NOT NULL DEFAULT '',
-  `file_type` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `file_size` mediumint NOT NULL DEFAULT '0',
-  `file_date` varchar(12) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `orig_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `file_name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `file_desc` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `file_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `file_size` bigint NOT NULL DEFAULT '0',
+  `file_date` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `added_by` mediumint NOT NULL DEFAULT '0',
-  `date_added` varchar(12) NOT NULL DEFAULT '',
-  `attachments_module` varchar(20) NOT NULL,
-  `url` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='List the names and locations of files attached to tasks';
+  `date_added` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `attachments_module` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='List the names and locations of files attached to cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_category_notifications`
+-- Table structure for table `{prefix}category_notifications`
 --
 
-CREATE TABLE `oct_category_notifications` (
+CREATE TABLE `{prefix}category_notifications` (
   `category_notifications_id` int NOT NULL,
   `category_id` int NOT NULL,
   `user_id` int NOT NULL,
   `notify_new` int NOT NULL,
   `notify_change` int NOT NULL,
   `notify_close` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Category based user notifications';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_comments`
+-- Table structure for table `{prefix}comments`
 --
 
-CREATE TABLE `oct_comments` (
+CREATE TABLE `{prefix}comments` (
   `comment_id` mediumint NOT NULL,
   `task_id` mediumint NOT NULL DEFAULT '0',
-  `date_added` varchar(12) NOT NULL DEFAULT '',
+  `date_added` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `user_id` mediumint NOT NULL DEFAULT '0',
-  `comment_text` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `comment_text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `time_spent` int DEFAULT NULL,
+  `cost` int DEFAULT NULL,
+  `date_created` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Case notes';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_companion`
+-- Table structure for table `{prefix}companion`
 --
 
-CREATE TABLE `oct_companion` (
+CREATE TABLE `{prefix}companion` (
   `related_id` mediumint NOT NULL,
   `this_task` mediumint NOT NULL DEFAULT '0',
   `related_task` mediumint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Related task entries';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Companion case links';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_custom_fields`
+-- Table structure for table `{prefix}custom_fields`
 --
 
-CREATE TABLE `oct_custom_fields` (
+CREATE TABLE `{prefix}custom_fields` (
   `custom_field_id` int NOT NULL,
   `custom_field_definition_id` int NOT NULL,
   `task_id` int NOT NULL,
-  `custom_field_value` longtext,
-  `custom_field_old_value` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `custom_field_value` longtext COLLATE utf8mb4_unicode_ci,
+  `custom_field_old_value` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Custom field data for cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_custom_field_definitions`
+-- Table structure for table `{prefix}custom_field_definitions`
 --
 
-CREATE TABLE `oct_custom_field_definitions` (
+CREATE TABLE `{prefix}custom_field_definitions` (
   `custom_field_definition_id` int NOT NULL,
-  `custom_field_name` varchar(50) NOT NULL,
+  `custom_field_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `custom_field_visible` int NOT NULL,
-  `custom_field_type` varchar(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `custom_field_type` varchar(1) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Custom field definitions';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_custom_texts`
+-- Table structure for table `{prefix}custom_field_lists`
 --
 
-CREATE TABLE `oct_custom_texts` (
+CREATE TABLE `{prefix}custom_field_lists` (
+  `custom_field_list_id` int NOT NULL,
+  `custom_field_definition_id` int NOT NULL,
+  `custom_field_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `custom_field_order` int NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Custom field list items';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `{prefix}custom_texts`
+--
+
+CREATE TABLE `{prefix}custom_texts` (
   `custom_text_id` int NOT NULL,
-  `modify_action` varchar(30) NOT NULL,
-  `custom_text_lang` varchar(10) NOT NULL,
-  `custom_text` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `modify_action` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `custom_text_lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `custom_text` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Custom texts for various actions';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_emailtemplates`
+-- Table structure for table `{prefix}emailtemplates`
 --
 
-CREATE TABLE `oct_emailtemplates` (
+CREATE TABLE `{prefix}emailtemplates` (
   `template_id` int NOT NULL,
   `project_id` int NOT NULL DEFAULT '0',
-  `name` varchar(100) NOT NULL DEFAULT '',
-  `subject` text NOT NULL,
-  `message` text NOT NULL,
-  `attachment` varchar(255) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `subject` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attachment` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Email templates for various actions';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_groups`
+-- Table structure for table `{prefix}groups`
 --
 
-CREATE TABLE `oct_groups` (
+CREATE TABLE `{prefix}groups` (
   `group_id` mediumint NOT NULL,
-  `group_name` varchar(20) NOT NULL DEFAULT '',
-  `group_desc` varchar(150) NOT NULL DEFAULT '',
+  `group_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `group_desc` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_admin` mediumint NOT NULL DEFAULT '0',
   `can_open_jobs` mediumint NOT NULL DEFAULT '0',
   `can_modify_jobs` mediumint NOT NULL DEFAULT '0',
@@ -150,388 +149,423 @@ CREATE TABLE `oct_groups` (
   `can_vote` mediumint NOT NULL DEFAULT '0',
   `group_open` mediumint NOT NULL DEFAULT '0',
   `restrict_versions` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='User Groups for the Flyspray bug killer';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Define user groups for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_history`
+-- Table structure for table `{prefix}history`
 --
 
-CREATE TABLE `oct_history` (
+CREATE TABLE `{prefix}history` (
   `history_id` mediumint NOT NULL,
   `task_id` mediumint NOT NULL DEFAULT '0',
   `user_id` mediumint NOT NULL DEFAULT '0',
-  `event_date` varchar(12) NOT NULL DEFAULT '',
+  `event_date` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `event_type` mediumint NOT NULL DEFAULT '0',
-  `field_changed` text NOT NULL,
-  `old_value` text NOT NULL,
-  `new_value` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `field_changed` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `old_value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `new_value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='History of changes to cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_invoices`
+-- Table structure for table `{prefix}invoices`
 --
 
-CREATE TABLE `oct_invoices` (
+CREATE TABLE `{prefix}invoices` (
   `invoice_id` int NOT NULL,
   `task_id` int NOT NULL DEFAULT '0',
-  `time_ids` text NOT NULL,
-  `date_generated` varchar(12) NOT NULL DEFAULT '',
+  `time_ids` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `date_generated` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `minutes` int NOT NULL DEFAULT '0',
   `amount` float NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Compiled and printed invoices for cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_category`
+-- Table structure for table `{prefix}list_category`
 --
 
-CREATE TABLE `oct_list_category` (
+CREATE TABLE `{prefix}list_category` (
   `category_id` mediumint NOT NULL,
   `project_id` mediumint NOT NULL DEFAULT '0',
-  `category_name` varchar(30) NOT NULL DEFAULT '',
-  `category_descrip` varchar(255) NOT NULL DEFAULT '',
+  `category_name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `category_descrip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_position` mediumint NOT NULL DEFAULT '0',
   `show_in_list` mediumint NOT NULL DEFAULT '0',
   `category_owner` mediumint NOT NULL DEFAULT '0',
   `parent_id` mediumint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Department list for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_os`
+-- Table structure for table `{prefix}list_os`
 --
 
-CREATE TABLE `oct_list_os` (
+CREATE TABLE `{prefix}list_os` (
   `os_id` mediumint NOT NULL,
   `project_id` mediumint NOT NULL DEFAULT '0',
-  `os_name` varchar(20) NOT NULL DEFAULT '',
+  `os_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_position` mediumint NOT NULL DEFAULT '0',
   `show_in_list` mediumint NOT NULL DEFAULT '0',
-  `os_description` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Operating system list for the Flyspray bug killer';
+  `os_description` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DEPRECATED - List of operating systems for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_resolution`
+-- Table structure for table `{prefix}list_resolution`
 --
 
-CREATE TABLE `oct_list_resolution` (
+CREATE TABLE `{prefix}list_resolution` (
   `resolution_id` mediumint NOT NULL,
-  `resolution_name` varchar(60) NOT NULL DEFAULT '',
+  `resolution_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_position` mediumint NOT NULL DEFAULT '0',
   `show_in_list` mediumint NOT NULL DEFAULT '0',
-  `resolution_description` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `resolution_description` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='List of resolutions for cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_tasktype`
+-- Table structure for table `{prefix}list_tasktype`
 --
 
-CREATE TABLE `oct_list_tasktype` (
+CREATE TABLE `{prefix}list_tasktype` (
   `tasktype_id` mediumint NOT NULL,
-  `tasktype_name` varchar(60) NOT NULL DEFAULT '',
+  `tasktype_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_position` mediumint NOT NULL DEFAULT '0',
   `show_in_list` mediumint NOT NULL DEFAULT '0',
-  `tasktype_description` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='List of task types for Flyspray the bug killer.';
+  `tasktype_description` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='List of case types for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_tasktype_groups`
+-- Table structure for table `{prefix}list_tasktype_groups`
 --
 
-CREATE TABLE `oct_list_tasktype_groups` (
+CREATE TABLE `{prefix}list_tasktype_groups` (
   `tasktype_groups_id` int NOT NULL,
-  `tasktype_groups_name` varchar(100) NOT NULL,
+  `tasktype_groups_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `owner_id` int NOT NULL,
   `list_position` int NOT NULL,
   `hide_from_list` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Case type groups for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_tasktype_groups_links`
+-- Table structure for table `{prefix}list_tasktype_groups_links`
 --
 
-CREATE TABLE `oct_list_tasktype_groups_links` (
+CREATE TABLE `{prefix}list_tasktype_groups_links` (
   `id` int NOT NULL,
   `tasktype_groups_id` int NOT NULL,
   `tasktype_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Links between for case types and case groups';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_unit`
+-- Table structure for table `{prefix}list_unit`
 --
 
-CREATE TABLE `oct_list_unit` (
+CREATE TABLE `{prefix}list_unit` (
   `unit_id` int NOT NULL,
   `project_id` int NOT NULL DEFAULT '0',
-  `unit_descrip` varchar(255) NOT NULL,
+  `unit_descrip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `list_position` int NOT NULL DEFAULT '0',
   `show_in_list` int NOT NULL DEFAULT '0',
   `category_owner` int NOT NULL DEFAULT '0',
   `parent_id` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='List of workplace or department units for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_list_version`
+-- Table structure for table `{prefix}list_version`
 --
 
-CREATE TABLE `oct_list_version` (
+CREATE TABLE `{prefix}list_version` (
   `version_id` mediumint NOT NULL,
   `project_id` mediumint NOT NULL DEFAULT '0',
-  `version_name` varchar(20) NOT NULL DEFAULT '',
+  `version_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_position` mediumint NOT NULL DEFAULT '0',
   `show_in_list` mediumint NOT NULL DEFAULT '0',
   `version_tense` mediumint NOT NULL DEFAULT '0',
   `is_enquiry` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Case groups for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_master`
+-- Table structure for table `{prefix}master`
 --
 
-CREATE TABLE `oct_master` (
+CREATE TABLE `{prefix}master` (
   `link_id` mediumint NOT NULL,
   `master_task` mediumint NOT NULL DEFAULT '0',
   `servant_task` mediumint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Master task entries';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Master case links';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_member_cache`
+-- Table structure for table `{prefix}member_cache`
 --
 
-CREATE TABLE `oct_member_cache` (
+CREATE TABLE `{prefix}member_cache` (
   `member` int NOT NULL,
   `subs_paid_to` datetime NOT NULL,
-  `paying_emp` varchar(255) NOT NULL,
-  `joined` varchar(20) NOT NULL,
-  `surname` varchar(255) NOT NULL,
-  `pref_name` varchar(255) NOT NULL,
+  `paying_emp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `joined` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `surname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pref_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modified` int NOT NULL,
-  `primary_key` text,
+  `primary_key` mediumtext COLLATE utf8mb4_unicode_ci,
   `data` longblob
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Member or client database';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_notifications`
+-- Table structure for table `{prefix}noticeboard`
 --
 
-CREATE TABLE `oct_notifications` (
+CREATE TABLE `{prefix}noticeboard` (
+  `id` int NOT NULL,
+  `publish_date` date NOT NULL,
+  `expiry_date` date NOT NULL,
+  `published` int DEFAULT '0',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by` int NOT NULL,
+  `allow_comments` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Noticeboard entries';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `{prefix}noticeboard_comments`
+--
+
+CREATE TABLE `{prefix}noticeboard_comments` (
+  `id` int NOT NULL,
+  `noticeboard_id` int NOT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hide_comment` int NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Noticeboard comments';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `{prefix}notifications`
+--
+
+CREATE TABLE `{prefix}notifications` (
   `notify_id` mediumint NOT NULL,
   `task_id` mediumint NOT NULL DEFAULT '0',
   `user_id` mediumint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Extra task notifications are stored here';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Case user notifications';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_payments`
+-- Table structure for table `{prefix}payments`
 --
 
-CREATE TABLE `oct_payments` (
+CREATE TABLE `{prefix}payments` (
   `payment_id` int NOT NULL,
   `task_id` int NOT NULL DEFAULT '0',
   `amount` float NOT NULL DEFAULT '0',
-  `date_received` varchar(12) NOT NULL DEFAULT '0',
-  `notes` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `date_received` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `notes` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Invoice/Billing payment records';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_people`
+-- Table structure for table `{prefix}people`
 --
 
-CREATE TABLE `oct_people` (
+CREATE TABLE `{prefix}people` (
   `id` int NOT NULL,
-  `firstname` varchar(255) NOT NULL,
-  `lastname` varchar(255) NOT NULL,
-  `position` varchar(255) NOT NULL,
-  `organisation` varchar(255) NOT NULL,
-  `phone` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `created` varchar(12) NOT NULL,
-  `modified` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `firstname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `position` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `organisation` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modified` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='People of Interest database';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_people_of_interest`
+-- Table structure for table `{prefix}people_of_interest`
 --
 
-CREATE TABLE `oct_people_of_interest` (
+CREATE TABLE `{prefix}people_of_interest` (
   `id` int NOT NULL,
   `person_id` int NOT NULL,
   `task_id` int NOT NULL,
-  `comment` text NOT NULL,
-  `created` varchar(12) NOT NULL,
-  `modified` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `comment` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modified` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Linking table between cases and people of interest';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_prefs`
+-- Table structure for table `{prefix}prefs`
 --
 
-CREATE TABLE `oct_prefs` (
+CREATE TABLE `{prefix}prefs` (
   `pref_id` mediumint NOT NULL,
-  `pref_name` varchar(20) NOT NULL DEFAULT '',
-  `pref_value` varchar(100) NOT NULL DEFAULT '',
-  `pref_desc` varchar(100) NOT NULL DEFAULT '',
-  `pref_group` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Application preferences are set here';
+  `pref_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `pref_value` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `pref_desc` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `pref_group` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AttiCase system preferences';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_projects`
+-- Table structure for table `{prefix}projects`
 --
 
-CREATE TABLE `oct_projects` (
+CREATE TABLE `{prefix}projects` (
   `project_id` mediumint NOT NULL,
-  `project_title` varchar(100) NOT NULL DEFAULT '',
-  `theme_style` varchar(20) NOT NULL DEFAULT '0',
+  `project_title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `theme_style` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `show_logo` mediumint NOT NULL DEFAULT '0',
   `inline_images` mediumint NOT NULL DEFAULT '0',
   `default_cat_owner` mediumint NOT NULL DEFAULT '0',
-  `intro_message` longtext NOT NULL,
+  `intro_message` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `project_is_active` mediumint NOT NULL DEFAULT '0',
-  `visible_columns` varchar(255) NOT NULL DEFAULT '',
-  `last_email_check` varchar(12) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Details on multiple Flyspray projects';
+  `visible_columns` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `last_email_check` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DEPRECATED - Project list for AttiCase';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_registrations`
+-- Table structure for table `{prefix}registrations`
 --
 
-CREATE TABLE `oct_registrations` (
+CREATE TABLE `{prefix}registrations` (
   `reg_id` mediumint NOT NULL,
-  `reg_time` varchar(12) NOT NULL DEFAULT '',
-  `confirm_code` varchar(20) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Storage for new user registration confirmation codes';
+  `reg_time` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `confirm_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DEPRECATED - Registration table for new users';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_related`
+-- Table structure for table `{prefix}related`
 --
 
-CREATE TABLE `oct_related` (
+CREATE TABLE `{prefix}related` (
   `related_id` mediumint NOT NULL,
   `this_task` mediumint NOT NULL DEFAULT '0',
   `related_task` mediumint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Related task entries';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Related case entries';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_reminders`
+-- Table structure for table `{prefix}reminders`
 --
 
-CREATE TABLE `oct_reminders` (
+CREATE TABLE `{prefix}reminders` (
   `reminder_id` mediumint NOT NULL,
   `task_id` mediumint NOT NULL DEFAULT '0',
   `to_user_id` mediumint NOT NULL DEFAULT '0',
   `from_user_id` mediumint NOT NULL DEFAULT '0',
-  `start_time` varchar(12) NOT NULL DEFAULT '0',
+  `start_time` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `how_often` mediumint NOT NULL DEFAULT '0',
-  `last_sent` varchar(12) NOT NULL DEFAULT '0',
-  `reminder_message` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Scheduled reminders about tasks';
+  `last_sent` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `reminder_message` longtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DEPRECATED - Scheduled reminders about cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_reports`
+-- Table structure for table `{prefix}reports`
 --
 
-CREATE TABLE `oct_reports` (
+CREATE TABLE `{prefix}reports` (
   `report_id` int NOT NULL,
   `report_category_id` int NOT NULL DEFAULT '0',
-  `name` varchar(150) NOT NULL DEFAULT '',
-  `description` text NOT NULL,
-  `inputs` text NOT NULL,
-  `input_names` text NOT NULL,
-  `outputs` text NOT NULL,
-  `output_names` text NOT NULL,
-  `sql` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inputs` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `input_names` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `outputs` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `output_names` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sql` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SQL report definitions';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_report_categories`
+-- Table structure for table `{prefix}report_categories`
 --
 
-CREATE TABLE `oct_report_categories` (
+CREATE TABLE `{prefix}report_categories` (
   `report_category_id` int NOT NULL,
   `project_id` int NOT NULL DEFAULT '0',
-  `name` varchar(100) NOT NULL DEFAULT '',
-  `description` text NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `sort_order` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Report categories';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_strategy`
+-- Table structure for table `{prefix}strategy`
 --
 
-CREATE TABLE `oct_strategy` (
+CREATE TABLE `{prefix}strategy` (
   `strategy_id` int NOT NULL,
   `task_id` int NOT NULL DEFAULT '0',
   `user_id` int NOT NULL DEFAULT '0',
-  `comment_date` varchar(12) NOT NULL DEFAULT '0',
-  `comment` text NOT NULL,
-  `acknowledged_date` varchar(12) NOT NULL DEFAULT '',
+  `comment_date` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `comment` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `acknowledged_date` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `acknowledged` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Strategy comments for cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_tasks`
+-- Table structure for table `{prefix}tasks`
 --
 
-CREATE TABLE `oct_tasks` (
+CREATE TABLE `{prefix}tasks` (
   `task_id` mediumint NOT NULL,
   `attached_to_project` mediumint NOT NULL DEFAULT '0',
   `task_type` mediumint NOT NULL DEFAULT '0',
-  `date_opened` varchar(12) NOT NULL DEFAULT '',
-  `date_due` varchar(12) NOT NULL DEFAULT '',
+  `date_opened` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date_due` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `opened_by` mediumint NOT NULL DEFAULT '0',
   `is_closed` mediumint NOT NULL DEFAULT '0',
-  `date_closed` varchar(12) NOT NULL DEFAULT '',
+  `date_closed` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `closed_by` mediumint NOT NULL DEFAULT '0',
-  `closure_comment` longtext,
-  `item_summary` varchar(100) NOT NULL DEFAULT '',
-  `detailed_desc` longtext NOT NULL,
+  `closure_comment` longtext COLLATE utf8mb4_unicode_ci,
+  `item_summary` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `detailed_desc` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `item_status` mediumint NOT NULL DEFAULT '0',
   `assigned_to` mediumint NOT NULL DEFAULT '0',
   `resolution_reason` mediumint NOT NULL DEFAULT '1',
@@ -542,346 +576,371 @@ CREATE TABLE `oct_tasks` (
   `task_severity` mediumint NOT NULL DEFAULT '0',
   `task_priority` mediumint NOT NULL DEFAULT '0',
   `last_edited_by` mediumint NOT NULL DEFAULT '0',
-  `last_edited_time` varchar(12) NOT NULL DEFAULT '0',
+  `last_edited_time` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `percent_complete` mediumint NOT NULL DEFAULT '0',
   `member` int NOT NULL DEFAULT '0',
-  `name` varchar(100) DEFAULT NULL,
-  `unit` text,
-  `line_manager` text,
-  `line_manager_ph` varchar(20) DEFAULT '',
-  `local_delegate` text,
-  `local_delegate_ph` varchar(20) DEFAULT '',
-  `resolution_sought` text,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `unit` mediumtext COLLATE utf8mb4_unicode_ci,
+  `line_manager` mediumtext COLLATE utf8mb4_unicode_ci,
+  `line_manager_ph` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `local_delegate` mediumtext COLLATE utf8mb4_unicode_ci,
+  `local_delegate_ph` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `resolution_sought` mediumtext COLLATE utf8mb4_unicode_ci,
   `is_restricted` mediumint NOT NULL DEFAULT '0',
-  `closure_checklist` varchar(10) NOT NULL DEFAULT '',
+  `closure_checklist` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `member_is_delegate` smallint NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Bugs and feature requests for the Flyspray bug killer';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Case details';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_tasktype_checked`
+-- Table structure for table `{prefix}tasktype_checked`
 --
 
-CREATE TABLE `oct_tasktype_checked` (
+CREATE TABLE `{prefix}tasktype_checked` (
   `checked_id` int NOT NULL,
   `checklist_id` int NOT NULL DEFAULT '0',
   `task_id` int NOT NULL DEFAULT '0',
   `date_checked` int NOT NULL DEFAULT '0',
   `user_id` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Record of checklist items checked off for cases';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_tasktype_checklist`
+-- Table structure for table `{prefix}tasktype_checklist`
 --
 
-CREATE TABLE `oct_tasktype_checklist` (
+CREATE TABLE `{prefix}tasktype_checklist` (
   `checklist_id` int NOT NULL,
   `tasktype_id` int NOT NULL DEFAULT '0',
-  `item` text NOT NULL,
+  `item` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` int NOT NULL DEFAULT '0',
   `user_id` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Special checks that are associated with different tasktypes';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_times`
+-- Table structure for table `{prefix}times`
 --
 
-CREATE TABLE `oct_times` (
+CREATE TABLE `{prefix}times` (
   `time_id` int NOT NULL,
   `task_id` int DEFAULT NULL,
-  `time` varchar(12) DEFAULT NULL,
-  `date` varchar(12) DEFAULT NULL,
-  `description` text,
+  `time` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` mediumtext COLLATE utf8mb4_unicode_ci,
   `user_id` int DEFAULT NULL,
   `invoiced` int UNSIGNED DEFAULT '0',
-  `invoice_date` varchar(12) DEFAULT NULL,
+  `invoice_date` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `rate` float NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Timekeeping';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Timekeeping';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_users`
+-- Table structure for table `{prefix}users`
 --
 
-CREATE TABLE `oct_users` (
+CREATE TABLE `{prefix}users` (
   `user_id` mediumint NOT NULL,
-  `user_name` varchar(20) NOT NULL DEFAULT '',
-  `user_pass` varchar(30) NOT NULL DEFAULT '',
-  `real_name` varchar(100) NOT NULL DEFAULT '',
+  `user_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `user_pass` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `real_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `group_in` mediumint NOT NULL DEFAULT '0',
-  `jabber_id` varchar(100) NOT NULL DEFAULT '',
-  `email_address` varchar(100) NOT NULL DEFAULT '',
+  `jabber_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `email_address` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `notify_type` mediumint NOT NULL DEFAULT '0',
   `account_enabled` mediumint NOT NULL DEFAULT '0',
-  `dateformat` varchar(30) NOT NULL DEFAULT '',
-  `dateformat_extended` varchar(30) NOT NULL DEFAULT '',
-  `default_task_view` varchar(15) NOT NULL DEFAULT '',
+  `dateformat` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `dateformat_extended` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `default_task_view` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `default_version` int NOT NULL DEFAULT '0',
   `strategy_enabled` mediumint DEFAULT '0',
   `email_moderator` int NOT NULL DEFAULT '0',
   `self_notify` int NOT NULL DEFAULT '0',
-  `notify_rate` varchar(1) NOT NULL DEFAULT 'D',
-  `last_notice` varchar(12) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Users for the Flyspray bug killer';
+  `notify_rate` varchar(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'D',
+  `last_notice` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AttiCase user list';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oct_version_permissions`
+-- Table structure for table `{prefix}version_permissions`
 --
 
-CREATE TABLE `oct_version_permissions` (
+CREATE TABLE `{prefix}version_permissions` (
   `id` int NOT NULL,
   `group_id` int NOT NULL,
   `version_id` int NOT NULL,
   `enabled` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DEPRECATED -  Version permissions for user groups';
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `oct_attachments`
+-- Indexes for table `{prefix}attachments`
 --
-ALTER TABLE `oct_attachments`
-  ADD PRIMARY KEY (`attachment_id`);
+ALTER TABLE `{prefix}attachments`
+  ADD PRIMARY KEY (`attachment_id`),
+  ADD KEY `task_id-idx` (`task_id`) USING BTREE;
 
 --
--- Indexes for table `oct_category_notifications`
+-- Indexes for table `{prefix}category_notifications`
 --
-ALTER TABLE `oct_category_notifications`
+ALTER TABLE `{prefix}category_notifications`
   ADD PRIMARY KEY (`category_notifications_id`);
 
 --
--- Indexes for table `oct_comments`
+-- Indexes for table `{prefix}comments`
 --
-ALTER TABLE `oct_comments`
-  ADD PRIMARY KEY (`comment_id`);
+ALTER TABLE `{prefix}comments`
+  ADD PRIMARY KEY (`comment_id`),
+  ADD KEY `task_id-idx` (`task_id`) USING BTREE;
 
 --
--- Indexes for table `oct_companion`
+-- Indexes for table `{prefix}companion`
 --
-ALTER TABLE `oct_companion`
+ALTER TABLE `{prefix}companion`
   ADD PRIMARY KEY (`related_id`);
 
 --
--- Indexes for table `oct_custom_fields`
+-- Indexes for table `{prefix}custom_fields`
 --
-ALTER TABLE `oct_custom_fields`
+ALTER TABLE `{prefix}custom_fields`
   ADD PRIMARY KEY (`custom_field_id`);
 
 --
--- Indexes for table `oct_custom_field_definitions`
+-- Indexes for table `{prefix}custom_field_definitions`
 --
-ALTER TABLE `oct_custom_field_definitions`
+ALTER TABLE `{prefix}custom_field_definitions`
   ADD PRIMARY KEY (`custom_field_definition_id`);
 
 --
--- Indexes for table `oct_custom_texts`
+-- Indexes for table `{prefix}custom_field_lists`
 --
-ALTER TABLE `oct_custom_texts`
+ALTER TABLE `{prefix}custom_field_lists`
+  ADD PRIMARY KEY (`custom_field_list_id`);
+
+--
+-- Indexes for table `{prefix}custom_texts`
+--
+ALTER TABLE `{prefix}custom_texts`
   ADD PRIMARY KEY (`custom_text_id`);
 
 --
--- Indexes for table `oct_emailtemplates`
+-- Indexes for table `{prefix}emailtemplates`
 --
-ALTER TABLE `oct_emailtemplates`
+ALTER TABLE `{prefix}emailtemplates`
   ADD PRIMARY KEY (`template_id`);
 
 --
--- Indexes for table `oct_groups`
+-- Indexes for table `{prefix}groups`
 --
-ALTER TABLE `oct_groups`
+ALTER TABLE `{prefix}groups`
   ADD PRIMARY KEY (`group_id`);
 
 --
--- Indexes for table `oct_history`
+-- Indexes for table `{prefix}history`
 --
-ALTER TABLE `oct_history`
+ALTER TABLE `{prefix}history`
   ADD PRIMARY KEY (`history_id`),
   ADD KEY `task_id` (`task_id`),
-  ADD KEY `event_date` (`event_date`);
+  ADD KEY `event_date` (`event_date`),
+  ADD KEY `task_id-idx` (`task_id`) USING BTREE;
 
 --
--- Indexes for table `oct_invoices`
+-- Indexes for table `{prefix}invoices`
 --
-ALTER TABLE `oct_invoices`
+ALTER TABLE `{prefix}invoices`
   ADD KEY `invoice_id` (`invoice_id`);
 
 --
--- Indexes for table `oct_list_category`
+-- Indexes for table `{prefix}list_category`
 --
-ALTER TABLE `oct_list_category`
+ALTER TABLE `{prefix}list_category`
   ADD PRIMARY KEY (`category_id`);
 
 --
--- Indexes for table `oct_list_os`
+-- Indexes for table `{prefix}list_os`
 --
-ALTER TABLE `oct_list_os`
+ALTER TABLE `{prefix}list_os`
   ADD PRIMARY KEY (`os_id`);
 
 --
--- Indexes for table `oct_list_resolution`
+-- Indexes for table `{prefix}list_resolution`
 --
-ALTER TABLE `oct_list_resolution`
+ALTER TABLE `{prefix}list_resolution`
   ADD PRIMARY KEY (`resolution_id`);
 
 --
--- Indexes for table `oct_list_tasktype`
+-- Indexes for table `{prefix}list_tasktype`
 --
-ALTER TABLE `oct_list_tasktype`
+ALTER TABLE `{prefix}list_tasktype`
   ADD PRIMARY KEY (`tasktype_id`);
 
 --
--- Indexes for table `oct_list_tasktype_groups`
+-- Indexes for table `{prefix}list_tasktype_groups`
 --
-ALTER TABLE `oct_list_tasktype_groups`
+ALTER TABLE `{prefix}list_tasktype_groups`
   ADD PRIMARY KEY (`tasktype_groups_id`);
 
 --
--- Indexes for table `oct_list_tasktype_groups_links`
+-- Indexes for table `{prefix}list_tasktype_groups_links`
 --
-ALTER TABLE `oct_list_tasktype_groups_links`
+ALTER TABLE `{prefix}list_tasktype_groups_links`
   ADD PRIMARY KEY (`id`),
   ADD KEY `tasktype_group_id` (`tasktype_groups_id`,`tasktype_id`);
 
 --
--- Indexes for table `oct_list_unit`
+-- Indexes for table `{prefix}list_unit`
 --
-ALTER TABLE `oct_list_unit`
+ALTER TABLE `{prefix}list_unit`
   ADD PRIMARY KEY (`unit_id`);
 
 --
--- Indexes for table `oct_list_version`
+-- Indexes for table `{prefix}list_version`
 --
-ALTER TABLE `oct_list_version`
+ALTER TABLE `{prefix}list_version`
   ADD PRIMARY KEY (`version_id`);
 
 --
--- Indexes for table `oct_master`
+-- Indexes for table `{prefix}master`
 --
-ALTER TABLE `oct_master`
+ALTER TABLE `{prefix}master`
   ADD PRIMARY KEY (`link_id`);
 
 --
--- Indexes for table `oct_member_cache`
+-- Indexes for table `{prefix}member_cache`
 --
-ALTER TABLE `oct_member_cache`
+ALTER TABLE `{prefix}member_cache`
   ADD PRIMARY KEY (`member`);
 
 --
--- Indexes for table `oct_notifications`
+-- Indexes for table `{prefix}noticeboard`
 --
-ALTER TABLE `oct_notifications`
+ALTER TABLE `{prefix}noticeboard`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `{prefix}noticeboard_comments`
+--
+ALTER TABLE `{prefix}noticeboard_comments`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `{prefix}notifications`
+--
+ALTER TABLE `{prefix}notifications`
   ADD PRIMARY KEY (`notify_id`);
 
 --
--- Indexes for table `oct_payments`
+-- Indexes for table `{prefix}payments`
 --
-ALTER TABLE `oct_payments`
+ALTER TABLE `{prefix}payments`
   ADD KEY `payment_id` (`payment_id`);
 
 --
--- Indexes for table `oct_people`
+-- Indexes for table `{prefix}people`
 --
-ALTER TABLE `oct_people`
+ALTER TABLE `{prefix}people`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `oct_people_of_interest`
+-- Indexes for table `{prefix}people_of_interest`
 --
-ALTER TABLE `oct_people_of_interest`
+ALTER TABLE `{prefix}people_of_interest`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `oct_prefs`
+-- Indexes for table `{prefix}prefs`
 --
-ALTER TABLE `oct_prefs`
+ALTER TABLE `{prefix}prefs`
   ADD PRIMARY KEY (`pref_id`);
 
 --
--- Indexes for table `oct_projects`
+-- Indexes for table `{prefix}projects`
 --
-ALTER TABLE `oct_projects`
+ALTER TABLE `{prefix}projects`
   ADD PRIMARY KEY (`project_id`);
 
 --
--- Indexes for table `oct_registrations`
+-- Indexes for table `{prefix}registrations`
 --
-ALTER TABLE `oct_registrations`
+ALTER TABLE `{prefix}registrations`
   ADD PRIMARY KEY (`reg_id`);
 
 --
--- Indexes for table `oct_related`
+-- Indexes for table `{prefix}related`
 --
-ALTER TABLE `oct_related`
+ALTER TABLE `{prefix}related`
   ADD PRIMARY KEY (`related_id`);
 
 --
--- Indexes for table `oct_reminders`
+-- Indexes for table `{prefix}reminders`
 --
-ALTER TABLE `oct_reminders`
+ALTER TABLE `{prefix}reminders`
   ADD PRIMARY KEY (`reminder_id`);
 
 --
--- Indexes for table `oct_reports`
+-- Indexes for table `{prefix}reports`
 --
-ALTER TABLE `oct_reports`
+ALTER TABLE `{prefix}reports`
   ADD PRIMARY KEY (`report_id`);
 
 --
--- Indexes for table `oct_report_categories`
+-- Indexes for table `{prefix}report_categories`
 --
-ALTER TABLE `oct_report_categories`
+ALTER TABLE `{prefix}report_categories`
   ADD PRIMARY KEY (`report_category_id`);
 
 --
--- Indexes for table `oct_strategy`
+-- Indexes for table `{prefix}strategy`
 --
-ALTER TABLE `oct_strategy`
+ALTER TABLE `{prefix}strategy`
   ADD PRIMARY KEY (`strategy_id`);
 
 --
--- Indexes for table `oct_tasks`
+-- Indexes for table `{prefix}tasks`
 --
-ALTER TABLE `oct_tasks`
-  ADD PRIMARY KEY (`task_id`);
+ALTER TABLE `{prefix}tasks`
+  ADD PRIMARY KEY (`task_id`),
+  ADD KEY `member-idx` (`member`) USING BTREE,
+  ADD KEY `member-is_closed-idx` (`member`,`is_closed`) USING BTREE,
+  ADD KEY `assigned_to-idx` (`assigned_to`) USING BTREE,
+  ADD KEY `assigned_to-date_due-is_closed-idx` (`assigned_to`,`date_due`,`is_closed`) USING BTREE;
 
 --
--- Indexes for table `oct_tasktype_checked`
+-- Indexes for table `{prefix}tasktype_checked`
 --
-ALTER TABLE `oct_tasktype_checked`
+ALTER TABLE `{prefix}tasktype_checked`
   ADD PRIMARY KEY (`checked_id`);
 
 --
--- Indexes for table `oct_tasktype_checklist`
+-- Indexes for table `{prefix}tasktype_checklist`
 --
-ALTER TABLE `oct_tasktype_checklist`
+ALTER TABLE `{prefix}tasktype_checklist`
   ADD PRIMARY KEY (`checklist_id`);
 
 --
--- Indexes for table `oct_times`
+-- Indexes for table `{prefix}times`
 --
-ALTER TABLE `oct_times`
+ALTER TABLE `{prefix}times`
   ADD PRIMARY KEY (`time_id`);
 
 --
--- Indexes for table `oct_users`
+-- Indexes for table `{prefix}users`
 --
-ALTER TABLE `oct_users`
+ALTER TABLE `{prefix}users`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- Indexes for table `oct_version_permissions`
+-- Indexes for table `{prefix}version_permissions`
 --
-ALTER TABLE `oct_version_permissions`
+ALTER TABLE `{prefix}version_permissions`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -889,230 +948,248 @@ ALTER TABLE `oct_version_permissions`
 --
 
 --
--- AUTO_INCREMENT for table `oct_attachments`
+-- AUTO_INCREMENT for table `{prefix}attachments`
 --
-ALTER TABLE `oct_attachments`
+ALTER TABLE `{prefix}attachments`
   MODIFY `attachment_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_category_notifications`
+-- AUTO_INCREMENT for table `{prefix}category_notifications`
 --
-ALTER TABLE `oct_category_notifications`
+ALTER TABLE `{prefix}category_notifications`
   MODIFY `category_notifications_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_comments`
+-- AUTO_INCREMENT for table `{prefix}comments`
 --
-ALTER TABLE `oct_comments`
+ALTER TABLE `{prefix}comments`
   MODIFY `comment_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_companion`
+-- AUTO_INCREMENT for table `{prefix}companion`
 --
-ALTER TABLE `oct_companion`
+ALTER TABLE `{prefix}companion`
   MODIFY `related_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_custom_fields`
+-- AUTO_INCREMENT for table `{prefix}custom_fields`
 --
-ALTER TABLE `oct_custom_fields`
+ALTER TABLE `{prefix}custom_fields`
   MODIFY `custom_field_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_custom_field_definitions`
+-- AUTO_INCREMENT for table `{prefix}custom_field_definitions`
 --
-ALTER TABLE `oct_custom_field_definitions`
+ALTER TABLE `{prefix}custom_field_definitions`
   MODIFY `custom_field_definition_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_custom_texts`
+-- AUTO_INCREMENT for table `{prefix}custom_field_lists`
 --
-ALTER TABLE `oct_custom_texts`
+ALTER TABLE `{prefix}custom_field_lists`
+  MODIFY `custom_field_list_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `{prefix}custom_texts`
+--
+ALTER TABLE `{prefix}custom_texts`
   MODIFY `custom_text_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_emailtemplates`
+-- AUTO_INCREMENT for table `{prefix}emailtemplates`
 --
-ALTER TABLE `oct_emailtemplates`
+ALTER TABLE `{prefix}emailtemplates`
   MODIFY `template_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_groups`
+-- AUTO_INCREMENT for table `{prefix}groups`
 --
-ALTER TABLE `oct_groups`
+ALTER TABLE `{prefix}groups`
   MODIFY `group_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_history`
+-- AUTO_INCREMENT for table `{prefix}history`
 --
-ALTER TABLE `oct_history`
+ALTER TABLE `{prefix}history`
   MODIFY `history_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_invoices`
+-- AUTO_INCREMENT for table `{prefix}invoices`
 --
-ALTER TABLE `oct_invoices`
+ALTER TABLE `{prefix}invoices`
   MODIFY `invoice_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_category`
+-- AUTO_INCREMENT for table `{prefix}list_category`
 --
-ALTER TABLE `oct_list_category`
+ALTER TABLE `{prefix}list_category`
   MODIFY `category_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_os`
+-- AUTO_INCREMENT for table `{prefix}list_os`
 --
-ALTER TABLE `oct_list_os`
+ALTER TABLE `{prefix}list_os`
   MODIFY `os_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_resolution`
+-- AUTO_INCREMENT for table `{prefix}list_resolution`
 --
-ALTER TABLE `oct_list_resolution`
+ALTER TABLE `{prefix}list_resolution`
   MODIFY `resolution_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_tasktype`
+-- AUTO_INCREMENT for table `{prefix}list_tasktype`
 --
-ALTER TABLE `oct_list_tasktype`
+ALTER TABLE `{prefix}list_tasktype`
   MODIFY `tasktype_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_tasktype_groups`
+-- AUTO_INCREMENT for table `{prefix}list_tasktype_groups`
 --
-ALTER TABLE `oct_list_tasktype_groups`
+ALTER TABLE `{prefix}list_tasktype_groups`
   MODIFY `tasktype_groups_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_tasktype_groups_links`
+-- AUTO_INCREMENT for table `{prefix}list_tasktype_groups_links`
 --
-ALTER TABLE `oct_list_tasktype_groups_links`
+ALTER TABLE `{prefix}list_tasktype_groups_links`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_unit`
+-- AUTO_INCREMENT for table `{prefix}list_unit`
 --
-ALTER TABLE `oct_list_unit`
+ALTER TABLE `{prefix}list_unit`
   MODIFY `unit_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_list_version`
+-- AUTO_INCREMENT for table `{prefix}list_version`
 --
-ALTER TABLE `oct_list_version`
+ALTER TABLE `{prefix}list_version`
   MODIFY `version_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_master`
+-- AUTO_INCREMENT for table `{prefix}master`
 --
-ALTER TABLE `oct_master`
+ALTER TABLE `{prefix}master`
   MODIFY `link_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_notifications`
+-- AUTO_INCREMENT for table `{prefix}noticeboard`
 --
-ALTER TABLE `oct_notifications`
+ALTER TABLE `{prefix}noticeboard`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `{prefix}noticeboard_comments`
+--
+ALTER TABLE `{prefix}noticeboard_comments`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `{prefix}notifications`
+--
+ALTER TABLE `{prefix}notifications`
   MODIFY `notify_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_payments`
+-- AUTO_INCREMENT for table `{prefix}payments`
 --
-ALTER TABLE `oct_payments`
+ALTER TABLE `{prefix}payments`
   MODIFY `payment_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_people`
+-- AUTO_INCREMENT for table `{prefix}people`
 --
-ALTER TABLE `oct_people`
+ALTER TABLE `{prefix}people`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_people_of_interest`
+-- AUTO_INCREMENT for table `{prefix}people_of_interest`
 --
-ALTER TABLE `oct_people_of_interest`
+ALTER TABLE `{prefix}people_of_interest`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_prefs`
+-- AUTO_INCREMENT for table `{prefix}prefs`
 --
-ALTER TABLE `oct_prefs`
+ALTER TABLE `{prefix}prefs`
   MODIFY `pref_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_projects`
+-- AUTO_INCREMENT for table `{prefix}projects`
 --
-ALTER TABLE `oct_projects`
+ALTER TABLE `{prefix}projects`
   MODIFY `project_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_registrations`
+-- AUTO_INCREMENT for table `{prefix}registrations`
 --
-ALTER TABLE `oct_registrations`
+ALTER TABLE `{prefix}registrations`
   MODIFY `reg_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_related`
+-- AUTO_INCREMENT for table `{prefix}related`
 --
-ALTER TABLE `oct_related`
+ALTER TABLE `{prefix}related`
   MODIFY `related_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_reminders`
+-- AUTO_INCREMENT for table `{prefix}reminders`
 --
-ALTER TABLE `oct_reminders`
+ALTER TABLE `{prefix}reminders`
   MODIFY `reminder_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_reports`
+-- AUTO_INCREMENT for table `{prefix}reports`
 --
-ALTER TABLE `oct_reports`
+ALTER TABLE `{prefix}reports`
   MODIFY `report_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_report_categories`
+-- AUTO_INCREMENT for table `{prefix}report_categories`
 --
-ALTER TABLE `oct_report_categories`
+ALTER TABLE `{prefix}report_categories`
   MODIFY `report_category_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_strategy`
+-- AUTO_INCREMENT for table `{prefix}strategy`
 --
-ALTER TABLE `oct_strategy`
+ALTER TABLE `{prefix}strategy`
   MODIFY `strategy_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_tasks`
+-- AUTO_INCREMENT for table `{prefix}tasks`
 --
-ALTER TABLE `oct_tasks`
+ALTER TABLE `{prefix}tasks`
   MODIFY `task_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_tasktype_checked`
+-- AUTO_INCREMENT for table `{prefix}tasktype_checked`
 --
-ALTER TABLE `oct_tasktype_checked`
+ALTER TABLE `{prefix}tasktype_checked`
   MODIFY `checked_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_tasktype_checklist`
+-- AUTO_INCREMENT for table `{prefix}tasktype_checklist`
 --
-ALTER TABLE `oct_tasktype_checklist`
+ALTER TABLE `{prefix}tasktype_checklist`
   MODIFY `checklist_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_times`
+-- AUTO_INCREMENT for table `{prefix}times`
 --
-ALTER TABLE `oct_times`
+ALTER TABLE `{prefix}times`
   MODIFY `time_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_users`
+-- AUTO_INCREMENT for table `{prefix}users`
 --
-ALTER TABLE `oct_users`
+ALTER TABLE `{prefix}users`
   MODIFY `user_id` mediumint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `oct_version_permissions`
+-- AUTO_INCREMENT for table `{prefix}version_permissions`
 --
-ALTER TABLE `oct_version_permissions`
+ALTER TABLE `{prefix}version_permissions`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
-COMMIT;
+

@@ -16,11 +16,73 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
     //echo PHP_VERSION;
-    require 'vendor/autoload.php';
-    session_start();
     /* REMOVE THE FOLLOWING LINES IN PRODUCTION ENVIRONMENT */
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
+    require 'vendor/autoload.php';
+    
+    /* Attempt to start the session */
+    if (!@session_start()) {
+        // If session_start() fails, use database session storage
+        class DbSessionHandler implements SessionHandlerInterface {
+            private $pdo;
+            private $table;
+        
+            public function __construct(PDO $pdo, $table = 'sessions') {
+                $this->pdo = $pdo;
+                $this->table = $table;
+            }
+        
+            public function open(string $savePath, string $sessionName): bool {
+                return true;
+            }
+        
+            public function close(): bool {
+                return true;
+            }
+        
+            public function read(string $id): string {
+                $stmt = $this->pdo->prepare("SELECT data FROM {$this->table} WHERE id = :id");
+                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $row ? $row['data'] : '';
+            }
+        
+            public function write(string $id, string $data): bool {
+                $timestamp = time();
+                $stmt = $this->pdo->prepare("REPLACE INTO {$this->table} (id, data, timestamp) VALUES (:id, :data, :timestamp)");
+                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+                $stmt->bindParam(':data', $data, PDO::PARAM_STR);
+                $stmt->bindParam(':timestamp', $timestamp, PDO::PARAM_INT);
+                return $stmt->execute();
+            }
+        
+            public function destroy(string $id): bool {
+                $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = :id");
+                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+                return $stmt->execute();
+            }
+        
+            public function gc(int $maxlifetime): int|false {
+                $old = time() - $maxlifetime;
+                $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE timestamp < :old");
+                $stmt->bindParam(':old', $old, PDO::PARAM_INT);
+                return $stmt->execute();
+            }
+        }
+        require_once('config/config.php');
+        // Database connection
+        $pdo = new PDO('mysql:host='.$settings['dbhost'].';dbname='.$settings['dbname'], $settings['dbuser'], $settings['dbpass']);
+        //Set the session handler table name
+        $table = $settings['dbprefix'].'sessions';
+        // Set custom session handler
+        $handler = new DbSessionHandler($pdo, $table);
+        session_set_save_handler($handler, true);
+        
+        // Start the session using the custom handler
+        session_start();
+    }
     /*                                                      */
 
     //Some useful values for each page
@@ -31,15 +93,14 @@
 
     require_once "helpers/startup.php";
 
-
     //##########################################################################
     // COOKIE MANAGEMENT
     // First cookie is user/system preferences
     // Second cookie is current status, history, filter settings etc.
     $myDomain = preg_replace("/^[^.]*.([^.]*).(.*)$/", '1.2', $_SERVER['HTTP_HOST']);
     //$setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? ".$myDomain" : false;
-    //$cookiepath=dirname($_SERVER['PHP_SELF']);
-    $cookiepath="/atticase";
+    $cookiepath=dirname($_SERVER['PHP_SELF']);
+    //$cookiepath="/atticase";
     //echo $cookiepath;
     $setDomain = ($_SERVER['HTTP_HOST']) != "localhost" ? $_SERVER['HTTP_HOST'] : false;
     
@@ -54,7 +115,7 @@
         "path"=>$cookiepath,
         "domain"=>$setDomain,
         "secure"=>true,
-        "httponly"=>false,
+        "httponly"=>false, //Set to true for better security - setting this to true will prevent the cookie from being accessed by JavaScript
         "samesite"=>"Strict"
     );
     
@@ -62,13 +123,17 @@
     $status=isset($_COOKIE[$cookieStatusName]) ? $_COOKIE[$cookieStatusName] : array();
 
     if(!is_array($status)) { //This means that there IS a cookie
-        $status=stripslashes($status);
-        $status=json_decode($status, true);
+        $status=json_decode(stripslashes($status), true);
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            $status=array("caseviews"=>array());
+        }
         if(empty($status)) {
             $status=array("caseviews"=>array());
         }
-        if(isset($_GET['case'])) {
-            if(isset($status['caseviews'][0]) && $status['caseviews'][0] != $_GET['case']) {
+        
+        $case = filter_input(INPUT_GET, 'case', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if($case) {
+            if(isset($status['caseviews'][0]) && $status['caseviews'][0] != $case) {
                 array_unshift($status['caseviews'], $_GET['case']);
             }
             if(isset($status['caseviews']) && count($status['caseviews']) > 10) {
@@ -90,7 +155,11 @@
         
         setCookie($cookieSystemName, json_encode($_SESSION), $cookieOptions);
         setCookie($cookieStatusName, json_encode($status), $cookieOptions);
-        //echo "<pre>PHP Cookie Setting"; print_r($_COOKIE); echo "</pre>"; 
+        //test to see if these cookies have been succesfully set?
+
+
+        //echo "Setting cookies - $cookieSystemName and $cookieStatusName<br />";
+       // echo "<pre>PHP Cookie Setting"; print_r($_COOKIE); echo "</pre>"; 
     }   
     
     
@@ -142,6 +211,8 @@
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
     </script>
+    <!-- Encryption -->
+     <script src="js/crypto-js.min.js"></script>
     <!-- Casetracker javascripts -->
     <script src="js/default.js"></script>
     <script src="js/index.js"></script>
@@ -153,11 +224,10 @@
             <?php
         };
     }
-
     ?>
     <script>
         var cookiePrefix='<?= $oct->cookiePrefix ?>';
-        console.log('Setting off search for global and status cookies')
+        //console.log('Setting off search for global and status cookies')
         var globals=getSettings('<?= $cookieSystemName ?>');
         var status=getSettings('<?= $cookieStatusName ?>');
         //console.log('Globals');

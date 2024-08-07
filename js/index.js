@@ -81,8 +81,10 @@ $(function() {
         
     })
 
+    /**
+     * TODO: Investigate a way to only load this when required - why does it have to load for every single page?
+     */
     $.when(getUsers()).done(function(users) {
-        
         $.each(users.results, function(i, x) {
             userNames[x.user_id]=x.real_name;
         })
@@ -103,6 +105,15 @@ $(function() {
 
 function gotoCase(caseId) {
     window.location.href="index.php?page=case&case="+caseId;        
+}
+
+function encryptData(data, key, iv) {
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), CryptoJS.enc.Utf8.parse(key), {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return encrypted.ciphertext.toString(CryptoJS.enc.Base64); // Base64 encode the ciphertext
 }
 
 function deleteTabEdit(method, id) {
@@ -219,12 +230,18 @@ function saveTabEdit(method, id) {
     }
 }
 
-function caseList(parameters, conditions, order, first, last) {
-    //console.log(parameters);
+function caseList(parameters, conditions, order, first=0, last=10) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'caseList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {parameters: parameters, method: 'caseList', conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     }) 
     
@@ -274,16 +291,18 @@ function getSettings(name) {
     }
 
     //console.log('Cookie not found, returning null');
-    return null; // Return null if the cookie is not found
+    //if no cookie is found return an empty object
+    return {};
+//    return null; // Return null if the cookie is not found
 }
 
 
 function getStatus() {
-    //console.log('Reading status cookie '+cookiePrefix+'Status');
+    console.log('Reading status cookie '+cookiePrefix+'Status');
     var cookiename = cookiePrefix+"Status=";
     
     var ca = document.cookie.split('; ');
-    //console.log(ca);
+
 
     for (var i = 0; i < ca.length; i++) {
         var c = ca[i].trim();
@@ -303,15 +322,24 @@ function getStatus() {
         }
     }
     console.log('No valid cookie found');
+    //console.log(document.cookie);
+    //console.log(ca);
     return { caseviews: {} }; // Default return if no valid cookie is found
 }
 
 
 function getUsers(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'usersList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'usersList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     })    
 }
@@ -330,21 +358,17 @@ function setStatus(status) {
     now.setTime(now.getTime() + (2 * 24 * 60 * 60 * 1000)); //Set for 2 days ahead;
 
     const expires = "expires=" + now.toUTCString();
-    const path = "path=/atticase";
+    //Find the current root directory
+    const path="path=/"+window.location.pathname.split('/')[1];
     const secure = "secure";
     const samesite = "SameSite=Strict";
     const encodedValue = encodeURIComponent(JSON.stringify(status));
     const cookieName=cookiePrefix+"Status";
     const domain=$('#set_domain').val();
+    //console.log('Setting cookie for: '+cookieName+' -> '+encodedValue+' in path '+path); console.log(status);
 
     document.cookie = `${cookieName}=${encodedValue}; ${expires}; ${path}; domain=${domain}; ${secure}; ${samesite}`;
-    //var cookiename = cookiePrefix+"Status=" + encodeURIComponent(JSON.stringify(status))+"; SameSite=Strict; path=/atticase";
-    //console.log(cookiename);
-    //document.cookie=cookiename;
-    //console.log("Cookie size: "+document.cookie.length+" characters");
-    //console.log(document.cookie);                             
-    //console.log("After setting, cookie looks like this");
-    //console.log(document.cookie);
+    
 }
 
 
@@ -360,10 +384,17 @@ function accountUpdate(userId, newValues) {
 }
 
 function attachmentList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'attachmentList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'attachmentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -394,6 +425,33 @@ function caseCreate(newValues, user_id) {
         data: {method: 'createCase', newValues: newValues, user_id: user_id},
         dataType: 'json'
     })    
+}
+
+function userCreate(username, realname, password, email, group, phone, notifytype, notifyrate, selfnotify, strategyenabled, defaulttaskview, accountenabled=1 ) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'userCreate', username: username, realname: realname, password: password, email: email, group: group, phone: phone, notifytype: notifytype, notifyrate: notifyrate, selfnotify: selfnotify, strategyenabled: strategyenabled, defaulttaskview: defaulttaskview, accountenabled: accountenabled},
+        dataType: 'json'
+    })    
+}
+
+function userUpdate(userId, newValues) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'userUpdate', userId: userId, newValues: newValues},
+        dataType: 'json'
+    })
+}
+
+function userDelete(userId) {
+    return $.ajax({
+        url: 'ajax.php',
+        method: 'POST',
+        data: {method: 'userDelete', userId: userId},
+        dataType: 'json'
+    })
 }
 
 function caseDelete(caseId) {
@@ -473,10 +531,17 @@ function caseTypeDelete(casetypeId) {
 }
 
 function commentList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'commentList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'commentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -703,10 +768,17 @@ function groupUpdate(groupId, fieldName, newValue) {
 }
 
 function historyList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'historyList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'historyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -769,19 +841,33 @@ function linkedDelete(linkType, id) {
 }
 
 function linkedList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'linkedList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'linkedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
 
 function notificationsList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'notificationsList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'notificationsList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });    
 }
@@ -893,10 +979,17 @@ function poiLinkDelete(poiId) {
 }
 
 function poiList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'poiList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'poiList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -932,10 +1025,17 @@ function poiPersonLookup(value) {
     var parameters={};
     parameters[':nameValue']='%'+value+'%';
     var conditions="CONCAT(firstname, ' ', lastname) LIKE :nameValue"; 
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'poiPeopleList',
+        params: encryptData({ parameters, conditions}, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'poiPeopleList', parameters: parameters, conditions: conditions },
+        data: data,
         dataType: 'json'
     })    
 }
@@ -951,19 +1051,33 @@ function poiUpdate(poiId, newValue) {
 
 
 function recentList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'recentList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'recentList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
 
 function relatedList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'relatedList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'relatedList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -1023,19 +1137,33 @@ function restrictVersionUpdate(groupId, versionId, newValue) {
 }
 
 function statsCases(parameters, conditions, order, first, last, select) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'statsCases',
+        params: encryptData({ parameters, conditions, order, first, last, select }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'statsCases', parameters: parameters, conditions: conditions, order: order, first: first, last: last, select: select},
+        data: data,
         dataType: 'json'
     });
 }
 
 function strategyList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'strategyList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'strategyList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -1053,28 +1181,49 @@ function systemSettingsUpdate(values, wheres) {
     //console.log('Values');
     //console.log(values);
     //console.log('Wheres: '+wheres);
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'systemSettingsUpdate',
+        params: encryptData({ values, wheres}, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url:'ajax.php',
         method: 'POST',
-        data: {method: 'systemSettingsUpdate', values: values, wheres: wheres},
+        data: data,
         dataType: 'json'
     })
 }
 
 function tableList(tablename, joins, select, parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'tableList',
+        params: encryptData({ tablename, joins, select, parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {tablename: tablename, joins: joins, select: select, parameters: parameters, method: 'tableList', conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     })
 }
 
 function timeList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'timeList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'timeList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -1107,10 +1256,17 @@ function unitUpdate(unitId, fieldName, value) {
 }
 
 function unitList(parameters, conditions, order, first, last) {
+    const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const data = {
+        method: 'unitList',
+        params: encryptData({ parameters, conditions, order, first, last }, key, iv),
+        iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
+    };    
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
-        data: {method: 'unitList', parameters: parameters, conditions: conditions, order: order, first: first, last: last},
+        data: data,
         dataType: 'json'
     });
 }
@@ -1413,6 +1569,7 @@ function saveCaseView(caseId, timestamp, lasttab) {
     if(status.caseviews['case'+caseId]==undefined) {
         console.log('Status cookie caseview '+caseId+' undefined');
         status.caseviews['case'+caseId]={};
+        console.log('creating empty object in caseviews for this case: '+caseId);
     }
     var cookiename='case'+caseId;
     status.caseviews[cookiename]['timestamp']=timestamp;

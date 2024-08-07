@@ -2,3 +2,4 @@
 config/config.php
 tmp/
 tmp/attachments/
+config/config.php.old

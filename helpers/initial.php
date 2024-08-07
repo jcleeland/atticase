@@ -21,7 +21,7 @@
 <html>
     <head>
         <title>
-            AttiCase 3
+            AttiCase 3 - Installation Step 1
         </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">        
@@ -35,10 +35,11 @@
     <script type="text/javascript" src="js/popper.min.js"></script>
     <!-- Bootstrap -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
-    
+    <!-- Encryption -->
+    <script src="js/crypto-js.min.js"></script>    
     <!-- Casetracker javascripts -->
-    <script src="js/default.js"></script>
-    <script src="js/index.js"></script>
+    <!--<script src="js/default.js"></script>-->
+    <!--<script src="js/index.js"></script>-->
 
     </head>
     <body>
@@ -46,11 +47,10 @@
     <?php
 
         if(isset($_POST['initialise']) && $_POST['initialise']=="true" && !empty($_POST['dbname']) && !empty($_POST['dbhost']) && !empty($_POST['dbuser']) && !empty($_POST['dbprefix']) && ($_POST['useexternaldb']=="false" || ($_POST['useexternaldb']=="true" && !empty($_POST['externaldb'])))) {
-            
-            include(__DIR__."/../pages/initialise.php");
+            include(__DIR__."/initialise.php");
             
         } else {
-    
+            
             include(__DIR__."/../pages/initial.php");
             //echo "<hr /><pre>";print_r($_POST);
         }

@@ -1,10 +1,4 @@
 <?php
-    if(!isset($_SESSION['administrator']) || !$_SESSION['administrator']==1) {
-        die("<div class='d-flex justify-content-center'>Your account does not have permission to see or change Options</div>");
-    }
-?>
-<script src="js/pages/options.js"></script>
-<?php
 /*
  * Copyright [2022] [Jason Alexander Cleeland, Melbourne Australia]
  *
@@ -21,6 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+    if(!isset($_SESSION['administrator']) || !$_SESSION['administrator']==1) {
+        die("<div class='d-flex justify-content-center'>Your account does not have permission to see or change Options</div>");
+    }
+
+
+?>
+<script src="js/pages/options.js"></script>
+<?php
+
 $options=array(
     //"displaysettings"=>"Display Settings",
     "casetypes"=>"Case Types",

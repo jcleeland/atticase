@@ -1,5 +1,4 @@
 <?php
-    
     if(isset($_POST['login']) && $_POST['login']=="true") {
         
         
@@ -122,8 +121,8 @@
           unset($_SESSION[$key]);
         }
         //echo "<pre>"; print_r($_SESSION); echo "</pre>";
-        //$cookiepath=dirname($_SERVER['PHP_SELF']);
-        $cookiepath="/atticase";
+        $cookiepath=dirname($_SERVER['PHP_SELF']);
+        //$cookiepath="/atticase";
         if(isset($_GET['clearcookies']) && $_GET['clearcookies']=="true") {
 
             if (isset($_SERVER['HTTP_COOKIE'])) {

@@ -556,6 +556,7 @@ $configsettings=array(
 $query="SELECT * FROM ".$oct->dbprefix."prefs ORDER BY pref_name";
 $settings=$oct->fetchMany($query);
 $settings=$settings['output'];
+$prefs=[];
 foreach($settings as $setting) {
   $prefs[$setting['pref_name']]=array("value"=>$setting['pref_value'], "description"=>$setting['pref_desc']);
 }

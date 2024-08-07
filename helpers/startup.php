@@ -20,12 +20,14 @@
 
     //All the things needed to get opencasetracker scripts connected and up and running
     if(!file_exists(__DIR__."/../config/config.php")) {
+        //There's no config file - so we haven't even installed yet!
+        require_once __DIR__."/../helpers/oct.php";
+        $oct=new oct;
         include(__DIR__."/../helpers/initial.php");
         die();
     } else {
         require_once __DIR__.'/../config/config.php';
         require_once __DIR__."/../helpers/oct.php";
-
         $oct=new oct;
         $oct->dbuser=$settings['dbuser'];
         $oct->dbpass=$settings['dbpass'];
@@ -37,13 +39,22 @@
         if(!$output) {
             //Database not available
             $message="Could not find database with the name ".$settings['dbname'];
-            include("helpers/initial.php");
+            include(__DIR__."/initial.php");
             die();
         }
 
+        //Check to see if there are any tables in the database - because if there's a database, but no tables, then we need to create them
+        $sql="SHOW TABLES";
+        $result=$oct->fetchMany($sql);
+        
+        if((isset($result['records']) && $result['records']==0) || !isset($result['records'])) {
+            //There is a database, but there are no tables, so we need to create an empty database
+            require_once(__DIR__."/initialise_db.php");
+            die();
+        }
 
         require_once __DIR__."/configsettings.php";
-
+        
         $oct->cookiePrefix=$oct->getSetting('installation', 'cookiePrefix');
         $cookieStatusName=$oct->cookiePrefix."Status";
         $cookieSystemName=$oct->cookiePrefix."System";
@@ -57,6 +68,8 @@
             $oct->externalDb=false;
         }
         
+        //Now it's time to log in
         include __DIR__."/../scripts/authenticate.php";   
+
     }
 ?>

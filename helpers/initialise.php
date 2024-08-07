@@ -35,8 +35,8 @@
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
     <!-- Casetracker javascripts -->
-    <script src="js/default.js"></script>
-    <script src="js/index.js"></script>
+    <!--<script src="js/default.js"></script>-->
+    <!--<script src="js/index.js"></script>-->
 
     </head>
     <body>
@@ -63,7 +63,15 @@ if(!is_dir($dirname)) {
         die("Could not create configuration directory. See your system administrator.");
     }
 }
+//Check to see if the config dir is writable
+if(!is_writable($dirname)) {
+    die("The configuration directory is not writable. See your system administrator.");
+}
 $filename=dirname(__FILE__)."/../config/config.php";
+//Check to see if the config.php file is writeable
+if(file_exists($filename) && !is_writable($filename)) {
+    die("The configuration file is not writable. See your system administrator.");
+}
 $file=@fopen($filename, "w") or die("Unable to open config.php for writing</body></html>");
 fwrite($file, $filecontents);
 fclose($file);
@@ -84,7 +92,6 @@ $oct->dbhost=$settings['dbhost'];
 $oct->dbname=$settings['dbname'];
 $oct->dbprefix=$settings['dbprefix'];
 $output=$oct->connect();
-print_r($output);
 
 if(!$output) {
     //Database not available
@@ -106,11 +113,25 @@ if(!$output) {
         <div style='position: relative; top: 200px; left: 45%'><a href='index.php' class='btn btn-primary'>Try again</a></div>
         <?php
     }    
-    //include("helpers/initial.php");
     die();
-}
+} else {
 ?>
-        <h1>Basic Configuration File has been created.</h1>
-        <div style='position: relative; top: 200px; left: 45%'><a href='index.php' class='btn btn-primary'>Start</div>
+        <div class="row h-50 justify-content-center align-items-center">
+            <div class="col-5">
+                <div class='col mb-3 p-0'>
+                    <h3 style="font-weight: bold"><img src='images/logo.png'>AttiCase</h3>
+                </div>
+                <div class="mb-3">
+                    The initial configuration file has been created.<br /><br />AttiCase will now attempt to connect to your database and see if there is an existing installation, or if it needs to generate the required database structure.
+                </div>            
+                <div>
+                    <a href='index.php' class='btn btn-primary'>Next</a>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
+<?php
+die();
+}
+?>

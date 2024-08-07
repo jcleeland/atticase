@@ -15,6 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */  
+//Check to see if the noticeboards & noticeboards_comments table exists, 
+
+$oct->db->query("CREATE TABLE IF NOT EXISTS ".$oct->dbprefix."noticeboard (
+  `id` int NOT NULL,
+  `publish_date` date NOT NULL,
+  `expiry_date` date NOT NULL,
+  `published` int DEFAULT '0',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by` int NOT NULL,
+  `allow_comments` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Noticeboard entries';");
+
+$oct->db->query("CREATE TABLE IF NOT EXISTS ".$oct->dbprefix."noticeboard_comments (
+  `id` int NOT NULL,
+  `noticeboard_id` int NOT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hide_comment` int NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Noticeboard comments';");
+ 
 $notices=$oct->fetchMany("SELECT nb.*, users.*, count(nc.noticeboard_id) as comment_count FROM ".$oct->dbprefix."noticeboard as nb INNER JOIN ".$oct->dbprefix."users as users ON nb.created_by=users.user_id LEFT JOIN ".$oct->dbprefix."noticeboard_comments AS nc ON nb.id=nc.noticeboard_id WHERE published=1 AND publish_date <= CURDATE() and expiry_date > CURDATE() GROUP BY nb.id, users.user_id ORDER BY publish_date DESC", null, 0, 10000);
 
 ?>

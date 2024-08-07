@@ -25,7 +25,7 @@ class oct {
     var $dbhost;
     var $dbname;
     var $dbtype="mysql";
-    var $dbprefix="casetracker_";
+    var $dbprefix="attticase_";
     var $db;
     var $externalDb=false;
     var $config;
@@ -172,8 +172,11 @@ class oct {
             $stmt->execute($parameters);
             return $stmt->rowCount();
         } catch (PDOException $e) {
-            // Handle error
-            die("Error executing query: " . $e->getMessage());
+            // Log detailed error information
+            error_log("Error executing query: " . $e->getMessage() . " (Code: " . $e->getCode() . ") in " . $e->getFile() . " on line " . $e->getLine() . "\nTrace: " . $e->getTraceAsString());
+            
+            // Rethrow the exception to be caught by the caller
+            throw $e;
         }
     }
     
@@ -2010,6 +2013,21 @@ class oct {
         }
         return $output;
     }
+
+    function decryptData($data, $key, $iv) {
+        $decodedData = base64_decode($data);
+        $decodedIv = base64_decode($iv);
+        if ($decodedData === false || $decodedIv === false) {
+            die("ERROR Base64 decode failed");
+        }
+    
+        $decrypted = openssl_decrypt($decodedData, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $decodedIv);
+        if ($decrypted === false) {
+            die("ERROR Decryption failed: " . openssl_error_string());
+        }
+    
+        return $decrypted;
+    }    
 
 }
 

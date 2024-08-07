@@ -27,7 +27,7 @@ $dbpass=$oct->dbpass ? $oct->dbpass : "";
 $dbhost=$oct->dbhost ? $oct->dbhost : "localhost";
 $dbprefix=$oct->dbprefix ? $oct->dbprefix : "atticase_";
 
-$useexternaldb=isset($settings['useexternaldb']) ? $settings['useexternaldb'] : "false";
+$useexternaldb=isset($settings['useexternaldb']) ? $settings['useexternaldb'] : false;
 $externaldb=isset($settings['externaldb']) ? $settings['externaldb'] : "";
 
 if(isset($message)) {

@@ -18,8 +18,8 @@
     session_start();
     
     //Turn off for production installation
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
+    //error_reporting(E_ALL);
     
     /** Simple testing
     *   run ajax.php?test=yes
@@ -37,10 +37,32 @@
         $_POST=$_GET;
     }
     
-    
     if(!isset($_POST['method']) && isset($_GET['method'])) $_POST['method']=$_GET['method'];
     if(!isset($_POST['method']) || $_POST['method']=="") die("ERROR No method called");
     require_once("helpers/startup.php");
+
+    // Decrypt the JSON encoded parameters
+    if (isset($_POST['params']) && isset($_POST['iv'])) {
+        $key = 'wOVkpVa4Eurd1cQM'; // Use the same 16-byte key
+        $iv = $_POST['iv']; // IV sent along with the encrypted data
+
+        // Add debugging statements
+        error_log("Params: " . $_POST['params']);
+        error_log("IV: " . $iv);
+
+        $decryptedParams = $oct->decryptData($_POST['params'], $key, $iv);
+        if ($decryptedParams === false) {
+            die("ERROR Decryption failed");
+        }
+
+        $decodedParams = json_decode($decryptedParams, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            die("ERROR Invalid JSON in parameters: " . json_last_error_msg());
+        }
+
+        $_POST = array_merge($_POST, $decodedParams);
+    }
+
     $functionFile="helpers/ajax/".$_POST['method'].".php";
     if(!file_exists($functionFile)) die("ERROR Function does not exist ($functionFile)");
     
