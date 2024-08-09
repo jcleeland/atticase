@@ -257,7 +257,7 @@ class oms extends oct {
         $this->dbQuery($query);        
     }
    
-    function decryptData($data) {
+    function decryptOMSData($data) {
         $retrdata=openssl_decrypt($data, 'aes-128-cbc', 'ct2016' );
         $datadata=json_decode($retrdata);
         return $datadata;
@@ -268,7 +268,7 @@ class oms extends oct {
       
         $get_details=$this->getSummaryFromCache($member);
         
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         $now=time();
         $to=!empty($data->membershipAssociation->association->to) ? date("U", strtotime($data->membershipAssociation->association->to)) : null;
@@ -444,7 +444,7 @@ class oms extends oct {
       
       $get_details=$this->dbQuery("SELECT data, modified FROM ".$this->returnDBPrefix()."member_cache WHERE member=?", array(intval($member)));
       $get_details=$this->dbFetchRow($get_details);
-      $datadata=$this->decryptData($get_details['data']);
+      $datadata=$this->decryptOMSData($get_details['data']);
       $modified=$get_details['modified'];
 
       //Calculate the $month, $day and $year of the last fully paid subs / subs-paid-to date, then return that
@@ -460,7 +460,7 @@ class oms extends oct {
       $get_details=$this->dbQuery("SELECT * FROM ".$this->returnDBPrefix()."member_cache WHERE member=?", array(intval($member)));
       $get_details = $this->dbFetchRow($get_details);
       
-      $data=$this->decryptData($get_details['data']);
+      $data=$this->decryptOMSData($get_details['data']);
       //echo "<pre style='text-align: left'>"; print_r($data);die("Done");
       $subs=$data->currentSubscriptionPeriod;
       
@@ -473,7 +473,7 @@ class oms extends oct {
       
       $get_details=$this->getSummaryFromCache($member);
       
-      $data=$this->decryptData($get_details['data']);
+      $data=$this->decryptOMSData($get_details['data']);
       
       //echo "<pre style='text-align: left'>"; print_r($data);die("Done");
       $subs=$data->currentSubscriptionPeriod;
@@ -581,7 +581,7 @@ class oms extends oct {
             array(intval($member))
         );
         $get_details=$this->dbFetchRow($get_details);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         $from=date("U", strtotime($data->membershipAssociation->association->from));
         $to=!empty($data->membershipAssociation->association->to) ? date("U", strtotime($data->membershipAssociation->association->to)) : time();
@@ -596,7 +596,7 @@ class oms extends oct {
         }
         
         $get_details=$this->getSummaryFromCache($member);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         return $data->currentSubscriptionPeriod->subscriptionMethodName;        
 
@@ -609,7 +609,7 @@ class oms extends oct {
         $results=array();
         
         $get_details=$this->getSummaryFromCache($member);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         //echo "<pre style='text-align: left'>"; print_r($data); die("from returnContactInfo");
         $results=array("work_phone"=>"stub", "home_phone"=>$data->person->homePhone, "email"=>$data->person->email, "attrib_6"=>$data->person->mobilePhone, "mail_addr_1"=>$data->person->address->formatted);
@@ -621,7 +621,7 @@ class oms extends oct {
         $today=date("Y-m-d");
         
         $get_details=$this->getSummaryFromCache($member);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         $firstname=!empty($data->person->alias) ? $data->person->alias : $data->person->firstNames;
         $return=$firstname . " " . $data->person->lastName. "(".$data->currentEmployment->groupName.")";
@@ -634,7 +634,7 @@ class oms extends oct {
         $today=date("Y-m-d");
         
         $get_details=$this->getSummaryFromCache($member);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         return $data->currentEmployment->groupName;
         
         /*$get_details = $this->odbcQuery("SELECT paying_emp FROM members WHERE member = $member");
@@ -684,7 +684,7 @@ class oms extends oct {
         }
         
         $get_details=$this->getSummaryFromCache($member);
-        $data=$this->decryptData($get_details['data']);
+        $data=$this->decryptOMSData($get_details['data']);
         
         /* members.surname, members.given_names, members.pref_name, members.title, members.email, members.birth,
            members.gender, members.home_addr_1, members.home_addr_2, members.home_addr_3,
@@ -794,7 +794,7 @@ class oms extends oct {
                 $get_details=$this->dbFetchRow($get_details);
                 if(!empty($get_details)) {
                     //Since this is only ever a single response, we can return the full dataset
-                    $obj=$this->decryptData($get_details['data']);
+                    $obj=$this->decryptOMSData($get_details['data']);
                     $resignation=!empty($obj->membershipAssociation->association->to) ? date("Y-m-d h:i:s", strtotime($obj->membershipAssociation->association->to)) : null;
                     //echo "<pre style='text-align: left'>"; print_r($obj); //die("from SearchMembers- memberNumber-Cache");
                     $emptype=date("U", strtotime($obj->membershipAssociation->association->to)) < time() ? "X" : "C";
@@ -1061,7 +1061,7 @@ class oms extends oct {
             );
             $get_details=$this->dbFetchRow($get_details);
             if(!empty($get_details)) {
-                $obj=$this->decryptData($get_details['data']);
+                $obj=$this->decryptOMSData($get_details['data']);
                 $firstname=!empty($obj->person->alias) ? $obj->person->alias : $obj->person->firstNames;
                 $return[]=array(
                         "member"=>$obj->membershipAssociation->reference,
