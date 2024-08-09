@@ -15,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+ /** 
+ * @var oct $oct 
+ * @see ../helpers/oct.php
+*/
 ?>
 <script src="js/pages/admin/people.js"></script>
 <?php
@@ -110,7 +115,7 @@ $missings = $results['output'];
             </nav>
             <nav aria-label="Letter navigation" style="display: flex; align-items: center; justify-content: center;" class="smaller w-100 p-1 h-scroll">
                 <div class="pagination">
-                    <span class="page-item <?= $char == $firstLetter ? 'active' : '' ?>"><a class="page-link" href="?page=options&option=people&recordpage=1&firstLetter=&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>&orderBy=<?= $sortOrder ?>&order=<?= $order ?>">All</a></span>
+                    <span class="page-item <?= '' == $firstLetter ? 'active' : '' ?>"><a class="page-link" href="?page=options&option=people&recordpage=1&firstLetter=&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>&orderBy=<?= $sortOrder ?>&order=<?= $order ?>">All</a></span>
                     <span class="page-item"><span class="page-link">&nbsp;</span></span>
                     <?php foreach (range('A', 'Z') as $char): ?>
                         <span class="page-item <?= $char == $firstLetter ? 'active' : '' ?>"><a class="page-link" href="?page=options&option=people&recordpage=1&firstLetter=<?= $char ?>&recordsPerPage=<?= $_GET['recordsPerPage'] ?? '10' ?>&orderBy=<?= $sortOrder ?>&order=<?= $order ?>"><?= $char ?></a></span>
@@ -333,7 +338,7 @@ $missings = $results['output'];
             if($oct->getSetting("externaldb", "useexternaldb")==1 && $oct->getSetting("externaldb", "externaldb") != "") {
             ?>
             <div class="row border rounded centered">
-                <div class="p-2 w-100 mb-1 popup-button-container">
+                <div class="p-2 w-100 mb-1 popup-button-container centered">
                     <span class='btn btn-info' onclick="togglePopup('missing_popup')">Find <?php echo $missing ?> missing entries</span>
                     <div id="missing_popup" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display: none">
                         <div class="row mb-1">
@@ -356,6 +361,23 @@ $missings = $results['output'];
                     </div>
                 </div>
             </div>
+            <?php
+            } else {
+            ?>
+            <div class="row border rounded text-center">
+                <div class="p-2 w-100 mb-1 popup-button-container text-center">
+                    <span class='btn btn-info' onclick="reconcileWithCases()" title="Clicking here will perform a review of all cases in the system and add names and ids to this database">Review cases and reconcile with list</span>
+                    <div id="buildfromcases_popup" class="popup-container scrollable-div custom-popup-height-30 custom-popup-width-50" style="display: none">
+                        <div class="row mb-1">
+                            <div class="col-sm-4">Identifier</div>
+                            <div class="col-sm-4">Name</div>
+                            <div class="col-sm-4">Action</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <?php
             }
             ?>

@@ -84,12 +84,24 @@ $(function() {
     /**
      * TODO: Investigate a way to only load this when required - why does it have to load for every single page?
      */
-    $.when(getUsers()).done(function(users) {
-        $.each(users.results, function(i, x) {
-            userNames[x.user_id]=x.real_name;
-        })
-    })
-
+    //Are we logged in?
+    //if the userNames object is empty, then we need to load the userNames object
+    if(Object.keys(userNames).length == 0) {
+        var settings=getSettings('AttiCaseSystem');
+        console.log(settings);
+        if(settings.user_id) {
+            console.log('Running getUsers');
+            $.when(getUsers()).done(function(users) {
+                console.log(users.results);
+                $.each(users.results, function(i, x) {
+                    userNames[x.user_id]=x.real_name;
+                })
+            })
+            console.log("Usernames loaded");
+            console.log(userNames);
+        }
+    }
+    
     //Check if there is a message to display
     var message=typeof $('#message').val() !== "undefined" && $('#message').val() != "" ? $('#message').val() : "";
     var messageTitle=typeof $('#messageTitle').val() !== "undefined" && $('#messageTitle').val() != "" ? $('#messageTitle').val() : "Notification";
@@ -329,13 +341,20 @@ function getStatus() {
 
 
 function getUsers(parameters, conditions, order, first, last) {
+    console.log('The getUsers function!');
     const key = 'wOVkpVa4Eurd1cQM'; // Use a 16, 24, or 32-byte key
     const iv = CryptoJS.lib.WordArray.random(16);
     const data = {
         method: 'usersList',
+        parameters: parameters,
+        conditions: conditions,
+        order: order,
+        first: first,
+        last: last,
         params: encryptData({ parameters, conditions, order, first, last }, key, iv),
         iv: iv.toString(CryptoJS.enc.Base64) // Base64 encode the IV
-    };    
+    };
+    console.log(data);
     return $.ajax({
         url: 'ajax.php',
         method: 'POST',
@@ -350,25 +369,18 @@ function getUsers(parameters, conditions, order, first, last) {
 * @param status    - object containing status values
 */
 function setStatus(status) {
-    //console.log('Setting status cookie');
-    //console.log(status);
-    //console.log('Stringified');
-    //console.log(JSON.stringify(status));
     const now=new Date();
     now.setTime(now.getTime() + (2 * 24 * 60 * 60 * 1000)); //Set for 2 days ahead;
 
     const expires = "expires=" + now.toUTCString();
-    //Find the current root directory
     const path="path=/"+window.location.pathname.split('/')[1];
     const secure = "secure";
     const samesite = "SameSite=Strict";
     const encodedValue = encodeURIComponent(JSON.stringify(status));
     const cookieName=cookiePrefix+"Status";
     const domain=$('#set_domain').val();
-    //console.log('Setting cookie for: '+cookieName+' -> '+encodedValue+' in path '+path); console.log(status);
-
-    document.cookie = `${cookieName}=${encodedValue}; ${expires}; ${path}; domain=${domain}; ${secure}; ${samesite}`;
     
+    document.cookie = `${cookieName}=${encodedValue}; ${expires}; ${path}; domain=${domain}; ${secure}; ${samesite}`;
 }
 
 

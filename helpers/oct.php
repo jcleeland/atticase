@@ -433,8 +433,12 @@ class oct {
     }
     
     function getCookies($cookiename) {
-        $output=$_COOKIE[$cookiename];
-        return json_decode($output);
+        if(isset($_COOKIE[$cookiename])) {
+            $output=$_COOKIE[$cookiename];
+            return json_decode($output);
+        } else {
+            return false;
+        }
     }
     
     function getUserAccount($userid) {
@@ -1649,28 +1653,29 @@ class oct {
     
     function insertTable($tablename, $inserts, $debug=0) {
 
+        $fields=array();
+        $values=array();
+        $parameters=array();
+        $query  = "INSERT INTO ".$this->dbprefix.$tablename."\r\n";
+        
+        foreach($inserts as $key=>$val) {
+            $fields[]=$key;
+            $values[]=$val;
+            $parameters[":".$key]=$val;
+        }
+        
+        $query .= "(`";
+        $query .= implode("`, `", $fields);
+        $query .= "`)\r\n";
+        $query .= "VALUES (:";
+        $query .= implode( ", :", $fields);
+        $query .= ")";
+        
+        //print_r($inserts);
+        //print_r($parameters); 
         try {
-            $query  = "INSERT INTO ".$this->dbprefix.$tablename."\r\n";
             
-            $fields=array();
-            $values=array();
-            $parameters=array();
             
-            foreach($inserts as $key=>$val) {
-                $fields[]=$key;
-                $values[]=$val;
-                $parameters[":".$key]=$val;
-            }
-            
-            $query .= "(`";
-            $query .= implode("`, `", $fields);
-            $query .= "`)\r\n";
-            $query .= "VALUES (:";
-            $query .= implode( ", :", $fields);
-            $query .= ")";
-            
-            //print_r($inserts);
-            //print_r($parameters); 
             $this->execute($query, $parameters);
             
             $newId=$this->db->lastInsertId();
@@ -2015,13 +2020,27 @@ class oct {
     }
 
     function decryptData($data, $key, $iv) {
+        error_log("Pre-recoded key: ".$key);
+        error_log("Pre-decoded data: ".$data);
+        error_log("Pre-decoded iv: ".$iv);
+        
+        $recodedKey = mb_convert_encoding($key, 'UTF-8');
         $decodedData = base64_decode($data);
         $decodedIv = base64_decode($iv);
+
+        error_log("Recoded key: ".$recodedKey);
+        error_log("Decoded data: ".$decodedData);
+        error_log("Decoded iv: ".$decodedIv);
+
         if ($decodedData === false || $decodedIv === false) {
             die("ERROR Base64 decode failed");
         }
     
-        $decrypted = openssl_decrypt($decodedData, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $decodedIv);
+
+        $decrypted = openssl_decrypt($decodedData, 'AES-128-CBC', $recodedKey, OPENSSL_RAW_DATA, $decodedIv);
+        error_log("Openssl_derypt output: ".$decrypted);
+        error_log('Openssl error: '.openssl_error_string());
+        
         if ($decrypted === false) {
             die("ERROR Decryption failed: " . openssl_error_string());
         }

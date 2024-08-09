@@ -1107,6 +1107,7 @@ a.fa-userlink::after {
     padding: 1rem;
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
   }
 
   .noticeboardheader {

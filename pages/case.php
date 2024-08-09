@@ -15,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+/** 
+ * @var oct $oct 
+ * @see ../helpers/oct.php
+*/
 ?>
 <script src="js/pages/case.js"></script>
 

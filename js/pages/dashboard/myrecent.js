@@ -63,7 +63,7 @@ function loadMyrecent(reset) {
     //var select="h.*, t.*, mem.surname, mem.pref_name, u.real_name as assigned_real_name";
     
     if(focus=="Mine") {
-        var conditions='h.user_id = :user_id i am happy';
+        var conditions='h.user_id = :user_id';
     } else {
         var conditions='h.user_id = "%"';
     }

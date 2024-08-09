@@ -15,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+ /** 
+ * @var oct $oct 
+ * @see ../helpers/oct.php
+*/
     session_start();
     
     //Turn off for production installation
@@ -24,8 +29,7 @@
     /** Simple testing
     *   run ajax.php?test=yes
     */
-    
-    if(isset($_GET['test']) && $_GET['test']=="yes") {
+        if(isset($_GET['test']) && $_GET['test']=="yes") {
         $_GET['parameters'][':assignedto']=2;
         $_GET['parameters'][':isclosed']=1;
         $_GET['parameters'][':datedue']='1606712841';
@@ -46,23 +50,18 @@
         $key = 'wOVkpVa4Eurd1cQM'; // Use the same 16-byte key
         $iv = $_POST['iv']; // IV sent along with the encrypted data
 
-        // Add debugging statements
-        error_log("Params: " . $_POST['params']);
-        error_log("IV: " . $iv);
-
         $decryptedParams = $oct->decryptData($_POST['params'], $key, $iv);
         if ($decryptedParams === false) {
-            die("ERROR Decryption failed");
+            error_log("ERROR Decryption failed when loading ".$_POST['method']." Ajax Script");
         }
 
         $decodedParams = json_decode($decryptedParams, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            die("ERROR Invalid JSON in parameters: " . json_last_error_msg());
+            error_log("ERROR Invalid JSON in parameters when loading ".$_POST['method']." Ajax Script: " . json_last_error_msg());
         }
 
         $_POST = array_merge($_POST, $decodedParams);
     }
-
     $functionFile="helpers/ajax/".$_POST['method'].".php";
     if(!file_exists($functionFile)) die("ERROR Function does not exist ($functionFile)");
     

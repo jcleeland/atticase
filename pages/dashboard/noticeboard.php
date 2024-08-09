@@ -58,10 +58,10 @@ $notices=$oct->fetchMany("SELECT nb.*, users.*, count(nc.noticeboard_id) as comm
             if($count==0) {
                 //First noticeboard item
             ?>
-            <div class="border rounded noticeboarditem p-0">
+            <div class="border rounded noticeboarditem p-0 m-1">
                 <div class="row m-0">
                     <div class="col-sm-12 noticeboardheader">
-                        <div class="w-100 noticeboardpostedby text-right">
+                        <div class="w-100 noticeboardpostedby text-right mt-0 pt-0">
                             <?php echo date("d M Y", strtotime($notice['publish_date'])); ?> - 
                             <?php echo $notice['real_name']; ?> 
                         </div>
@@ -71,14 +71,14 @@ $notices=$oct->fetchMany("SELECT nb.*, users.*, count(nc.noticeboard_id) as comm
 
                     </div>
                 </div>
-                <div class="row mb-1">
+                <div class="row mb-1 m-0 p-1">
                     <div class="col-sm-12 m-1 noticeboardmessage">
                         <?php echo htmlspecialchars_decode($notice['message']); ?>
                     </div>
                 </div>
                 <div class="row m-0">
-                    <div class="col-sm-12 noticeboardfooter">
-                        <div class="pr-2 text-right smallest">
+                    <div class="col-sm-12 noticeboardfooter pb-2">
+                        <div class="pr-2 text-right smaller">
                             <?php
                                 //If comments are enabled, show "Comments" coount and expander link
                                 if($notice['allow_comments']==1) {
@@ -105,7 +105,7 @@ $notices=$oct->fetchMany("SELECT nb.*, users.*, count(nc.noticeboard_id) as comm
                     <div class="border rounded noticeboarditem p-0">
                         <div class="row m-0 p-0">
                             <div class="col-sm-12 noticeboardheader">
-                                <div class="w-100 noticeboardpostedby text-right">
+                                <div class="w-100 noticeboardpostedby text-right mt-0 pt-0">
                                     <?php echo date("d M Y", strtotime($notice['publish_date'])); ?> - 
                                     <?php echo $notice['real_name']; ?> 
                                 </div>
@@ -120,8 +120,8 @@ $notices=$oct->fetchMany("SELECT nb.*, users.*, count(nc.noticeboard_id) as comm
                             </div>
                         </div>
                         <div class="row m-0">
-                    <div class="col-sm-12 noticeboardfooter">
-                        <div class="pr-2 text-right smallest">
+                    <div class="col-sm-12 noticeboardfooter pb-2">
+                        <div class="pr-2 text-right smaller">
                             <?php
                                 //If comments are enabled, show "Comments" coount and expander link
                                 if($notice['allow_comments']==1) {

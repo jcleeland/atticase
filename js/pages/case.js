@@ -240,7 +240,7 @@ $(function() {
 });
 
 function loadCase() {
-    var today=new Date();
+    //var today=new Date();
     var caseId=$('#caseid').val();
     var settings=getSettings(cookiePrefix+'System');
     
